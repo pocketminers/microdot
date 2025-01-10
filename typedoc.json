@@ -1,10 +1,7 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "entryPoints": [
-        "./src/artifacts/argument.ts",
-        "./src/artifacts/hashable.ts",
-        "./src/utils/checks.ts",
-        "./src/utils/crypto.ts"
+        "./src/index.ts"
     ],
     "entryPointStrategy": "resolve",
     "sort": ["source-order"],
@@ -16,10 +13,10 @@
     "navigation": {
         "excludeReferences": true,
         "includeFolders": true,
-        "compactFolders": false,
+        "compactFolders": true,
     },
     "readme": "./README.md",
-    "out": "./__docs__",
+    "out": "./docs",
     "cleanOutputDir": true,
     "plugin": [
         "typedoc-plugin-inline-sources",
