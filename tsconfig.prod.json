@@ -3,9 +3,9 @@
         "rootDir": "./src",
         "baseUrl": "./",
         "paths": {
-            "@/*": ["src/*"],
-            "@artifacts/*": ["src/artifacts/*"],
-            "@utils/*": ["src/utils/*"]
+            "@/*": ["src/*", "dist/*"],
+            "@artifacts/*": ["src/artifacts/*", "dist/artifacts/*"],
+            "@utils/*": ["src/utils/*", "dist/utils/*"],
         },
         "outDir": "./dist",
         "target": "ES2022",
