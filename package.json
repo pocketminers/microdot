@@ -38,7 +38,8 @@
   "scripts": {
     "docs": "typedoc --options typedoc.json",
     "lint": "tslint --project tsconfig.json src/**/*.ts --fix",
-    "test": "jest --config jest.config.ts"
+    "test": "jest --config jest.config.ts",
+    "build": "tsc"
   },
   "browserslist": {
     "production": [
