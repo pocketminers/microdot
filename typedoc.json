@@ -1,0 +1,23 @@
+{
+    "$schema": "https://typedoc.org/schema.json",
+    "entryPoints": [
+        "./src/artifacts/argument.ts",
+        "./src/artifacts/hashable.ts",
+        "./src/utils/checks.ts",
+        "./src/utils/crypto.ts"
+    ],
+    "entryPointStrategy": "resolve",
+    "sort": ["source-order"],
+    "name": "microdot",
+    "headings": {
+        "document": false,
+        "readme": true,
+    },
+    "navigation": {
+        "excludeReferences": true,
+        "includeFolders": true,
+        "compactFolders": false,
+    },
+    "readme": "./README.md",
+    "cleanOutputDir": true,
+}
