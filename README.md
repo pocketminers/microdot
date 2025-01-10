@@ -10,7 +10,7 @@ This repository is designed to provide an effortless decentralized micro-service
 - **Browser**: [React](https://reactjs.org/)
 - **Powered By**: [Node.js](https://nodejs.org/)
 - **Testing**: [Jest](https://jestjs.io/) (Unit Testing), [Supertest](https://github.com/visionmedia/supertest) (Integration Testing)
-- **Linting**: [ESLint](https://eslint.org/)
+- **Linting**: [TSLint](https://palantir.github.io/tslint/)
 - **Documentation**: [TypeDoc](https://typedoc.org/)
 
 ## Featured Services
