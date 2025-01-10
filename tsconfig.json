@@ -1,9 +1,12 @@
 {
     "compilerOptions": {
+        "rootDir": "./",
+        "rootDirs": ["src", "__tests__", "__examples__"],
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"],
-            "@tests/*": ["tests/*"],
+            "@tests/*": ["__tests__/*"],
+            "@examples/*": ["examples/*"],
             "@artifacts/*": ["src/artifacts/*"],
             "@utils/*": ["src/utils/*"]
         },
@@ -12,6 +15,7 @@
         "module": "ES2022",
         "moduleResolution": "node",
         "esModuleInterop": true,
+        "resolveJsonModule": true,
         "forceConsistentCasingInFileNames": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
@@ -20,7 +24,6 @@
     },
     "include": [
         "src/**/*.ts",
-        "tests/**/*.ts"
-    ],
+        "__tests__/**/*.ts"
+    ]
 }
-  

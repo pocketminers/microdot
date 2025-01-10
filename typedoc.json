@@ -19,5 +19,10 @@
         "compactFolders": false,
     },
     "readme": "./README.md",
+    "out": "./__docs__",
     "cleanOutputDir": true,
+    "plugin": [
+        "typedoc-plugin-inline-sources",
+        "typedoc-plugin-coverage"
+    ],
 }
