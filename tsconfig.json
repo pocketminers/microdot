@@ -4,8 +4,6 @@
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"],
-            "@tests/*": ["__tests__/*"],
-            "@examples/*": ["examples/*"],
             "@artifacts/*": ["src/artifacts/*"],
             "@utils/*": ["src/utils/*"]
         },
@@ -19,13 +17,17 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "strict": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "declarationMap": true,
+        "declaration": true
     },
     "include": [
         "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist"
+        "dist",
+        "__coverage__",
+        "__docs__"
     ]
 }

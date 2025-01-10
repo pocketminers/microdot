@@ -9,7 +9,7 @@ export default {
     coverageProvider: "v8",
     maxWorkers: 5,
     testEnvironment: "node",
-    testPathIgnorePatterns: ["/node_modules/", "/dist/", "/__docs__/", "/__coverage__/", "/__examples__/"],
+    testPathIgnorePatterns: ["/node_modules/", "/dist/", "/__docs__/", "/__coverage__/"],
     roots: [
         "<rootDir>src",
         "<rootDir>/__tests__"
@@ -31,8 +31,7 @@ export default {
     transformIgnorePatterns: [
         "/node_modules/",
         "/node_modules/(?!sequelize|uuid)",
-        "\\.pnp\\.[^\\/]+$",
-        'jest.config.*.ts'
+        "\\.pnp\\.[^\\/]+$"
     ],
     verbose: true,
     testTimeout: 30000,

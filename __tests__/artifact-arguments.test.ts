@@ -1,4 +1,4 @@
-import { Argument, ArgumentEntry } from '@artifacts/argument';
+import { Argument, ArgumentEntry } from '../src/artifacts/argument';
 
 describe('Argument', () => {
     it('should create an Argument instance with the given name and value', () => {
