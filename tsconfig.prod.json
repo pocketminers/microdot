@@ -1,15 +1,13 @@
 {
     "compilerOptions": {
-        "rootDir": "./",
+        "rootDir": "./src",
         "baseUrl": "./",
         "paths": {
             "@/*": ["src/*"],
-            "@tests/*": ["__tests__/*"],
-            "@examples/*": ["__examples__/*"],
             "@artifacts/*": ["src/artifacts/*"],
             "@utils/*": ["src/utils/*"]
         },
-        "outDir": "./build/",
+        "outDir": "./dist",
         "target": "ES2022",
         "module": "ES2022",
         "moduleResolution": "node",
@@ -22,12 +20,10 @@
         "skipLibCheck": true
     },
     "include": [
-        "src/**/*.ts",
-        "__tests__/**/*.ts"
+        "src/**/*.ts"
     ],
     "exclude": [
         "node_modules",
-        "dist",
-        "build"
+        "dist"
     ]
 }

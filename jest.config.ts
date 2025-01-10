@@ -31,8 +31,7 @@ export default {
     transformIgnorePatterns: [
         "/node_modules/",
         "/node_modules/(?!sequelize|uuid)",
-        "\\.pnp\\.[^\\/]+$",
-        'jest.config.*.ts'
+        "\\.pnp\\.[^\\/]+$"
     ],
     verbose: true,
     testTimeout: 30000,
