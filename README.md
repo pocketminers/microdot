@@ -27,3 +27,38 @@ This repository is designed to provide an effortless decentralized micro-service
 ## Overview
 
 ### Uniform Interface
+
+The system is designed to have a uniform interface. This means that all services will have a consistent API. This allows for easy integration and scaling.
+
+## Development
+
+### Installation
+
+```bash
+git clone https://github.com/pocketminers/microdot.git
+yarn install
+```
+
+### Testing
+
+```bash
+yarn test
+```
+
+### Linting
+
+```bash
+yarn lint
+```
+
+### Documentation
+
+```bash
+yarn docs
+```
+
+### Build
+
+```bash
+yarn build
+```
