@@ -48,7 +48,6 @@ const check = (hash: string): boolean => {
 
 /**
  * Hashable Class
- * @group Hashable
  * @summary Hashable class that can be extended by other classes
  * @example
  * class MyClass extends Hashable {
@@ -150,8 +149,8 @@ class Hashable
 
         else if (
             HASHING_ENABLED === true
-            && this.isHash(hashOrValue) == false
-            && this.isString(hashOrValue) == false
+            && this.isHash(hashOrValue) === false
+            && this.isString(hashOrValue) === false
         ) {
             throw new Error("Invalid hash value");
         }

@@ -24,11 +24,11 @@ const checkIsEmpty = (values: any[]): boolean => {
         values !== undefined &&
         values !== null
     ) {
-        for (let i = 0; i < values.length; i++) {
+        for (const value of values) {
             if (
-                values[i] === undefined ||
-                values[i] === null ||
-                values[i] === ""
+                value === undefined ||
+                value === null ||
+                value === ""
             ) {
                 return true;
             }
