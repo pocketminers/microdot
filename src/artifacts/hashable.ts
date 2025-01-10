@@ -115,7 +115,6 @@ class Hashable
 
     /**
      * checkHash Method
-     * @param hashOrValue  [string] Hash value or value to check
      * @summary Check if the hash matches the value
      * @overload checkHash
      * @example
