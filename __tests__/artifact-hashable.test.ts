@@ -1,4 +1,4 @@
-import { Hashable } from "@artifacts/hashable";
+import { Hashable } from "../src/artifacts/hashable";
 
 describe('Hashable', () => {
     it('should create a hash when hashing is enabled', () => {
