@@ -16,12 +16,12 @@ const HASHING_ENABLED: boolean = process.env.HASHING_ENABLED !== undefined ? pro
 const HASHING_ALGORITHM: string = process.env.HASHING_ALGORITHM !== undefined ? process.env.HASHING_ALGORITHM : "SHA256";
 
 /**
- * Hash Method
- * @summary Hash the given value using sha256
+ * Hash a value
+ * @summary Hash the given value using the hashing algorithm
  * @example
  * hash('myValue');
  */
-const hash = (value: string): string => {
+const hashValue = (value: string): string => {
     switch (HASHING_ALGORITHM) {
         case "SHA256":
             return sha256(value);
@@ -31,12 +31,12 @@ const hash = (value: string): string => {
 };
 
 /**
- * Check Method
+ * Check a value for a hash
  * @summary Check if the hash is in the valid format
  * @example
  * check('myHash');
  */
-const check = (hash: string): boolean => {
+const checkForHash = (hash: string): boolean => {
     switch (HASHING_ALGORITHM) {
         case "SHA256":
             return /^[a-f0-9]{64}$/.test(hash);
@@ -104,7 +104,7 @@ class Hashable
      */
     private isHash(value: any): boolean {
         if (
-            check(value)
+            checkForHash(value)
         ) {
             return true;
         }
@@ -170,12 +170,12 @@ class Hashable
      * @summary Hash the given string using sha256
      */
     public static hashString(value: string): string {
-        return hash(value);
+        return hashValue(value);
     }
 }
 
 export {
-    hash,
-    check,
+    hashValue,
+    checkForHash,
     Hashable
 };

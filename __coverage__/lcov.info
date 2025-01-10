@@ -185,8 +185,8 @@ BRH:12
 end_of_record
 TN:
 SF:src/artifacts/hashable.ts
-FN:24,hash
-FN:39,check
+FN:24,hashValue
+FN:39,checkForHash
 FN:60,<instance_members_initializer>
 FN:71,Hashable
 FN:95,isString
@@ -195,8 +195,8 @@ FN:130,checkHash
 FN:172,hashString
 FNF:8
 FNH:3
-FNDA:0,hash
-FNDA:0,check
+FNDA:0,hashValue
+FNDA:0,checkForHash
 FNDA:14,<instance_members_initializer>
 FNDA:14,Hashable
 FNDA:0,isString

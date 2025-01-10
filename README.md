@@ -27,7 +27,12 @@ This repository is designed to provide an effortless decentralized micro-service
 
 ## Overview
 
-### Uniform Interface
+### Peers 
+
+The system is designed to be decentralized. This means that there is no central server. Instead, the system is made up of multiple peers. Each peer is responsible for a specific service. This allows for easy scaling and redundancy.
+
+
+### Uniform API Interface
 
 The system is designed to have a uniform interface. This means that all services will have a consistent API. This allows for easy integration and scaling.
 
