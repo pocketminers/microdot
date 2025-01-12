@@ -1,8 +1,8 @@
 {
   "name": "@pocketminers/microdot",
-  "version": "0.0.1-test25",
+  "version": "0.0.1-test28",
   "description": "Decentralized Micro-services Architecture",
-  "main": "index.ts",
+  "main": "src/index.ts",
   "private": false,
   "type": "module",
   "module": "src/index.ts",
@@ -43,7 +43,7 @@
     "uuid": "^11.0.5"
   },
   "scripts": {
-    "docs": "typedoc --out docs src",
+    "docs": "typedoc",
     "lint": "tslint -p tsconfig.json",
     "test": "jest",
     "build": "tsc",

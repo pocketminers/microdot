@@ -1,26 +1,48 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "entryPoints": [
-        "./src/index.ts"
+        "./src/artifacts/index.ts",
+        "./src/utils/index.ts",
     ],
-    "entryPointStrategy": "resolve",
+    "entryPointStrategy": "expand",
     "sort": ["alphabetical"],
     "name": "microdot",
     "headings": {
-        "document": false,
+        "document": true,
         "readme": true,
     },
+    "highlightLanguages": [
+        "bash",
+        "console",
+        "css",
+        "html",
+        "javascript",
+        "json",
+        "jsonc",
+        "json5",
+        "yaml",
+        "sql",
+        "tsx"
+    ],    
     "navigation": {
         "excludeReferences": true,
         "includeFolders": true,
-        "compactFolders": true,
-        "includeGroups": true,
+        "compactFolders": false,
+        "includeGroups": false
     },
     "readme": "./README.md",
     "out": "./docs",
     "cleanOutputDir": true,
     "plugin": [
         "typedoc-plugin-inline-sources",
-        "typedoc-plugin-coverage"
+        "typedoc-plugin-coverage",
+        "typedoc-plugin-extras"
     ],
+    "alwaysCreateEntryPointModule": false,
+    "githubPages": true,
+    "gitRemote": "github.com/pocketminers/microdot.git",
+    "gitRevision": "main",
+    "validation": {
+        "invalidLink": false
+    }
 }

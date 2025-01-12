@@ -19,8 +19,6 @@ yarn-debug.log*
 yarn-error.log*
 build
 jest.config.js
-tsconfig.json
-tsconfig.prod.json
 tslint.json
 package-lock.json
 yarn.lock
