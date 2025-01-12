@@ -7,17 +7,6 @@ describe('Hashable', () => {
         expect(hashable).toHaveProperty('hash');
     });
 
-    // it('should not create a hash when hashing is disabled', () => {
-    //     const originalHashingEnabled = (global as any).HASHING_ENABLED;
-    //     (global as any).HASHING_ENABLED = false;
-
-    //     const value = 'test';
-    //     const hashable = new Hashable(value);
-    //     expect(hashable).not.toHaveProperty('hash');
-
-    //     (global as any).HASHING_ENABLED = originalHashingEnabled;
-    // });
-
     it('should throw an error if hash does not match', () => {
         const value = 'test';
         const hashable = new Hashable(value);

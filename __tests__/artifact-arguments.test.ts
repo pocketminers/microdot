@@ -109,7 +109,7 @@ describe('Argument', () => {
         const entry: ArgumentEntry<string> = { name: 'testName', value: 'testValue' };
         const arg = new Argument<string>(entry);
 
-        expect(() => arg.checkHash()).toThrow('Method not implemented.');
+        expect(arg.checkHash()).toBe(true);
     })
 
 });

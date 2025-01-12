@@ -39,11 +39,11 @@ class Argument<T>
      * Argument Constructor
      * @summary Create a new Argument instance
      * @example
-     * const arg = new Argument<number>({ name: 'arg1', value: 123 }, true);
+     * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: '391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd',
-     *  name: 'arg1',
+     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
+     *  name: "arg1",
      *  value: 123
      * }`
      */
@@ -51,18 +51,15 @@ class Argument<T>
         {
             name,
             value
-        }: ArgumentEntry<T>,
-        forceHash: boolean = false
+        }: ArgumentEntry<T>
     ) {
         if (Argument.isEmtpty({ name, value })) {
             throw new Error("Argument name or value cannot be empty.");
         }
 
-        super({ name, value }, forceHash);
+        super({ name, value });
         this.name = name;
         this.value = value as T;
-
-
     }
 
     /**

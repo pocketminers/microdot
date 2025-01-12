@@ -1,49 +1,4 @@
-import { sha256 } from "@utils/crypto";
-
-
-/**
- * HASHING_ENABLED
- * @summary Enable hashing for the Hashable class
- * @default false
- */
-const HASHING_ENABLED: boolean = process.env.HASHING_ENABLED !== undefined ? process.env.HASHING_ENABLED === "TRUE" ? true : false : false;
-
-/**
- * HASHING_ALGORITHM
- * @summary Hashing algorithm to use for the Hashable class
- * @default SHA256
- */
-const HASHING_ALGORITHM: string = process.env.HASHING_ALGORITHM !== undefined ? process.env.HASHING_ALGORITHM : "SHA256";
-
-/**
- * Hash a value
- * @summary Hash the given value using the hashing algorithm
- * @example
- * hash('myValue');
- */
-const hashValue = (value: string): string => {
-    switch (HASHING_ALGORITHM) {
-        case "SHA256":
-            return sha256(value);
-        default:
-            return sha256(value);
-    }
-};
-
-/**
- * Check a value for a hash
- * @summary Check if the hash is in the valid format
- * @example
- * check('myHash');
- */
-const checkForHash = (hash: string): boolean => {
-    switch (HASHING_ALGORITHM) {
-        case "SHA256":
-            return /^[a-f0-9]{64}$/.test(hash);
-        default:
-            return /^[a-f0-9]{64}$/.test(hash);
-    }
-};
+import { checkForHash, hashValue } from "@utils/crypto";
 
 
 /**
@@ -63,27 +18,22 @@ class Hashable
     public readonly hash?: string;
 
     /**
-     * Constructor
+     * Hashable Constructor to create a new Hashable instance from a value
      * @param value
-     * @param force [optional] Force hashing
      * @summary Create a new Hashable instance
      */
-    constructor(value: any, force: boolean = false) {
-        let string: string;
+    constructor(value: any) {
+        let str: string;
 
-        if (
-            HASHING_ENABLED === true
-            || force === true
-        ) {
-            if (this.isString(value)) {
-                string = value;
-            }
-            else {
-                string = JSON.stringify(value);
-            }
 
-            this.hash = Hashable.hashString(string);
+        if (this.isString(value)) {
+            str = value;
         }
+        else {
+            str = JSON.stringify(value);
+        }
+
+        this.hash = Hashable.hashString(str);
     }
 
     /**
@@ -113,33 +63,34 @@ class Hashable
         }
     }
 
+
     /**
-     * checkHash Method
-     * @summary Check if the hash matches the value
+     * check if a hash is the same as the hash of the value
      * @overload checkHash
      * @example
-     * const hashable = new Hashable('myValue');
-     * hashable.checkHash('myHash'); // throws Error 'Hash mismatch'
-     * @overload checkHash
-     * @example
-     * const hashable = new Hashable('myValue');
-     * hashable.checkHash('myValue'); // returns true
+     * const hashable = new Hashable("myValue");
+     * hashable.checkHash("myHash");
      */
     public checkHash(hash: string): boolean;
+    /**
+     * check if a string is the same as the hash of the value
+     * @overload checkHash
+     * @example
+     * const hashable = new Hashable("myValue");
+     * hashable.checkHash("myValue");
+     */
     public checkHash(value: string): boolean;
     public checkHash(hashOrValue: string): boolean {
 
         if (
-            HASHING_ENABLED === true
-            && this.isHash(hashOrValue) === true
+            this.isHash(hashOrValue) === true
             && this.hash !== hashOrValue
         ) {
             throw new Error("Hash mismatch");
         }
 
         else if (
-            HASHING_ENABLED === true
-            && this.isString(hashOrValue) === true
+            this.isString(hashOrValue) === true
             && this.isHash(hashOrValue) === false
             && this.hash !== Hashable.hashString(hashOrValue)
         ) {
@@ -147,17 +98,10 @@ class Hashable
         }
 
         else if (
-            HASHING_ENABLED === true
-            && this.isHash(hashOrValue) === false
+            this.isHash(hashOrValue) === false
             && this.isString(hashOrValue) === false
         ) {
             throw new Error("Invalid hash value");
-        }
-
-        else if (
-            HASHING_ENABLED === false
-        ) {
-            throw new Error("Method not implemented.");
         }
 
         return true;
@@ -175,7 +119,5 @@ class Hashable
 }
 
 export {
-    hashValue,
-    checkForHash,
     Hashable
 };
