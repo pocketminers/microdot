@@ -1,4 +1,5 @@
 import { Argument, ArgumentEntry } from '../src/artifacts/argument';
+import { Arguments } from '../src/artifacts/arguments';
 
 describe('Argument', () => {
     it('should create an Argument instance with the given name and value', () => {
@@ -112,4 +113,115 @@ describe('Argument', () => {
         expect(arg.checkHash()).toBe(true);
     })
 
+});
+
+describe('Arguments', () => {
+    it('should create an Arguments instance with the given entries', () => {
+        const entries: ArgumentEntry<string>[] = [
+            { name: 'arg1', value: 'value1' },
+            { name: 'arg2', value: 'value2' }
+        ];
+        const args = new Arguments(entries);
+
+        expect(args.length).toBe(2);
+        expect(args.get('arg1')).toBe('value1');
+        expect(args.get('arg2')).toBe('value2');
+    });
+
+    it('should add a new argument to the Arguments instance', () => {
+        const args = new Arguments();
+        const entry: ArgumentEntry<number> = { name: 'arg1', value: 123 };
+
+        args.add(entry);
+
+        expect(args.length).toBe(1);
+        expect(args.get('arg1')).toBe(123);
+    });
+
+    it('should remove an argument from the Arguments instance', () => {
+        const entries: ArgumentEntry<string>[] = [
+            { name: 'arg1', value: 'value1' },
+            { name: 'arg2', value: 'value2' }
+        ];
+        const args = new Arguments(entries);
+
+        args.remove('arg1');
+
+        expect(args.length).toBe(1);
+        expect(args.get('arg1')).toBeUndefined();
+        expect(args.get('arg2')).toBe('value2');
+    });
+
+    it('should convert the Arguments instance to JSON', () => {
+        const entries: ArgumentEntry<boolean>[] = [
+            { name: 'arg1', value: true },
+            { name: 'arg2', value: false }
+        ];
+        const args = new Arguments(entries);
+
+        expect(args.toJSON()).toEqual([
+            { name: 'arg1', value: true },
+            { name: 'arg2', value: false }
+        ]);
+    });
+
+    it('should convert the Arguments instance to a string', () => {
+        const entries: ArgumentEntry<string>[] = [
+            { name: 'arg1', value: 'value1' },
+            { name: 'arg2', value: 'value2' }
+        ];
+        const args = new Arguments(entries);
+
+        expect(args.toString()).toBe('arg1: value1\narg2: value2');
+    });
+
+    it('should convert the Arguments instance to a Record', () => {
+        const entries: ArgumentEntry<number>[] = [
+            { name: 'arg1', value: 1 },
+            { name: 'arg2', value: 2 }
+        ];
+        const args = new Arguments(entries);
+
+        expect(args.toRecord()).toEqual({
+            arg1: 1,
+            arg2: 2
+        });
+    });
+
+    it('should throw an error when adding a duplicate argument', () => {
+        const entries: ArgumentEntry<string>[] = [
+            { name: 'arg1', value: 'value1' }
+        ];
+        const args = new Arguments(entries);
+
+        expect(() => args.add({ name: 'arg1', value: 'value2' })).toThrow('Duplicate argument name: arg1');
+    });
+
+    it('should handle adding arguments from an object', () => {
+        const args = new Arguments();
+        const obj = { arg1: 'value1', arg2: 'value2' };
+
+        args.add(obj);
+
+        expect(args.length).toBe(2);
+        expect(args.get('arg1')).toBe('value1');
+        expect(args.get('arg2')).toBe('value2');
+    });
+
+    // it('should handle adding arguments from an array of objects', () => {
+    //     const args = new Arguments();
+    //     const objs = [{ arg1: 'value1' }, { arg2: 'value2' }];
+
+    //     args.add(objs);
+
+    //     expect(args.length).toBe(2);
+    //     expect(args.get('arg1')).toBe('value1');
+    //     expect(args.get('arg2')).toBe('value2');
+    // });
+
+    it('should return undefined for non-existent argument', () => {
+        const args = new Arguments();
+
+        expect(args.get('nonExistent')).toBeUndefined();
+    });
 });
