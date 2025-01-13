@@ -5,7 +5,9 @@ import { Parameter } from "./parameter";
 /**
  * The Property class is a Parameter with an Argument
  */
-class Property<T = any> extends Parameter<T> {
+class Property<T = any>
+    extends Parameter<T>
+{
     public argument: Argument<T>;
 
     public constructor({

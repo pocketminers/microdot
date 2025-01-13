@@ -34,7 +34,6 @@
     "out": "./docs",
     "cleanOutputDir": true,
     "plugin": [
-        "typedoc-plugin-inline-sources",
         "typedoc-plugin-coverage",
         "typedoc-plugin-extras"
     ],
