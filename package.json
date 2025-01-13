@@ -1,6 +1,6 @@
 {
   "name": "@pocketminers/microdot",
-  "version": "0.0.2-test34",
+  "version": "0.0.1-test41",
   "description": "Decentralized Micro-services Architecture",
   "main": "dist/cjs/index.js",
   "types": "dist/esm/index.d.ts",
@@ -13,12 +13,19 @@
     "src/**/*",
     "README.md",
     "LICENSE",
-    "index.js",
     "package.json",
     "tsconfig.json"
   ],
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js",
+      "browser": "./dist/browser/index.js",
+      "types": "./dist/esm/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
   "devDependencies": {
-    "@eslint/js": "^9.9.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/jest": "29.5.14",
@@ -34,7 +41,6 @@
     "typedoc": "^0.27.6",
     "typedoc-plugin-coverage": "^3.4.1",
     "typedoc-plugin-extras": "^4.0.0",
-    "typedoc-plugin-inline-sources": "^1.2.0",
     "typescript": "^5.7.3",
     "typescript-transform-paths": "^3.5.3"
   },
@@ -62,10 +68,13 @@
     "type": "git",
     "url": "git+https://github.com/pocketminers/microdot.git"
   },
+  "homepage": "https://github.com/pocketminers/microdot#readme",
   "publishConfig": {
     "access": "public",
     "registry": "https://npm.pkg.github.com/"
   },
+  "unpkg": "dist/browser/index.js",
+  "jsdelivr": "dist/browser/index.js",
   "keywords": [
     "microservices",
     "decentralized",

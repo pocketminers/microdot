@@ -13,6 +13,33 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __values = (this && this.__values) || function(o) {
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
+    if (m) return m.call(o);
+    if (o && typeof o.length === "number") return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
+};
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import { Argument } from "./argument";
 /**
  * Arguments Class
@@ -95,17 +122,37 @@ var Arguments = /** @class */ (function (_super) {
      * Add an argument from an object
      */
     Arguments.prototype.addArgumentFromObject = function (arg) {
-        for (var _i = 0, _a = Object.entries(arg); _i < _a.length; _i++) {
-            var _b = _a[_i], name_1 = _b[0], value = _b[1];
-            this.addArgumentFromEntry({ name: name_1, value: value });
+        var e_1, _a;
+        try {
+            for (var _b = __values(Object.entries(arg)), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_1 = _d[0], value = _d[1];
+                this.addArgumentFromEntry({ name: name_1, value: value });
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
         }
     };
     Arguments.prototype.add = function (entryOrObject) {
+        var e_2, _a;
         if (entryOrObject === void 0) { entryOrObject = []; }
         if (Array.isArray(entryOrObject)) {
-            for (var _i = 0, entryOrObject_1 = entryOrObject; _i < entryOrObject_1.length; _i++) {
-                var arg = entryOrObject_1[_i];
-                this.add(arg);
+            try {
+                for (var entryOrObject_1 = __values(entryOrObject), entryOrObject_1_1 = entryOrObject_1.next(); !entryOrObject_1_1.done; entryOrObject_1_1 = entryOrObject_1.next()) {
+                    var arg = entryOrObject_1_1.value;
+                    this.add(arg);
+                }
+            }
+            catch (e_2_1) { e_2 = { error: e_2_1 }; }
+            finally {
+                try {
+                    if (entryOrObject_1_1 && !entryOrObject_1_1.done && (_a = entryOrObject_1.return)) _a.call(entryOrObject_1);
+                }
+                finally { if (e_2) throw e_2.error; }
             }
         }
         else {
@@ -134,10 +181,20 @@ var Arguments = /** @class */ (function (_super) {
      * @summary Convert the arguments to a JSON object and return it
      */
     Arguments.prototype.toJSON = function () {
+        var e_3, _a;
         var obj = [];
-        for (var _i = 0, _a = this; _i < _a.length; _i++) {
-            var arg = _a[_i];
-            obj.push(arg.toJSON());
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var arg = _c.value;
+                obj.push(arg.toJSON());
+            }
+        }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_3) throw e_3.error; }
         }
         return obj;
     };
@@ -161,3 +218,4 @@ var Arguments = /** @class */ (function (_super) {
     return Arguments;
 }(Array));
 export { Arguments };
+//# sourceMappingURL=arguments.js.map

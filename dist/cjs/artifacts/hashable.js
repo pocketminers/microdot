@@ -79,3 +79,4 @@ class Hashable {
     }
 }
 exports.Hashable = Hashable;
+//# sourceMappingURL=hashable.js.map

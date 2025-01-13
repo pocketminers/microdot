@@ -136,3 +136,4 @@ class Arguments extends Array {
     }
 }
 export { Arguments };
+//# sourceMappingURL=arguments.js.map

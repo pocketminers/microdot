@@ -4,12 +4,12 @@ import { Parameter } from "./parameter";
  * The Property class is a Parameter with an Argument
  */
 declare class Property<T = any> extends Parameter<T> {
-    argument: Argument<T>;
+    argument?: Argument<T>;
     constructor({ name, value, description, required, defaultValue, optionalValues }: {
         name: string;
-        value: T;
-        description: string;
-        required: boolean;
+        value?: T;
+        description?: string;
+        required?: boolean;
         defaultValue?: T;
         optionalValues?: T[];
     });
@@ -21,7 +21,7 @@ declare class Property<T = any> extends Parameter<T> {
         description: string;
         defaultValue: T | undefined;
         optionalValues: T[] | undefined;
-        value: T;
+        value?: T;
     };
     toString(): string;
     toRecord(): Record<"name" | "required" | "description" | "defaultValue" | "optionalValues" | "value", any>;

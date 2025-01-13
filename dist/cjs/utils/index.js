@@ -17,3 +17,4 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./checks"), exports);
 __exportStar(require("./crypto"), exports);
 __exportStar(require("./identifier"), exports);
+//# sourceMappingURL=index.js.map

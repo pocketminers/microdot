@@ -38,6 +38,8 @@ The system is designed to have a uniform interface. This means that all services
 
 ## Development
 
+View the [documentation](https://pocketminers.github.io/microdot/).  Source code is available on [GitHub](https://github.com/pocketminers/microdot).
+
 ### Installation
 
 ```bash

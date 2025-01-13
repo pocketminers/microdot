@@ -66,12 +66,16 @@ var Parameter = /** @class */ (function (_super) {
      * @summary Get the value of the parameter which will be the default value if the given value is undefined
      */
     Parameter.prototype.getValue = function (value) {
-        if (value === undefined &&
-            this.defaultValue === undefined) {
+        if ((value === undefined
+            || value === null
+            || value === "")
+            && this.defaultValue === undefined) {
             throw new Error("Value is required: ".concat(this.name));
         }
-        if (value === undefined &&
-            this.defaultValue !== undefined) {
+        if ((value === undefined
+            || value === null
+            || value === "")
+            && this.defaultValue !== undefined) {
             return this.defaultValue;
         }
         if (!this.checkOptionalValues(value)) {
@@ -114,7 +118,7 @@ var Parameter = /** @class */ (function (_super) {
      *  hash: <insert sha256 hash here>`
      */
     Parameter.prototype.toString = function () {
-        return "name: ".concat(this.name, "\n description: ").concat(this.description, "\n required: ").concat(this.required, " ").concat(this.defaultValue ? "\ndefault: ".concat(this.defaultValue) : "", " ").concat(this.optionalValues !== undefined && this.optionalValues.length > 0 ? "\noptions: ".concat(this.optionalValues.join(", ")) : "", " ").concat(this.hash ? "\nhash: ".concat(this.hash) : "");
+        return "name: ".concat(this.name, "\ndescription: ").concat(this.description, "\nrequired: ").concat(this.required, " ").concat(this.defaultValue ? "\ndefault: ".concat(this.defaultValue) : "", " ").concat(this.optionalValues !== undefined && this.optionalValues.length > 0 ? "\noptions: ".concat(this.optionalValues.join(", ")) : "", " ").concat(this.hash ? "\nhash: ".concat(this.hash) : "");
     };
     /**
      * Export the Parameter as a Record
@@ -132,3 +136,4 @@ var Parameter = /** @class */ (function (_super) {
     return Parameter;
 }(Hashable));
 export { Parameter };
+//# sourceMappingURL=parameter.js.map
