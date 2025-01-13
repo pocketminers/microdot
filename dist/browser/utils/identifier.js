@@ -182,15 +182,6 @@ var IdentifierFactory = /** @class */ (function (_super) {
             throw new Error("Map is empty");
         }
         try {
-            // map.forEach((id, key) => {
-            //     if (checkIsEmpty([id, key])) {
-            //         throw new Error(`Identifier or key is empty: ${id}, ${key}`);
-            //     }
-            //     if (this.checkIfIdentifierExists(id)) {
-            //         throw new Error(`Identifier already exists: ${id}`);
-            //     }
-            //     added.push(this.addFromRecord({ [key]: id }));
-            // });
             for (var _c = __values(map.entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = __read(_d.value, 2), key = _e[0], id = _e[1];
                 if (checkIsEmpty([id, key])) {
@@ -313,14 +304,6 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 }
                 finally { if (e_6) throw e_6.error; }
             }
-            // idsOrRecords.forEach((id, key) => {
-            //     if (this.checkIfIdentifierExists(id)) {
-            //         const key = Number(Object.keys(this.getRecord(id))[0]);
-            //         super.delete(key);
-            //         removed.push({ [key]: id[key] });
-            //     }
-            //     removed.push();
-            // });
         }
         else if (idsOrRecords instanceof Map) {
             try {

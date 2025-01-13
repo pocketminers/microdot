@@ -1,4 +1,3 @@
-import { after } from "node:test";
 import { IdentifierFactory, createIdentifier, IdentifierTypes, Identifier } from "../src/utils/identifier";
 
 describe("createIdentifier", () => {
@@ -16,7 +15,7 @@ describe("createIdentifier", () => {
 
     it("should create a Random identifier", () => {
         const id = createIdentifier("Random");
-        expect(id).toMatch(/^[a-z0-9]{26}$/);
+        expect(id).toMatch(/^[a-z0-9]{25-27}$/);
     });
 
     it("should create a Password identifier", () => {

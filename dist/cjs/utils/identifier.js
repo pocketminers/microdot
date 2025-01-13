@@ -104,15 +104,6 @@ class IdentifierFactory extends Map {
         if (map.size === 0) {
             throw new Error("Map is empty");
         }
-        // map.forEach((id, key) => {
-        //     if (checkIsEmpty([id, key])) {
-        //         throw new Error(`Identifier or key is empty: ${id}, ${key}`);
-        //     }
-        //     if (this.checkIfIdentifierExists(id)) {
-        //         throw new Error(`Identifier already exists: ${id}`);
-        //     }
-        //     added.push(this.addFromRecord({ [key]: id }));
-        // });
         for (const [key, id] of map.entries()) {
             if ((0, checks_1.checkIsEmpty)([id, key])) {
                 throw new Error(`Identifier or key is empty: ${id}, ${key}`);
@@ -192,14 +183,6 @@ class IdentifierFactory extends Map {
                 const completed = this.remove(id);
                 removed.push(...completed);
             }
-            // idsOrRecords.forEach((id, key) => {
-            //     if (this.checkIfIdentifierExists(id)) {
-            //         const key = Number(Object.keys(this.getRecord(id))[0]);
-            //         super.delete(key);
-            //         removed.push({ [key]: id[key] });
-            //     }
-            //     removed.push();
-            // });
         }
         else if (idsOrRecords instanceof Map) {
             for (const [key, id] of idsOrRecords.entries()) {
