@@ -1,5 +1,5 @@
-import { checkIsEmpty } from "@utils/checks";
-import { Hashable } from "@artifacts/hashable";
+import { checkIsEmpty } from "../utils/checks";
+import { Hashable } from "./hashable";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name

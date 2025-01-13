@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Parameter = void 0;
-const identifier_1 = require("@utils/identifier");
-const hashable_1 = require("@artifacts/hashable");
+const identifier_1 = require("../utils/identifier");
+const hashable_1 = require("./hashable");
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method

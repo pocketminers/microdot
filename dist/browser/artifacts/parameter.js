@@ -13,8 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { createIdentifier } from "@utils/identifier";
-import { Hashable } from "@artifacts/hashable";
+import { createIdentifier } from "../utils/identifier";
+import { Hashable } from "./hashable";
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method

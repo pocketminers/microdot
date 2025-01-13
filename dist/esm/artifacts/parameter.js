@@ -1,5 +1,5 @@
-import { createIdentifier } from "@utils/identifier";
-import { Hashable } from "@artifacts/hashable";
+import { createIdentifier } from "../utils/identifier";
+import { Hashable } from "./hashable";
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method

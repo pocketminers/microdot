@@ -13,8 +13,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { checkIsEmpty } from "@utils/checks";
-import { Hashable } from "@artifacts/hashable";
+import { checkIsEmpty } from "../utils/checks";
+import { Hashable } from "./hashable";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name

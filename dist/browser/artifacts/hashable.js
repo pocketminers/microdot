@@ -1,4 +1,4 @@
-import { checkForHash, hashValue } from "@utils/crypto";
+import { checkForHash, hashValue } from "../utils/crypto";
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
