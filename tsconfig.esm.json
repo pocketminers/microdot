@@ -1,4 +1,3 @@
-// filepath: /Users/j/Code/pocketminers/microdot/tsconfig.esm.json
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
