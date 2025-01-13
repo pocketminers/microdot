@@ -21,6 +21,7 @@
         "json5",
         "yaml",
         "sql",
+        "ts",
         "tsx"
     ],    
     "navigation": {
@@ -38,9 +39,6 @@
         "typedoc-plugin-extras"
     ],
     "alwaysCreateEntryPointModule": false,
-    "githubPages": true,
-    "gitRemote": "github.com/pocketminers/microdot.git",
-    "gitRevision": "main",
     "validation": {
         "invalidLink": false
     }

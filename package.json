@@ -1,12 +1,14 @@
 {
   "name": "@pocketminers/microdot",
-  "version": "0.0.1-test28",
+  "version": "0.0.1-test32",
   "description": "Decentralized Micro-services Architecture",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "private": false,
   "type": "module",
-  "module": "./",
+  "module": "dist/index.js",
   "files": [
+    "dist/**/*",
     "src/**/*",
     "README.md",
     "LICENSE",
