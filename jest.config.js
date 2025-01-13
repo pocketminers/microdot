@@ -1,6 +1,6 @@
 import { pathsToModuleNameMapper } from "ts-jest";
 
-import tsconfig from "./tsconfig.json";
+import tsconfig from "./tsconfig.json" assert { type: "json" };
 
 export default {
     clearMocks: true,
@@ -24,14 +24,12 @@ export default {
     moduleNameMapper: pathsToModuleNameMapper(tsconfig.compilerOptions.paths, { prefix: "<rootDir>/" }),
     transform: {
         "^.+\\.(ts)$": [ "ts-jest", {
-            "tsconfig": "<rootDir>/tsconfig.json"
+            tsconfig: "<rootDir>/tsconfig.json"
         }],
     },
     extensionsToTreatAsEsm: [".ts"],
     transformIgnorePatterns: [
-        "/node_modules/",
-        "/node_modules/(?!sequelize|uuid)",
-        "\\.pnp\\.[^\\/]+$"
+        "/node_modules/"
     ],
     verbose: true,
     testTimeout: 30000,

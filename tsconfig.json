@@ -19,7 +19,8 @@
         "strict": true,
         "skipLibCheck": true,
         "declarationMap": true,
-        "declaration": true
+        "declaration": true,
+        "noEmit": false
     },
     "include": [
         "src/**/*.ts"
@@ -29,5 +30,13 @@
         "dist",
         "__coverage__",
         "docs"
-    ]
+    ],
+    "plugins": [
+        { "transform": "typescript-transform-paths" },
+        { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ],
+    "ts-node": {
+        "transpileOnly": true,
+        "require": [ "typescript-transform-paths/register" ]
+    }
 }
