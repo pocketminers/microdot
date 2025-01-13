@@ -8,7 +8,9 @@ class Configuration
         properties: Property<any>[] = []
     ) {
         super();
-        properties.forEach(property => this.set(property.name, property));
+        for (const property of properties) {
+            this.set(property.name, property);
+        }
     }
 
     public get<T = any>(name: string): Property<T> | undefined {
@@ -16,7 +18,7 @@ class Configuration
     }
 
     public set<T = any>(name: string, value: Property<T>): this {
-        this.get<Property<T>>(name)?.setValue(value);
+        super.set(name, value);
         return this;
     }
 
@@ -26,25 +28,29 @@ class Configuration
 
     public toJSON(): { [key: string]: any } {
         const json: Record<string, any> = {};
-        this.forEach((property, name) => {
+        for (const [name, property] of this) {
             json[name] = property.toJSON();
-        });
+        }
         return json;
     }
 
     public toString(): string {
         let str = "";
-        this.forEach(property => {
-            str += `${property.toString()}\n`;
-        });
+        for (const [name, property] of this) {
+            str += `${name}: ${property.getValue()}\n`;
+        }
         return str;
     }
 
     public toRecord(): Record<string, any> {
         const record: Record<string, any> = {};
-        this.forEach((property, name) => {
+        for (const [name, property] of this) {
             record[name] = property.toRecord();
-        });
+        }
         return record;
     }
 }
+
+export {
+    Configuration
+};

@@ -53,12 +53,16 @@ class Parameter extends Hashable {
      * @summary Get the value of the parameter which will be the default value if the given value is undefined
      */
     getValue(value) {
-        if (value === undefined &&
-            this.defaultValue === undefined) {
+        if ((value === undefined
+            || value === null
+            || value === "")
+            && this.defaultValue === undefined) {
             throw new Error(`Value is required: ${this.name}`);
         }
-        if (value === undefined &&
-            this.defaultValue !== undefined) {
+        if ((value === undefined
+            || value === null
+            || value === "")
+            && this.defaultValue !== undefined) {
             return this.defaultValue;
         }
         if (!this.checkOptionalValues(value)) {
@@ -101,7 +105,7 @@ class Parameter extends Hashable {
      *  hash: <insert sha256 hash here>`
      */
     toString() {
-        return `name: ${this.name}\n description: ${this.description}\n required: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
+        return `name: ${this.name}\ndescription: ${this.description}\nrequired: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
     }
     /**
      * Export the Parameter as a Record

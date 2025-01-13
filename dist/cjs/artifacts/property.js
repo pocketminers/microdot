@@ -8,12 +8,14 @@ const parameter_1 = require("./parameter");
  */
 class Property extends parameter_1.Parameter {
     argument;
-    constructor({ name, value, description, required, defaultValue, optionalValues }) {
+    constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
         super({ name, description, required, defaultValue, optionalValues });
-        this.argument = new argument_1.Argument({ name, value });
+        if (value !== undefined && super.checkOptionalValues(value)) {
+            this.argument = new argument_1.Argument({ name, value });
+        }
     }
     getValue() {
-        return super.getValue(this.argument.value);
+        return super.getValue(this.argument?.value);
     }
     setValue(value) {
         if (!this.checkOptionalValues(value)) {
@@ -22,7 +24,8 @@ class Property extends parameter_1.Parameter {
         if (this.required && value === undefined) {
             throw new Error(`Value is required: ${this.name}`);
         }
-        if (value === this.argument.value) {
+        if (this.argument !== undefined
+            && value === this.argument.value) {
             return;
         }
         this.argument = new argument_1.Argument({ name: this.name, value });
@@ -30,7 +33,7 @@ class Property extends parameter_1.Parameter {
     toJSON() {
         return {
             ...super.toJSON(),
-            value: this.argument.value
+            value: this.argument?.value
         };
     }
     toString() {
@@ -43,7 +46,7 @@ class Property extends parameter_1.Parameter {
             description: this.description,
             defaultValue: this.defaultValue,
             optionalValues: this.optionalValues,
-            value: this.argument.value
+            value: this.argument?.value
         };
     }
 }

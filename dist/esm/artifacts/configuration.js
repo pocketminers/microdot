@@ -1,13 +1,15 @@
 class Configuration extends Map {
     constructor(properties = []) {
         super();
-        properties.forEach(property => this.set(property.name, property));
+        for (const property of properties) {
+            this.set(property.name, property);
+        }
     }
     get(name) {
         return super.get(name);
     }
     set(name, value) {
-        this.get(name)?.setValue(value);
+        super.set(name, value);
         return this;
     }
     getValue(name) {
@@ -15,25 +17,25 @@ class Configuration extends Map {
     }
     toJSON() {
         const json = {};
-        this.forEach((property, name) => {
+        for (const [name, property] of this) {
             json[name] = property.toJSON();
-        });
+        }
         return json;
     }
     toString() {
         let str = "";
-        this.forEach(property => {
-            str += `${property.toString()}\n`;
-        });
+        for (const [name, property] of this) {
+            str += `${name}: ${property.getValue()}\n`;
+        }
         return str;
     }
     toRecord() {
         const record = {};
-        this.forEach((property, name) => {
+        for (const [name, property] of this) {
             record[name] = property.toRecord();
-        });
+        }
         return record;
     }
 }
-export {};
+export { Configuration };
 //# sourceMappingURL=configuration.js.map

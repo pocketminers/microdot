@@ -8,22 +8,25 @@ import { Parameter } from "./parameter";
 class Property<T = any>
     extends Parameter<T>
 {
-    public argument: Argument<T>;
+    public argument?: Argument<T>;
 
     public constructor({
         name,
         value,
-        description,
-        required,
-        defaultValue,
-        optionalValues
-    }: { name: string, value: T, description: string, required: boolean, defaultValue?: T, optionalValues?: T[] }) {
+        description = '',
+        required = true,
+        defaultValue = undefined,
+        optionalValues = []
+    }: { name: string, value?: T, description?: string, required?: boolean, defaultValue?: T, optionalValues?: T[] }) {
         super({ name, description, required, defaultValue, optionalValues });
-        this.argument = new Argument({ name, value });
+
+        if (value !== undefined && super.checkOptionalValues(value)) {
+            this.argument = new Argument<T>({ name, value });
+        }
     }
 
     public getValue(): T {
-        return super.getValue(this.argument.value);
+        return super.getValue(this.argument?.value);
     }
 
     public setValue(value: T): void {
@@ -35,17 +38,19 @@ class Property<T = any>
             throw new Error(`Value is required: ${this.name}`);
         }
 
-        if (value === this.argument.value) {
+        if (this.argument !== undefined
+            && value === this.argument.value
+        ) {
             return;
         }
 
         this.argument = new Argument({ name: this.name, value });
     }
 
-    public override toJSON(): { name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined, value: T } {
+    public override toJSON(): { name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined, value?: T } {
         return {
             ...super.toJSON(),
-            value: this.argument.value
+            value: this.argument?.value
         };
     }
 
@@ -60,7 +65,7 @@ class Property<T = any>
             description: this.description,
             defaultValue: this.defaultValue,
             optionalValues: this.optionalValues,
-            value: this.argument.value
+            value: this.argument?.value
         };
     }
 }

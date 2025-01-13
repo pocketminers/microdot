@@ -108,7 +108,7 @@ describe("IdentifierFactory", () => {
 
         const added = factory.add(map);
 
-        console.log(`added from map: ${added}`);
+        console.log(`added from map: ${JSON.stringify(added)}`);
 
         expect(added.length).toBe(map.size);
         
@@ -118,7 +118,7 @@ describe("IdentifierFactory", () => {
     it("should add identifiers from a record", () => {
         const record = { 1: createIdentifier(), 2: createIdentifier() };
         const added = factory.add(record);
-        console.log(`added: ${JSON.stringify(added.forEach((value, key) => console.log(`key: ${key}, value: ${value}`)))}`);
+        added.forEach((value, key) => console.log(`key: ${key}, value: ${JSON.stringify(value)}`));
 
         expect(added.length).toBe(Object.keys(record).length);
         Object.entries(record).forEach(([key, id]) => {

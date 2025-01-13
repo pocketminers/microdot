@@ -6,7 +6,7 @@ describe('Property', () => {
     let property: Property<string>;
 
     beforeEach(() => {
-        property = new Property({
+        property = new Property<string>({
             name: 'testProperty',
             value: 'initialValue',
             description: 'A test property',
@@ -20,7 +20,7 @@ describe('Property', () => {
         expect(property).toBeInstanceOf(Property);
         expect(property.name).toBe('testProperty');
         expect(property.argument).toBeInstanceOf(Argument);
-        expect(property.argument.value).toBe('initialValue');
+        expect(property.argument?.value).toBe('initialValue');
     });
 
     test('should get the value of the property', () => {
@@ -33,11 +33,11 @@ describe('Property', () => {
     });
 
     test('should throw an error if the value is not in optional values', () => {
-        expect(() => property.setValue('invalidValue')).toThrowError('Value is not in optional values: testProperty');
+        expect(() => property.setValue('invalidValue')).toThrow('Value is not in optional values: testProperty');
     });
 
     test('should throw an error if the value is required but undefined', () => {
-        expect(() => property.setValue(undefined as any)).toThrowError('Value is required: testProperty');
+        expect(() => property.setValue(undefined as any)).toThrow('Value is required: testProperty');
     });
 
     test('should not set the same value again', () => {

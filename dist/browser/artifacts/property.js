@@ -32,13 +32,16 @@ import { Parameter } from "./parameter";
 var Property = /** @class */ (function (_super) {
     __extends(Property, _super);
     function Property(_a) {
-        var name = _a.name, value = _a.value, description = _a.description, required = _a.required, defaultValue = _a.defaultValue, optionalValues = _a.optionalValues;
+        var name = _a.name, value = _a.value, _b = _a.description, description = _b === void 0 ? '' : _b, _c = _a.required, required = _c === void 0 ? true : _c, _d = _a.defaultValue, defaultValue = _d === void 0 ? undefined : _d, _e = _a.optionalValues, optionalValues = _e === void 0 ? [] : _e;
         var _this = _super.call(this, { name: name, description: description, required: required, defaultValue: defaultValue, optionalValues: optionalValues }) || this;
-        _this.argument = new Argument({ name: name, value: value });
+        if (value !== undefined && _super.prototype.checkOptionalValues.call(_this, value)) {
+            _this.argument = new Argument({ name: name, value: value });
+        }
         return _this;
     }
     Property.prototype.getValue = function () {
-        return _super.prototype.getValue.call(this, this.argument.value);
+        var _a;
+        return _super.prototype.getValue.call(this, (_a = this.argument) === null || _a === void 0 ? void 0 : _a.value);
     };
     Property.prototype.setValue = function (value) {
         if (!this.checkOptionalValues(value)) {
@@ -47,25 +50,28 @@ var Property = /** @class */ (function (_super) {
         if (this.required && value === undefined) {
             throw new Error("Value is required: ".concat(this.name));
         }
-        if (value === this.argument.value) {
+        if (this.argument !== undefined
+            && value === this.argument.value) {
             return;
         }
         this.argument = new Argument({ name: this.name, value: value });
     };
     Property.prototype.toJSON = function () {
-        return __assign(__assign({}, _super.prototype.toJSON.call(this)), { value: this.argument.value });
+        var _a;
+        return __assign(__assign({}, _super.prototype.toJSON.call(this)), { value: (_a = this.argument) === null || _a === void 0 ? void 0 : _a.value });
     };
     Property.prototype.toString = function () {
         return "".concat(this.name, ": ").concat(this.getValue());
     };
     Property.prototype.toRecord = function () {
+        var _a;
         return {
             name: this.name,
             required: this.required,
             description: this.description,
             defaultValue: this.defaultValue,
             optionalValues: this.optionalValues,
-            value: this.argument.value
+            value: (_a = this.argument) === null || _a === void 0 ? void 0 : _a.value
         };
     };
     return Property;

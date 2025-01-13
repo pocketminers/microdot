@@ -91,15 +91,23 @@ class Parameter<T>
     public getValue(value?: T | undefined): T {
 
         if (
-            value === undefined &&
-            this.defaultValue === undefined
+            (
+                value === undefined
+                || value === null
+                || value === ""
+            )
+            && this.defaultValue === undefined
         ) {
             throw new Error(`Value is required: ${this.name}`);
         }
 
         if (
-            value === undefined &&
-            this.defaultValue !== undefined
+            (
+                value === undefined
+                || value === null
+                || value === ""
+            )
+            && this.defaultValue !== undefined
         ) {
             return this.defaultValue;
         }
@@ -148,7 +156,7 @@ class Parameter<T>
      *  hash: <insert sha256 hash here>`
      */
     public toString(): string {
-        return `name: ${this.name}\n description: ${this.description}\n required: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
+        return `name: ${this.name}\ndescription: ${this.description}\nrequired: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
     }
 
     /**
