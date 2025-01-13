@@ -118,3 +118,4 @@ class Parameter extends Hashable {
     }
 }
 export { Parameter };
+//# sourceMappingURL=parameter.js.map

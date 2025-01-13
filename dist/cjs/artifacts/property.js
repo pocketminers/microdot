@@ -48,3 +48,4 @@ class Property extends parameter_1.Parameter {
     }
 }
 exports.Property = Property;
+//# sourceMappingURL=property.js.map

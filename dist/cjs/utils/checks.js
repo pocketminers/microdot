@@ -37,3 +37,4 @@ const checkIsEmpty = (values) => {
     return false;
 };
 exports.checkIsEmpty = checkIsEmpty;
+//# sourceMappingURL=checks.js.map

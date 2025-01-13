@@ -6,6 +6,14 @@ var IdentifierTypes;
     IdentifierTypes["Name"] = "Name";
     IdentifierTypes["Password"] = "Password";
 })(IdentifierTypes || (IdentifierTypes = {}));
+/**
+ * Creates a new identifier.
+ * @summary Creates a new identifier with the specified type.
+ * @param type The type of identifier to create.
+ * @param prefix The prefix to add to the identifier.
+ * @param suffix The suffix to add to the identifier.
+ * @returns The new identifier.
+ */
 var createIdentifier = function (type, _a) {
     if (type === void 0) { type = "UUID"; }
     var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
@@ -30,3 +38,4 @@ var createIdentifier = function (type, _a) {
     return "".concat(prefix ? prefix : "").concat(id).concat(suffix ? suffix : "");
 };
 export { createIdentifier, IdentifierTypes };
+//# sourceMappingURL=identifier.js.map

@@ -139,3 +139,4 @@ class Arguments extends Array {
     }
 }
 exports.Arguments = Arguments;
+//# sourceMappingURL=arguments.js.map

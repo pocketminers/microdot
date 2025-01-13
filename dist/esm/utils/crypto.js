@@ -35,3 +35,4 @@ const checkForHash = (hash, algorithm = "SHA256") => {
     }
 };
 export { hashValue, checkForHash, sha256 };
+//# sourceMappingURL=crypto.js.map

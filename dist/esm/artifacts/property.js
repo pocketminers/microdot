@@ -45,3 +45,4 @@ class Property extends Parameter {
     }
 }
 export { Property };
+//# sourceMappingURL=property.js.map
