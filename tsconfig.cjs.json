@@ -1,0 +1,8 @@
+// filepath: /Users/j/Code/pocketminers/microdot/tsconfig.cjs.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/cjs",
+    "module": "CommonJS"
+  }
+}
