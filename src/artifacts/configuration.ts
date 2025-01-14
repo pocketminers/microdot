@@ -1,7 +1,8 @@
 import { checkIsEmpty } from "@/utils";
-import { ArgumentEntry } from "./argument";
+import { Argument, ArgumentEntry } from "./argument";
 import { Parameter, ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
+import { Arguments } from "./arguments";
 
 /**
  * Configuration is a map of properties that can be set by arguments.
@@ -23,7 +24,7 @@ class Configuration
         args: ArgumentEntry<any>[] = []
     ) {
         super();
-        this.addEntries([...properties, ...parameters], args);
+        this.addEntries({entries: [...properties, ...parameters], args});
     }
 
     /**
@@ -85,6 +86,18 @@ class Configuration
         this.set(property.name, property);
     }
 
+    public addEntryFromArg(
+        arg: ArgumentEntry<any>
+    ): void {
+        const property = new Property({
+            name: arg.name,
+            required: false,
+            description: ''
+        });
+        property.setValue(arg.value);
+        this.set(property.name, property);
+    }
+
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.  
      * If the property is already in the configuration, then throw an error.  
@@ -92,11 +105,17 @@ class Configuration
      * If the entry is a parameter, then create a new property. 
      * If the entry is not a parameter or a property, then throw an error.
      */
-    public addEntries(
-        entries: PropertyEntry<any>[] | ParameterEntry<any>[],
-        args: ArgumentEntry<any>[] = []
-    ): void {
+    public addEntries({
+        entries = [],
+        args = [],
+        overwrite = true
+    }:{
+        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[],
+        args?: ArgumentEntry<any>[],
+        overwrite?: boolean
+    } = {}): void {
         //check the input entries for duplicates
+        
         const names = entries.map(entry => entry.name);
         const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
         if (duplicates.length > 0) {
@@ -104,7 +123,55 @@ class Configuration
         }
 
         for(const entry of entries) {
-            this.addEntry(entry, args);
+            if (
+                entry instanceof Property
+                || entry instanceof Parameter
+            ) {
+                this.addEntry(entry, args, overwrite);
+            }
+            else if (
+                entry instanceof Argument
+            ) {
+                this.addEntryFromArg(entry);
+            }
+            else {
+                throw new Error(`Invalid entry: ${entry}`);
+            }
+            this.addEntry(entry, args, overwrite);
+        }
+    }
+
+    public setArguments(args: ArgumentEntry<any>[], setProperties: boolean = false): void {
+        for (const [name, property] of this) {
+            const arg = args.find(arg => arg.name === name);
+            if (
+                arg !== undefined
+                && checkIsEmpty([arg]) === false
+            ) {
+                property.setValue(arg.value);
+            }
+        }
+
+        // Check if any arguments were not set
+        const unsetArgs = args.filter(arg => this.has(arg.name) === false);
+
+        // If any arguments were not set, then throw an error
+        if (
+            unsetArgs.length > 0
+            && setProperties === false
+        ) {
+            throw new Error(`Invalid arguments: ${unsetArgs.map(arg => arg.name)}`);
+        }
+
+        // If any arguments were not set, then add the arguments as properties
+        if (
+            unsetArgs.length > 0
+            && setProperties === true
+        ) {
+            this.addEntries({
+                entries: unsetArgs,
+                args
+            });
         }
     }
 
@@ -166,6 +233,18 @@ class Configuration
         }
         return record;
     }
+
+    public toArguments(): Arguments {
+        const args: Arguments = new Arguments();
+        for (const [name, property] of this) {
+            args.add(new Argument({
+                name,
+                value: property.getValue()
+            }));
+        }
+        return args
+    }
+
 }
 
 export {
