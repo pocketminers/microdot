@@ -68,9 +68,9 @@ declare class Arguments extends Array<Argument<any>> {
      * Export the Arguments as a JSON object
      * @summary Convert the arguments to a JSON object and return it
      */
-    toJSON<T>(): {
+    toJSON(): {
         name: string;
-        value: T;
+        value: any;
     }[];
     /**
      * Export the Arguments as a string

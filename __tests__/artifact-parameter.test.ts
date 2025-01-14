@@ -39,7 +39,6 @@ describe("Parameter", () => {
             defaultValue: 123,
             optionalValues: [123, 456]
         });
-        console.log(`param: ${param}`);
         expect(param.getValue()).toBe(123);
     });
 
