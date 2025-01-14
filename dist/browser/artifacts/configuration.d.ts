@@ -1,6 +1,7 @@
 import { ArgumentEntry } from "./argument";
 import { ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
+import { Arguments } from "./arguments";
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -21,6 +22,7 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * If the entry is not a parameter or a property, then throw an error.
      */
     addEntry(entry: PropertyEntry<any> | ParameterEntry<any>, args?: ArgumentEntry<any>[], overwrite?: boolean): void;
+    addEntryFromArg(arg: ArgumentEntry<any>): void;
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.
      * If the property is already in the configuration, then throw an error.
@@ -28,7 +30,12 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntries(entries: PropertyEntry<any>[] | ParameterEntry<any>[], args?: ArgumentEntry<any>[]): void;
+    addEntries({ entries, args, overwrite }?: {
+        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[];
+        args?: ArgumentEntry<any>[];
+        overwrite?: boolean;
+    }): void;
+    setArguments(args: ArgumentEntry<any>[], setProperties?: boolean): void;
     /**
      * Get a property from the configuration by name
      */
@@ -54,6 +61,7 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * The record contains the name of the property and the property object.
      */
     toRecord(): Record<string, any>;
+    toArguments(): Arguments;
 }
 export { Configuration };
 //# sourceMappingURL=configuration.d.ts.map

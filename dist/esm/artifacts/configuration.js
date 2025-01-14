@@ -1,6 +1,8 @@
 import { checkIsEmpty } from "../utils";
+import { Argument } from "./argument";
 import { Parameter } from "./parameter";
 import { Property } from "./property";
+import { Arguments } from "./arguments";
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -14,7 +16,7 @@ class Configuration extends Map {
      */
     constructor(properties = [], parameters = [], args = []) {
         super();
-        this.addEntries([...properties, ...parameters], args);
+        this.addEntries({ entries: [...properties, ...parameters], args });
     }
     /**
      * Add a property to the configuration from a property entry and an argument entry.
@@ -56,6 +58,15 @@ class Configuration extends Map {
         // Add the property to the configuration
         this.set(property.name, property);
     }
+    addEntryFromArg(arg) {
+        const property = new Property({
+            name: arg.name,
+            required: false,
+            description: ''
+        });
+        property.setValue(arg.value);
+        this.set(property.name, property);
+    }
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.
      * If the property is already in the configuration, then throw an error.
@@ -63,7 +74,7 @@ class Configuration extends Map {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntries(entries, args = []) {
+    addEntries({ entries = [], args = [], overwrite = true } = {}) {
         //check the input entries for duplicates
         const names = entries.map(entry => entry.name);
         const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
@@ -71,7 +82,41 @@ class Configuration extends Map {
             throw new Error(`Duplicate entries: ${duplicates}`);
         }
         for (const entry of entries) {
-            this.addEntry(entry, args);
+            if (entry instanceof Property
+                || entry instanceof Parameter) {
+                this.addEntry(entry, args, overwrite);
+            }
+            else if (entry instanceof Argument) {
+                this.addEntryFromArg(entry);
+            }
+            else {
+                throw new Error(`Invalid entry: ${entry}`);
+            }
+            this.addEntry(entry, args, overwrite);
+        }
+    }
+    setArguments(args, setProperties = false) {
+        for (const [name, property] of this) {
+            const arg = args.find(arg => arg.name === name);
+            if (arg !== undefined
+                && checkIsEmpty([arg]) === false) {
+                property.setValue(arg.value);
+            }
+        }
+        // Check if any arguments were not set
+        const unsetArgs = args.filter(arg => this.has(arg.name) === false);
+        // If any arguments were not set, then throw an error
+        if (unsetArgs.length > 0
+            && setProperties === false) {
+            throw new Error(`Invalid arguments: ${unsetArgs.map(arg => arg.name)}`);
+        }
+        // If any arguments were not set, then add the arguments as properties
+        if (unsetArgs.length > 0
+            && setProperties === true) {
+            this.addEntries({
+                entries: unsetArgs,
+                args
+            });
         }
     }
     /**
@@ -127,6 +172,16 @@ class Configuration extends Map {
             record[name] = property.toRecord();
         }
         return record;
+    }
+    toArguments() {
+        const args = new Arguments();
+        for (const [name, property] of this) {
+            args.add(new Argument({
+                name,
+                value: property.getValue()
+            }));
+        }
+        return args;
     }
 }
 export { Configuration };

@@ -74,9 +74,23 @@ class IdentifierFactory
         }
     }
 
+    private checkIfIndexExists(index: number): boolean {
+        return super.has(index);
+    }
+
     private checkIfIdentifierExists(id: Identifier): boolean {
         let exists = false;
-        for (const value of this.values()) {
+        for (const [index, value ] of this.entries()) {
+
+            if (
+                typeof id !== "string"
+                || typeof value !== "string"
+                || typeof index !== "number"
+                || checkIsEmpty([value, index])
+            ) {
+                throw new Error(`Invalid identifier or index type: ${value}, ${index}`);
+            }
+
             if (value === id) {
                 exists = true;
                 break;
@@ -89,7 +103,10 @@ class IdentifierFactory
         const added = new Array<Record<number, Identifier | undefined>>();
 
         for (const [key, id] of Object.entries(record)) {
-            if (this.checkIfIdentifierExists(id)) {
+            if (
+                this.checkIfIdentifierExists(id)
+                || this.checkIfIndexExists(Number(key))
+            ) {
                 throw new Error(`Identifier already exists: ${id}`);
             }
             super.set(Number(key), id);
@@ -100,7 +117,10 @@ class IdentifierFactory
     }
 
     private addFromIdentifier(id: Identifier): Record<number, Identifier | undefined> {
-        if (this.checkIfIdentifierExists(id)) {
+        if (
+            this.checkIfIdentifierExists(id)
+            || typeof id !== "string"
+        ) {
             throw new Error(`Identifier already exists: ${id}`);
         }
         const key = this.size;
@@ -137,7 +157,10 @@ class IdentifierFactory
                 throw new Error(`Identifier or key is empty: ${id}, ${key}`);
             }
 
-            if (this.checkIfIdentifierExists(id)) {
+            if (
+                this.checkIfIdentifierExists(id)
+                || this.checkIfIndexExists(key)
+            ) {
                 throw new Error(`Identifier already exists: ${id}`);
             }
             const completed = this.addFromRecord({ [key]: id });
@@ -171,6 +194,9 @@ class IdentifierFactory
         else if (typeof idsOrRecords === 'string') {
             const record = this.addFromIdentifier(idsOrRecords);
             added.push(record);
+        }
+        else {
+            throw new Error(`Invalid argument type: ${typeof idsOrRecords}`);
         }
 
         return added;
@@ -235,6 +261,7 @@ class IdentifierFactory
         if (
             Array.isArray(idsOrRecords)
             && idsOrRecords.length > 0
+            && checkIsEmpty([idsOrRecords])
         ) {
             for (const id of idsOrRecords) {
                 const completed = this.remove(id);
@@ -243,7 +270,10 @@ class IdentifierFactory
         }
         else if (idsOrRecords instanceof Map) {
             for (const [key, id] of idsOrRecords.entries()) {
-                if (this.checkIfIdentifierExists(id)) {
+                if (
+                    this.checkIfIdentifierExists(id)
+                    && this.checkIfIndexExists(key)
+                ) {
                     super.delete(key);
                     removed.push({ [key]: id });
                 }
@@ -252,7 +282,10 @@ class IdentifierFactory
         else if (typeof idsOrRecords === 'object') {
             const record = idsOrRecords as Record<number, Identifier>;
             for (const [key, id] of Object.entries(record)) {
-                if (this.checkIfIdentifierExists(id)) {
+                if (
+                    this.checkIfIdentifierExists(id)
+                    && this.checkIfIndexExists(Number(key))
+                ) {
                     super.delete(Number(key));
                     removed.push({ [key]: id });
                 }
@@ -266,6 +299,11 @@ class IdentifierFactory
                 removed.push({ [key]: id });
             }
         }
+        else {
+            throw new Error(`Invalid argument type: ${typeof idsOrRecords}`);
+        }
+
+
         return removed;
     }
 

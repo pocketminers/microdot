@@ -107,12 +107,21 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return _this;
     }
+    IdentifierFactory.prototype.checkIfIndexExists = function (index) {
+        return _super.prototype.has.call(this, index);
+    };
     IdentifierFactory.prototype.checkIfIdentifierExists = function (id) {
         var e_1, _a;
         var exists = false;
         try {
-            for (var _b = __values(this.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var value = _c.value;
+            for (var _b = __values(this.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), index = _d[0], value = _d[1];
+                if (typeof id !== "string"
+                    || typeof value !== "string"
+                    || typeof index !== "number"
+                    || checkIsEmpty([value, index])) {
+                    throw new Error("Invalid identifier or index type: ".concat(value, ", ").concat(index));
+                }
                 if (value === id) {
                     exists = true;
                     break;
@@ -134,7 +143,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
         try {
             for (var _c = __values(Object.entries(record)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = __read(_d.value, 2), key = _e[0], id = _e[1];
-                if (this.checkIfIdentifierExists(id)) {
+                if (this.checkIfIdentifierExists(id)
+                    || this.checkIfIndexExists(Number(key))) {
                     throw new Error("Identifier already exists: ".concat(id));
                 }
                 _super.prototype.set.call(this, Number(key), id);
@@ -152,7 +162,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
     };
     IdentifierFactory.prototype.addFromIdentifier = function (id) {
         var _a;
-        if (this.checkIfIdentifierExists(id)) {
+        if (this.checkIfIdentifierExists(id)
+            || typeof id !== "string") {
             throw new Error("Identifier already exists: ".concat(id));
         }
         var key = this.size;
@@ -199,7 +210,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 if (checkIsEmpty([id, key])) {
                     throw new Error("Identifier or key is empty: ".concat(id, ", ").concat(key));
                 }
-                if (this.checkIfIdentifierExists(id)) {
+                if (this.checkIfIdentifierExists(id)
+                    || this.checkIfIndexExists(key)) {
                     throw new Error("Identifier already exists: ".concat(id));
                 }
                 var completed = this.addFromRecord((_b = {}, _b[key] = id, _b));
@@ -245,6 +257,9 @@ var IdentifierFactory = /** @class */ (function (_super) {
         else if (typeof idsOrRecords === 'string') {
             var record = this.addFromIdentifier(idsOrRecords);
             added.push(record);
+        }
+        else {
+            throw new Error("Invalid argument type: ".concat(typeof idsOrRecords));
         }
         return added;
     };
@@ -301,7 +316,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
         var e_7, _a, e_8, _b, _c, e_9, _d, _e, _f;
         var removed = new Array();
         if (Array.isArray(idsOrRecords)
-            && idsOrRecords.length > 0) {
+            && idsOrRecords.length > 0
+            && checkIsEmpty([idsOrRecords])) {
             try {
                 for (var idsOrRecords_2 = __values(idsOrRecords), idsOrRecords_2_1 = idsOrRecords_2.next(); !idsOrRecords_2_1.done; idsOrRecords_2_1 = idsOrRecords_2.next()) {
                     var id = idsOrRecords_2_1.value;
@@ -321,7 +337,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
             try {
                 for (var _g = __values(idsOrRecords.entries()), _h = _g.next(); !_h.done; _h = _g.next()) {
                     var _j = __read(_h.value, 2), key = _j[0], id = _j[1];
-                    if (this.checkIfIdentifierExists(id)) {
+                    if (this.checkIfIdentifierExists(id)
+                        && this.checkIfIndexExists(key)) {
                         _super.prototype.delete.call(this, key);
                         removed.push((_c = {}, _c[key] = id, _c));
                     }
@@ -340,7 +357,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
             try {
                 for (var _k = __values(Object.entries(record)), _l = _k.next(); !_l.done; _l = _k.next()) {
                     var _m = __read(_l.value, 2), key = _m[0], id = _m[1];
-                    if (this.checkIfIdentifierExists(id)) {
+                    if (this.checkIfIdentifierExists(id)
+                        && this.checkIfIndexExists(Number(key))) {
                         _super.prototype.delete.call(this, Number(key));
                         removed.push((_e = {}, _e[key] = id, _e));
                     }
@@ -361,6 +379,9 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 _super.prototype.delete.call(this, key);
                 removed.push((_f = {}, _f[key] = id, _f));
             }
+        }
+        else {
+            throw new Error("Invalid argument type: ".concat(typeof idsOrRecords));
         }
         return removed;
     };

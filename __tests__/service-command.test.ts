@@ -32,7 +32,6 @@ describe('Command', () => {
         });
 
         const result = await command.execute({ instance: undefined, args: [] });
-        console.log(`result: ${result}`);
         expect(result).toBe('result');
         expect(mockTaskRunner).toHaveBeenCalled();
     });
@@ -78,11 +77,8 @@ describe('Command', () => {
         });
 
         const result = await command.run({ instance: undefined, args: [] });
-        console.log(`result: ${result.output}`);
-        console.log(result.metrics);
-        console.log(`bytesReceived: ${JSON.stringify([]).length}`);
 
-        expect(result.metrics.bytesReceived).toBe(JSON.stringify([]).length);
+        expect(result.metrics.bytesReceived).toEqual(0);
         expect(result.metrics.bytesReturned).toBe(result.output.length);
     });
 

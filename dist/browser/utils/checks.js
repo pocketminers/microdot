@@ -27,10 +27,15 @@ var checkForCircularReference = function (obj) {
     };
     return hasCircular(obj);
 };
+/**
+ * Check if an array is empty or contains empty values.
+ *
+ */
 var checkIsEmpty = function (values) {
     var e_1, _a;
-    if (values !== undefined &&
-        values !== null) {
+    if (values !== undefined
+        && values !== null
+        && values.length > 0) {
         try {
             for (var values_1 = __values(values), values_1_1 = values_1.next(); !values_1_1.done; values_1_1 = values_1.next()) {
                 var value = values_1_1.value;

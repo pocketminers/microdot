@@ -20,9 +20,14 @@ const checkForCircularReference = (obj) => {
     return hasCircular(obj);
 };
 exports.checkForCircularReference = checkForCircularReference;
+/**
+ * Check if an array is empty or contains empty values.
+ *
+ */
 const checkIsEmpty = (values) => {
-    if (values !== undefined &&
-        values !== null) {
+    if (values !== undefined
+        && values !== null
+        && values.length > 0) {
         for (const value of values) {
             if (value === undefined ||
                 value === null ||

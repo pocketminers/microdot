@@ -1,9 +1,10 @@
-import { Configuration } from '../artifacts/configuration';
-import { Arguments } from '../artifacts/arguments';
-import { ArgumentEntry, Argument } from '../artifacts/argument';
-import { ParameterEntry } from '../artifacts/parameter';
-import { Hashable } from '../artifacts/hashable';
-import { PropertyEntry } from '../artifacts/property';
+import { Configuration } from '@artifacts/configuration';
+import { Arguments } from '@artifacts/arguments';
+import { ArgumentEntry, Argument } from '@artifacts/argument';
+import { ParameterEntry } from '@artifacts/parameter';
+import { Hashable } from '@artifacts/hashable';
+import { PropertyEntry } from '@artifacts/property';
+import { checkIsEmpty } from '@utils/checks';
 
 
 interface ExecutionMetrics
@@ -114,11 +115,11 @@ class Command
         
     }
 
-    public setArguments = (args: ArgumentEntry<any>[]): void => {
+    public setArguments(args: ArgumentEntry<any>[]): void {
         this.config.setArguments(args);
     }
 
-    public getArguments = (): Arguments => {
+    public getArguments(): Arguments {
         return this.config.toArguments();
     }
 
@@ -152,7 +153,10 @@ class Command
         let bytesReceived: number = 0;
         let bytesReturned: number = 0;
         
-        if (args !== undefined) {
+        if (
+            args !== undefined
+            && checkIsEmpty([args])
+        ) {
             bytesReceived = JSON.stringify(args).length;
         }
         
@@ -166,6 +170,7 @@ class Command
         if (
             output === undefined
             || output === null
+            || checkIsEmpty([output])
         ) {
             bytesReturned = 0;
         }

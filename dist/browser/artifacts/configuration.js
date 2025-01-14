@@ -50,8 +50,10 @@ var __values = (this && this.__values) || function(o) {
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
 import { checkIsEmpty } from "../utils";
+import { Argument } from "./argument";
 import { Parameter } from "./parameter";
 import { Property } from "./property";
+import { Arguments } from "./arguments";
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -69,7 +71,7 @@ var Configuration = /** @class */ (function (_super) {
         if (parameters === void 0) { parameters = []; }
         if (args === void 0) { args = []; }
         var _this = _super.call(this) || this;
-        _this.addEntries(__spreadArray(__spreadArray([], __read(properties), false), __read(parameters), false), args);
+        _this.addEntries({ entries: __spreadArray(__spreadArray([], __read(properties), false), __read(parameters), false), args: args });
         return _this;
     }
     /**
@@ -114,6 +116,15 @@ var Configuration = /** @class */ (function (_super) {
         // Add the property to the configuration
         this.set(property.name, property);
     };
+    Configuration.prototype.addEntryFromArg = function (arg) {
+        var property = new Property({
+            name: arg.name,
+            required: false,
+            description: ''
+        });
+        property.setValue(arg.value);
+        this.set(property.name, property);
+    };
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.
      * If the property is already in the configuration, then throw an error.
@@ -121,10 +132,10 @@ var Configuration = /** @class */ (function (_super) {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    Configuration.prototype.addEntries = function (entries, args) {
-        var e_1, _a;
-        if (args === void 0) { args = []; }
+    Configuration.prototype.addEntries = function (_a) {
         //check the input entries for duplicates
+        var e_1, _b;
+        var _c = _a === void 0 ? {} : _a, _d = _c.entries, entries = _d === void 0 ? [] : _d, _e = _c.args, args = _e === void 0 ? [] : _e, _f = _c.overwrite, overwrite = _f === void 0 ? true : _f;
         var names = entries.map(function (entry) { return entry.name; });
         var duplicates = names.filter(function (name, index) { return names.indexOf(name) !== index; });
         if (duplicates.length > 0) {
@@ -133,15 +144,65 @@ var Configuration = /** @class */ (function (_super) {
         try {
             for (var entries_1 = __values(entries), entries_1_1 = entries_1.next(); !entries_1_1.done; entries_1_1 = entries_1.next()) {
                 var entry = entries_1_1.value;
-                this.addEntry(entry, args);
+                if (entry instanceof Property
+                    || entry instanceof Parameter) {
+                    this.addEntry(entry, args, overwrite);
+                }
+                else if (entry instanceof Argument) {
+                    this.addEntryFromArg(entry);
+                }
+                else {
+                    throw new Error("Invalid entry: ".concat(entry));
+                }
+                this.addEntry(entry, args, overwrite);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
         finally {
             try {
-                if (entries_1_1 && !entries_1_1.done && (_a = entries_1.return)) _a.call(entries_1);
+                if (entries_1_1 && !entries_1_1.done && (_b = entries_1.return)) _b.call(entries_1);
             }
             finally { if (e_1) throw e_1.error; }
+        }
+    };
+    Configuration.prototype.setArguments = function (args, setProperties) {
+        var e_2, _a;
+        var _this = this;
+        if (setProperties === void 0) { setProperties = false; }
+        var _loop_1 = function (name_1, property) {
+            var arg = args.find(function (arg) { return arg.name === name_1; });
+            if (arg !== undefined
+                && checkIsEmpty([arg]) === false) {
+                property.setValue(arg.value);
+            }
+        };
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_1 = _d[0], property = _d[1];
+                _loop_1(name_1, property);
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+        // Check if any arguments were not set
+        var unsetArgs = args.filter(function (arg) { return _this.has(arg.name) === false; });
+        // If any arguments were not set, then throw an error
+        if (unsetArgs.length > 0
+            && setProperties === false) {
+            throw new Error("Invalid arguments: ".concat(unsetArgs.map(function (arg) { return arg.name; })));
+        }
+        // If any arguments were not set, then add the arguments as properties
+        if (unsetArgs.length > 0
+            && setProperties === true) {
+            this.addEntries({
+                entries: unsetArgs,
+                args: args
+            });
         }
     };
     /**
@@ -158,36 +219,14 @@ var Configuration = /** @class */ (function (_super) {
      * Get the required property values from the configuration
      */
     Configuration.prototype.getRequiredValues = function () {
-        var e_2, _a;
+        var e_3, _a;
         var values = {};
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), name_1 = _d[0], property = _d[1];
-                if (property.required) {
-                    values[name_1] = property.getValue();
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return values;
-    };
-    /**
-     * Convert the configuration to a JSON object.
-     * The JSON object contains the name of the property and the property object.
-     */
-    Configuration.prototype.toJSON = function () {
-        var e_3, _a;
-        var json = {};
-        try {
-            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), name_2 = _d[0], property = _d[1];
-                json[name_2] = property.toJSON();
+                if (property.required) {
+                    values[name_2] = property.getValue();
+                }
             }
         }
         catch (e_3_1) { e_3 = { error: e_3_1 }; }
@@ -197,19 +236,19 @@ var Configuration = /** @class */ (function (_super) {
             }
             finally { if (e_3) throw e_3.error; }
         }
-        return json;
+        return values;
     };
     /**
-     * Convert the configuration to a string.
-     * The string contains the name of the property and the value of the property.
+     * Convert the configuration to a JSON object.
+     * The JSON object contains the name of the property and the property object.
      */
-    Configuration.prototype.toString = function () {
+    Configuration.prototype.toJSON = function () {
         var e_4, _a;
-        var str = "";
+        var json = {};
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), name_3 = _d[0], property = _d[1];
-                str += "".concat(name_3, ": ").concat(property.getValue(), "\n");
+                json[name_3] = property.toJSON();
             }
         }
         catch (e_4_1) { e_4 = { error: e_4_1 }; }
@@ -219,19 +258,19 @@ var Configuration = /** @class */ (function (_super) {
             }
             finally { if (e_4) throw e_4.error; }
         }
-        return str;
+        return json;
     };
     /**
-     * Convert the configuration to a record.
-     * The record contains the name of the property and the property object.
+     * Convert the configuration to a string.
+     * The string contains the name of the property and the value of the property.
      */
-    Configuration.prototype.toRecord = function () {
+    Configuration.prototype.toString = function () {
         var e_5, _a;
-        var record = {};
+        var str = "";
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), name_4 = _d[0], property = _d[1];
-                record[name_4] = property.toRecord();
+                str += "".concat(name_4, ": ").concat(property.getValue(), "\n");
             }
         }
         catch (e_5_1) { e_5 = { error: e_5_1 }; }
@@ -241,7 +280,50 @@ var Configuration = /** @class */ (function (_super) {
             }
             finally { if (e_5) throw e_5.error; }
         }
+        return str;
+    };
+    /**
+     * Convert the configuration to a record.
+     * The record contains the name of the property and the property object.
+     */
+    Configuration.prototype.toRecord = function () {
+        var e_6, _a;
+        var record = {};
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_5 = _d[0], property = _d[1];
+                record[name_5] = property.toRecord();
+            }
+        }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_6) throw e_6.error; }
+        }
         return record;
+    };
+    Configuration.prototype.toArguments = function () {
+        var e_7, _a;
+        var args = new Arguments();
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_6 = _d[0], property = _d[1];
+                args.add(new Argument({
+                    name: name_6,
+                    value: property.getValue()
+                }));
+            }
+        }
+        catch (e_7_1) { e_7 = { error: e_7_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_7) throw e_7.error; }
+        }
+        return args;
     };
     return Configuration;
 }(Map));

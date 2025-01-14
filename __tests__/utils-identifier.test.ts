@@ -246,4 +246,77 @@ describe("IdentifierFactory", () => {
         const removed = factory.remove([id]);
         expect(removed.length).toBe(0);
     });
+
+    it("should throw an error when adding a duplicate identifier from a map", () => {
+        const id = createIdentifier();
+        const map = new Map<number, Identifier>([
+            [1, id],
+            [2, id]
+        ]);
+        expect(() => factory.add(map)).toThrow(`Identifier already exists: ${id}`);
+    });
+
+    it("should throw an error when adding a duplicate identifier from a record", () => {
+        const id = createIdentifier();
+        const record = { 1: id, 2: id };
+        expect(() => factory.add(record)).toThrow(`Identifier already exists: ${id}`);
+    });
+
+    it("should throw an error when removing a non-existent identifier from a map", () => {
+        const map = new Map<number, Identifier>([
+            [1, createIdentifier()],
+            [2, createIdentifier()]
+        ]);
+        const removeMap = new Map<number, Identifier>([
+            [1, createIdentifier()],
+            [3, createIdentifier()]
+        ]);
+        factory.remove(removeMap);
+    });
+
+    it("should throw an error when removing a non-existent identifier from a record", () => {
+        const record = { 1: createIdentifier(), 2: createIdentifier() };
+        const removeRecord = { 1: createIdentifier(), 3: createIdentifier() };
+
+        factory.add(record);
+        factory.remove(removeRecord);
+        expect(factory.getAll().size).toBe(Object.keys(record).length);
+    });
+
+    it("should handle adding a large number of identifiers", () => {
+        const ids = Array.from({ length: 1000 }, () => createIdentifier());
+        const added = factory.add(ids);
+        expect(added.length).toBe(ids.length);
+        ids.forEach((id, index) => {
+            expect(factory.getValue(index)).toBe(id);
+        });
+    });
+
+    it("should handle removing a large number of identifiers", () => {
+        const ids = Array.from({ length: 1000 }, () => createIdentifier());
+        factory.add(ids);
+        const removed = factory.remove(ids);
+        expect(removed.length).toBe(ids.length);
+        ids.forEach((id) => {
+            expect(factory["checkIfIdentifierExists"](id)).toBe(false);
+        });
+    });
+
+    it("should throw an error when adding an invalid identifier type", () => {
+        // @ts-ignorex
+        expect(() => factory.add(123)).toThrow("Invalid argument type: number");
+    });
+
+    it("should throw an error when removing an invalid identifier type", () => {
+        // @ts-ignore
+        expect(() => factory.remove(1233)).toThrow("Invalid argument type: number");
+    });
+
+    it("should throw an error when getting a value with an invalid identifier type", () => {
+        expect(() => factory.getValue(123 as any)).toThrow("Identifier not found: 123");
+    });
+
+    it("should throw an error when getting a record with an invalid identifier type", () => {
+        expect(() => factory.getRecord(123 as any)).toThrow("Identifier not found: 123");
+    });
 });

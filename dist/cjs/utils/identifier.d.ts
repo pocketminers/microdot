@@ -26,6 +26,7 @@ declare const createIdentifier: (type?: IdentifierType, { prefix, suffix }?: {
 }) => Identifier;
 declare class IdentifierFactory extends Map<number, Identifier> {
     constructor(identifiers?: Identifier[] | Map<number, Identifier>);
+    private checkIfIndexExists;
     private checkIfIdentifierExists;
     private addFromRecord;
     private addFromIdentifier;
