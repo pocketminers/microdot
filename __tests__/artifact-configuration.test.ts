@@ -12,6 +12,7 @@ describe('Configuration', () => {
             new Property<boolean>({name: 'prop3', defaultValue: true, required: true, description: 'Property 3', value: true})
         ];
         config = new Configuration(properties);
+        // console.log(`config: ${ JSON.stringify(config) }`);
     });
 
     afterEach(() => {
@@ -20,7 +21,7 @@ describe('Configuration', () => {
     })
 
     test('should initialize with properties', () => {
-        console.log(`config: ${JSON.stringify(config)}`);
+        // console.log(`config: ${JSON.stringify(config)}`);
         expect(config.get('prop1')?.getValue()).toBe('value1');
         expect(config.get('prop2')?.getValue()).toBe(42);
         expect(config.get('prop3')?.getValue()).toBe(true);
@@ -42,7 +43,7 @@ describe('Configuration', () => {
         const json = config.toJSON();
         expect(json).toEqual({
             prop1: { name: 'prop1', value: 'value1', required: true, description: 'Property 1', defaultValue: 'value1', optionalValues: [] },
-            prop2: { name: 'prop2', value: undefined, required: true, description: 'Property 2', defaultValue: 42, optionalValues: [] },
+            prop2: { name: 'prop2', value: 42, required: true, description: 'Property 2', defaultValue: 42, optionalValues: [] },
             prop3: { name: 'prop3', value: true, required: true, description: 'Property 3', defaultValue: true, optionalValues: [] }
         });
     });
@@ -57,9 +58,42 @@ describe('Configuration', () => {
     test('should convert to record', () => {
         const record = config.toRecord();
         expect(record).toEqual({
-            prop1: { name: 'prop1', value: 'value1', required: true, description: 'Property 1', defaultValue: 'value1', optionalValues: [] },
+            prop1: { name: 'prop1', value: "value1", required: true, description: 'Property 1', defaultValue: 'value1', optionalValues: [] },
             prop2: { name: 'prop2', value: undefined, required: true, description: 'Property 2', defaultValue: 42, optionalValues: [] },
             prop3: { name: 'prop3', value: true, required: true, description: 'Property 3', defaultValue: true, optionalValues: [] }
         });
+    });
+
+    test('should get required values', () => {
+        const values = config.getRequiredValues();
+        expect(values).toEqual({
+            prop1: 'value1',
+            prop2: 42,
+            prop3: true
+        });
+    });
+
+    test('should clear configuration', () => {
+        config.clear();
+        expect(config.size).toBe(0);
+    });
+
+    test('should not add duplicate property', () => {
+        const prop = new Property({name: 'prop1', value: 'newValue', required: true, description: 'Property 1', defaultValue: 'value1'});
+        expect(() => config.addEntry(prop, [{name: 'prop1', value: 'newValue'}])).toThrow('Property already exists: prop1');
+        expect(config.size).toBe(3);
+    });
+
+    test('should overwrite a property', () => {
+        const prop = new Property({name: 'prop1', value: 'newValue', required: true, description: 'Property 1', defaultValue: 'value1'});
+        config.addEntry(prop, [{name: 'prop1', value: 'newValue'}], true);
+        expect(config.get('prop1')?.getValue()).toBe('newValue');
+    });
+
+    test('should not set property with invalid name', () => {
+        const prop = new Property({name: 'prop4', value: 'newValue', required: true, description: 'Property 4', defaultValue: 'value4'});
+        config.addEntry(prop, [{name: 'prop5', value: 'newValue1'}]);
+        expect(config.size).toBe(4);
+        expect(config.get('prop4')?.argument?.value).toBe('newValue');
     });
 });

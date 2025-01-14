@@ -146,8 +146,8 @@ class Arguments
      * Export the Arguments as a JSON object
      * @summary Convert the arguments to a JSON object and return it
      */
-    public toJSON<T>(): {name: string, value: T}[] {
-        const obj: {name: string, value: T}[] = [];
+    public toJSON(): {name: string, value: any}[] {
+        const obj: {name: string, value: any}[] = [];
         for (const arg of this) {
             obj.push(arg.toJSON());
         }

@@ -57,11 +57,12 @@ class IdentifierFactory extends Map {
     }
     checkIfIdentifierExists(id) {
         let exists = false;
-        this.forEach((value) => {
+        for (const value of this.values()) {
             if (value === id) {
                 exists = true;
+                break;
             }
-        });
+        }
         return exists;
     }
     addFromRecord(record) {
@@ -210,6 +211,11 @@ class IdentifierFactory extends Map {
             }
         }
         return removed;
+    }
+    create(type, { prefix, suffix } = {}) {
+        const id = createIdentifier(type, { prefix, suffix });
+        this.add(id);
+        return id;
     }
 }
 exports.IdentifierFactory = IdentifierFactory;

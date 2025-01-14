@@ -72,4 +72,12 @@ describe('Property', () => {
             value: 'initialValue'
         });
     });
+
+    test('should throw an error if set method is called', () => {
+        expect(() => property.set('newValue')).toThrow('Method not implemented.');
+    });
+
+    test('should return a key-value pair for the property', () => {
+        expect(property.toKeyValuePair()).toEqual({ testProperty: 'initialValue' });
+    });
 });

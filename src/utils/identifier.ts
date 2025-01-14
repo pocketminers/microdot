@@ -76,11 +76,12 @@ class IdentifierFactory
 
     private checkIfIdentifierExists(id: Identifier): boolean {
         let exists = false;
-        this.forEach((value) => {
+        for (const value of this.values()) {
             if (value === id) {
-               exists = true;
+                exists = true;
+                break;
             }
-        });
+        }
         return exists;
     }
 
@@ -266,6 +267,18 @@ class IdentifierFactory
             }
         }
         return removed;
+    }
+
+    public create<T extends IdentifierType>(
+        type: T,
+        {
+            prefix,
+            suffix
+        } : {prefix?: string, suffix?: string} = {}
+    ): Identifier {
+        const id = createIdentifier(type, { prefix, suffix });
+        this.add(id);
+        return id;
     }
 }
 
