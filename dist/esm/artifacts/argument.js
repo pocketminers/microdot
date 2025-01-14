@@ -42,7 +42,7 @@ class Argument extends Hashable {
      * @throws Error
      */
     set(value) {
-        throw new Error("Method not implemented.");
+        throw new Error(`Method not implemented. Unable to set value: ${value}`);
     }
     /**
      * Get Method

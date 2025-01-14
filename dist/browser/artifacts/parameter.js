@@ -89,7 +89,7 @@ var Parameter = /** @class */ (function (_super) {
      * @throws Error
      */
     Parameter.prototype.set = function (value) {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented. Unable to set value: " + value);
     };
     /**
      * Convert the Parameter to a JSON object

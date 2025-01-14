@@ -17,7 +17,7 @@ class Configuration extends Map {
      */
     constructor(properties = [], parameters = [], args = []) {
         super();
-        this.addEntries(properties, args);
+        this.addEntries([...properties, ...parameters], args);
     }
     /**
      * Add a property to the configuration from a property entry and an argument entry.

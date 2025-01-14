@@ -50,7 +50,7 @@ var Argument = /** @class */ (function (_super) {
      * @throws Error
      */
     Argument.prototype.set = function (value) {
-        throw new Error("Method not implemented.");
+        throw new Error("Method not implemented. Unable to set value: ".concat(value));
     };
     /**
      * Get Method

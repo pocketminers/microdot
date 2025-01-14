@@ -1,5 +1,5 @@
 import { checkIsEmpty } from "@/utils";
-import { Argument, ArgumentEntry } from "./argument";
+import { ArgumentEntry } from "./argument";
 import { Parameter, ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
 
@@ -23,7 +23,7 @@ class Configuration
         args: ArgumentEntry<any>[] = []
     ) {
         super();
-        this.addEntries(properties, args);
+        this.addEntries([...properties, ...parameters], args);
     }
 
     /**
