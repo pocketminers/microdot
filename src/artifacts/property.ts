@@ -2,6 +2,15 @@ import { Argument } from "./argument";
 import { Parameter } from "./parameter";
 
 
+interface PropertyEntry<T = any> {
+    name: string;
+    value?: T;
+    description?: string;
+    required?: boolean;
+    defaultValue?: T;
+    optionalValues?: T[];
+}
+
 /**
  * The Property class is a Parameter with an Argument
  */
@@ -17,11 +26,13 @@ class Property<T = any>
         required = true,
         defaultValue = undefined,
         optionalValues = []
-    }: { name: string, value?: T, description?: string, required?: boolean, defaultValue?: T, optionalValues?: T[] }) {
+    }: PropertyEntry<T>) {
         super({ name, description, required, defaultValue, optionalValues });
 
         if (value !== undefined && super.checkOptionalValues(value)) {
+            console.log(`Property: ${name} value: ${value}`);
             this.argument = new Argument<T>({ name, value });
+            console.log(`Property: ${name} argument: ${this.argument}`);
         }
     }
 
@@ -50,7 +61,7 @@ class Property<T = any>
     public override toJSON(): { name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined, value?: T } {
         return {
             ...super.toJSON(),
-            value: this.argument?.value
+            value: this.getValue()
         };
     }
 
@@ -71,5 +82,6 @@ class Property<T = any>
 }
 
 export {
+    type PropertyEntry,
     Property
 };

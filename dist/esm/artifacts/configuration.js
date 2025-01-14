@@ -1,19 +1,29 @@
+import { Property } from "./property";
 class Configuration extends Map {
-    constructor(properties = []) {
+    constructor(properties = [], args = []) {
         super();
         for (const property of properties) {
-            this.set(property.name, property);
+            if (args.length > 0) {
+                const arg = args.find(arg => arg.name === property.name);
+                /**
+                 * If an argument exists for the property
+                 * then set the value of the property to the value of the argument.
+                 * This will allow the property to be set by the argument.
+                 */
+                if (arg !== undefined
+                    && arg.value !== undefined) {
+                    property.value = arg.value;
+                }
+            }
+            this.set(property.name, new Property(property));
         }
     }
-    get(name) {
-        return super.get(name);
-    }
-    set(name, value) {
-        super.set(name, value);
-        return this;
-    }
     getValue(name) {
-        return this.get(name)?.getValue();
+        if (this.has(name)) {
+            const value = super.get(name)?.getValue();
+            console.log(`Configuration: ${name} value: ${value}`);
+            return value;
+        }
     }
     toJSON() {
         const json = {};

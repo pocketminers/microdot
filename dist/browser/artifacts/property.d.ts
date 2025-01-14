@@ -1,18 +1,19 @@
 import { Argument } from "./argument";
 import { Parameter } from "./parameter";
+interface PropertyEntry<T = any> {
+    name: string;
+    value?: T;
+    description?: string;
+    required?: boolean;
+    defaultValue?: T;
+    optionalValues?: T[];
+}
 /**
  * The Property class is a Parameter with an Argument
  */
 declare class Property<T = any> extends Parameter<T> {
     argument?: Argument<T>;
-    constructor({ name, value, description, required, defaultValue, optionalValues }: {
-        name: string;
-        value?: T;
-        description?: string;
-        required?: boolean;
-        defaultValue?: T;
-        optionalValues?: T[];
-    });
+    constructor({ name, value, description, required, defaultValue, optionalValues }: PropertyEntry<T>);
     getValue(): T;
     setValue(value: T): void;
     toJSON(): {
@@ -26,5 +27,5 @@ declare class Property<T = any> extends Parameter<T> {
     toString(): string;
     toRecord(): Record<"name" | "required" | "description" | "defaultValue" | "optionalValues" | "value", any>;
 }
-export { Property };
+export { type PropertyEntry, Property };
 //# sourceMappingURL=property.d.ts.map

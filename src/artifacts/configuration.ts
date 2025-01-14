@@ -1,29 +1,41 @@
-import { Property } from "./property";
+import { Argument, ArgumentEntry } from "./argument";
+import { Property, PropertyEntry } from "./property";
 
 class Configuration
     extends
         Map<string, Property<any>>
 {
     public constructor(
-        properties: Property<any>[] = []
+        properties: PropertyEntry<any>[] = [],
+        args: ArgumentEntry<any>[] = []
     ) {
         super();
         for (const property of properties) {
-            this.set(property.name, property);
+            if (args.length > 0) {
+                const arg = args.find(arg => arg.name === property.name);
+                
+                /**
+                 * If an argument exists for the property
+                 * then set the value of the property to the value of the argument.
+                 * This will allow the property to be set by the argument.
+                 */
+                if (
+                    arg !== undefined
+                    && arg.value !== undefined
+                ) {
+                    property.value = arg.value;
+                }
+            }
+            this.set(property.name, new Property(property));
         }
     }
 
-    public get<T = any>(name: string): Property<T> | undefined {
-        return super.get(name);
-    }
-
-    public set<T = any>(name: string, value: Property<T>): this {
-        super.set(name, value);
-        return this;
-    }
-
     public getValue<T = any>(name: string): T | undefined {
-        return this.get<T>(name)?.getValue();
+        if (this.has(name)) {
+            const value = super.get(name)?.getValue();
+            console.log(`Configuration: ${name} value: ${value}`);
+            return value;
+        }
     }
 
     public toJSON(): { [key: string]: any } {

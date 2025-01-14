@@ -40,16 +40,34 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+import { Property } from "./property";
 var Configuration = /** @class */ (function (_super) {
     __extends(Configuration, _super);
-    function Configuration(properties) {
+    function Configuration(properties, args) {
         var e_1, _a;
         if (properties === void 0) { properties = []; }
+        if (args === void 0) { args = []; }
         var _this = _super.call(this) || this;
+        var _loop_1 = function (property) {
+            if (args.length > 0) {
+                var arg = args.find(function (arg) { return arg.name === property.name; });
+                /**
+                 * If an argument exists for the property
+                 * then set the value of the property to the value of the argument.
+                 * This will allow the property to be set by the argument.
+                 */
+                if (arg !== undefined
+                    && arg.value !== undefined) {
+                    property.value = arg.value;
+                }
+            }
+            this_1.set(property.name, new Property(property));
+        };
+        var this_1 = this;
         try {
             for (var properties_1 = __values(properties), properties_1_1 = properties_1.next(); !properties_1_1.done; properties_1_1 = properties_1.next()) {
                 var property = properties_1_1.value;
-                _this.set(property.name, property);
+                _loop_1(property);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -61,16 +79,13 @@ var Configuration = /** @class */ (function (_super) {
         }
         return _this;
     }
-    Configuration.prototype.get = function (name) {
-        return _super.prototype.get.call(this, name);
-    };
-    Configuration.prototype.set = function (name, value) {
-        _super.prototype.set.call(this, name, value);
-        return this;
-    };
     Configuration.prototype.getValue = function (name) {
         var _a;
-        return (_a = this.get(name)) === null || _a === void 0 ? void 0 : _a.getValue();
+        if (this.has(name)) {
+            var value = (_a = _super.prototype.get.call(this, name)) === null || _a === void 0 ? void 0 : _a.getValue();
+            console.log("Configuration: ".concat(name, " value: ").concat(value));
+            return value;
+        }
     };
     Configuration.prototype.toJSON = function () {
         var e_2, _a;

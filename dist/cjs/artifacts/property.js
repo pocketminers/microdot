@@ -11,7 +11,9 @@ class Property extends parameter_1.Parameter {
     constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
         super({ name, description, required, defaultValue, optionalValues });
         if (value !== undefined && super.checkOptionalValues(value)) {
+            console.log(`Property: ${name} value: ${value}`);
             this.argument = new argument_1.Argument({ name, value });
+            console.log(`Property: ${name} argument: ${this.argument}`);
         }
     }
     getValue() {
@@ -33,7 +35,7 @@ class Property extends parameter_1.Parameter {
     toJSON() {
         return {
             ...super.toJSON(),
-            value: this.argument?.value
+            value: this.getValue()
         };
     }
     toString() {

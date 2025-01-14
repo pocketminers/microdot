@@ -35,7 +35,9 @@ var Property = /** @class */ (function (_super) {
         var name = _a.name, value = _a.value, _b = _a.description, description = _b === void 0 ? '' : _b, _c = _a.required, required = _c === void 0 ? true : _c, _d = _a.defaultValue, defaultValue = _d === void 0 ? undefined : _d, _e = _a.optionalValues, optionalValues = _e === void 0 ? [] : _e;
         var _this = _super.call(this, { name: name, description: description, required: required, defaultValue: defaultValue, optionalValues: optionalValues }) || this;
         if (value !== undefined && _super.prototype.checkOptionalValues.call(_this, value)) {
+            console.log("Property: ".concat(name, " value: ").concat(value));
             _this.argument = new Argument({ name: name, value: value });
+            console.log("Property: ".concat(name, " argument: ").concat(_this.argument));
         }
         return _this;
     }
@@ -57,8 +59,7 @@ var Property = /** @class */ (function (_super) {
         this.argument = new Argument({ name: this.name, value: value });
     };
     Property.prototype.toJSON = function () {
-        var _a;
-        return __assign(__assign({}, _super.prototype.toJSON.call(this)), { value: (_a = this.argument) === null || _a === void 0 ? void 0 : _a.value });
+        return __assign(__assign({}, _super.prototype.toJSON.call(this)), { value: this.getValue() });
     };
     Property.prototype.toString = function () {
         return "".concat(this.name, ": ").concat(this.getValue());

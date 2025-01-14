@@ -108,16 +108,28 @@ var IdentifierFactory = /** @class */ (function (_super) {
         return _this;
     }
     IdentifierFactory.prototype.checkIfIdentifierExists = function (id) {
+        var e_1, _a;
         var exists = false;
-        this.forEach(function (value) {
-            if (value === id) {
-                exists = true;
+        try {
+            for (var _b = __values(this.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var value = _c.value;
+                if (value === id) {
+                    exists = true;
+                    break;
+                }
             }
-        });
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
         return exists;
     };
     IdentifierFactory.prototype.addFromRecord = function (record) {
-        var e_1, _a, _b;
+        var e_2, _a, _b;
         var added = new Array();
         try {
             for (var _c = __values(Object.entries(record)), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -129,12 +141,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 added.push((_b = {}, _b[key] = id, _b));
             }
         }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
         finally {
             try {
                 if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
             }
-            finally { if (e_1) throw e_1.error; }
+            finally { if (e_2) throw e_2.error; }
         }
         return added;
     };
@@ -157,7 +169,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         return added;
     };
     IdentifierFactory.prototype.addFromArrayOfRecords = function (ids) {
-        var e_2, _a;
+        var e_3, _a;
         var added = new Array();
         try {
             for (var ids_1 = __values(ids), ids_1_1 = ids_1.next(); !ids_1_1.done; ids_1_1 = ids_1.next()) {
@@ -166,17 +178,17 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 added.push.apply(added, __spreadArray([], __read(completed), false));
             }
         }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        catch (e_3_1) { e_3 = { error: e_3_1 }; }
         finally {
             try {
                 if (ids_1_1 && !ids_1_1.done && (_a = ids_1.return)) _a.call(ids_1);
             }
-            finally { if (e_2) throw e_2.error; }
+            finally { if (e_3) throw e_3.error; }
         }
         return added;
     };
     IdentifierFactory.prototype.addFromMap = function (map) {
-        var e_3, _a, _b;
+        var e_4, _a, _b;
         var added = new Array();
         if (map.size === 0) {
             throw new Error("Map is empty");
@@ -194,17 +206,17 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 added.push.apply(added, __spreadArray([], __read(completed), false));
             }
         }
-        catch (e_3_1) { e_3 = { error: e_3_1 }; }
+        catch (e_4_1) { e_4 = { error: e_4_1 }; }
         finally {
             try {
                 if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
             }
-            finally { if (e_3) throw e_3.error; }
+            finally { if (e_4) throw e_4.error; }
         }
         return added;
     };
     IdentifierFactory.prototype.add = function (idsOrRecords) {
-        var e_4, _a;
+        var e_5, _a;
         var added = new Array();
         if (Array.isArray(idsOrRecords)) {
             try {
@@ -214,12 +226,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                     added.push.apply(added, __spreadArray([], __read(completed), false));
                 }
             }
-            catch (e_4_1) { e_4 = { error: e_4_1 }; }
+            catch (e_5_1) { e_5 = { error: e_5_1 }; }
             finally {
                 try {
                     if (idsOrRecords_1_1 && !idsOrRecords_1_1.done && (_a = idsOrRecords_1.return)) _a.call(idsOrRecords_1);
                 }
-                finally { if (e_4) throw e_4.error; }
+                finally { if (e_5) throw e_5.error; }
             }
         }
         else if (idsOrRecords instanceof Map) {
@@ -251,7 +263,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
     };
     IdentifierFactory.prototype.getIdentifierByValue = function (value) {
-        var e_5, _a, _b;
+        var e_6, _a, _b;
         try {
             for (var _c = __values(this.getAll().entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = __read(_d.value, 2), key = _e[0], id = _e[1];
@@ -260,12 +272,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 }
             }
         }
-        catch (e_5_1) { e_5 = { error: e_5_1 }; }
+        catch (e_6_1) { e_6 = { error: e_6_1 }; }
         finally {
             try {
                 if (_d && !_d.done && (_a = _c.return)) _a.call(_c);
             }
-            finally { if (e_5) throw e_5.error; }
+            finally { if (e_6) throw e_6.error; }
         }
     };
     IdentifierFactory.prototype.getRecord = function (identifier) {
@@ -286,7 +298,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         return Object.values(id)[0];
     };
     IdentifierFactory.prototype.remove = function (idsOrRecords) {
-        var e_6, _a, e_7, _b, _c, e_8, _d, _e, _f;
+        var e_7, _a, e_8, _b, _c, e_9, _d, _e, _f;
         var removed = new Array();
         if (Array.isArray(idsOrRecords)
             && idsOrRecords.length > 0) {
@@ -297,12 +309,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                     removed.push.apply(removed, __spreadArray([], __read(completed), false));
                 }
             }
-            catch (e_6_1) { e_6 = { error: e_6_1 }; }
+            catch (e_7_1) { e_7 = { error: e_7_1 }; }
             finally {
                 try {
                     if (idsOrRecords_2_1 && !idsOrRecords_2_1.done && (_a = idsOrRecords_2.return)) _a.call(idsOrRecords_2);
                 }
-                finally { if (e_6) throw e_6.error; }
+                finally { if (e_7) throw e_7.error; }
             }
         }
         else if (idsOrRecords instanceof Map) {
@@ -315,12 +327,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                     }
                 }
             }
-            catch (e_7_1) { e_7 = { error: e_7_1 }; }
+            catch (e_8_1) { e_8 = { error: e_8_1 }; }
             finally {
                 try {
                     if (_h && !_h.done && (_b = _g.return)) _b.call(_g);
                 }
-                finally { if (e_7) throw e_7.error; }
+                finally { if (e_8) throw e_8.error; }
             }
         }
         else if (typeof idsOrRecords === 'object') {
@@ -334,12 +346,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
                     }
                 }
             }
-            catch (e_8_1) { e_8 = { error: e_8_1 }; }
+            catch (e_9_1) { e_9 = { error: e_9_1 }; }
             finally {
                 try {
                     if (_l && !_l.done && (_d = _k.return)) _d.call(_k);
                 }
-                finally { if (e_8) throw e_8.error; }
+                finally { if (e_9) throw e_9.error; }
             }
         }
         else if (typeof idsOrRecords === 'string') {
@@ -351,6 +363,12 @@ var IdentifierFactory = /** @class */ (function (_super) {
             }
         }
         return removed;
+    };
+    IdentifierFactory.prototype.create = function (type, _a) {
+        var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
+        var id = createIdentifier(type, { prefix: prefix, suffix: suffix });
+        this.add(id);
+        return id;
     };
     return IdentifierFactory;
 }(Map));
