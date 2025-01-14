@@ -9,11 +9,20 @@ import { Arguments } from "./arguments";
  * This allows the property to be set by the argument.
  */
 declare class Configuration extends Map<Property['name'], Property<any>> {
+    name: string;
+    description: string;
     /**
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor(properties?: PropertyEntry<any>[], parameters?: ParameterEntry<any>[], args?: ArgumentEntry<any>[]);
+    constructor({ name, description, properties, parameters, args, useArgs }?: {
+        name?: string;
+        description?: string;
+        properties?: PropertyEntry<any>[];
+        parameters?: ParameterEntry<any>[];
+        args?: ArgumentEntry<any>[];
+        useArgs?: boolean;
+    });
     /**
      * Add a property to the configuration from a property entry and an argument entry.
      * If the property is already in the configuration, then throw an error.
@@ -30,10 +39,11 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntries({ entries, args, overwrite }?: {
-        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[];
+    addEntries({ entries, args, overwrite, fromArgs }?: {
+        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[] | any[];
         args?: ArgumentEntry<any>[];
         overwrite?: boolean;
+        fromArgs?: boolean;
     }): void;
     setArguments(args: ArgumentEntry<any>[], setProperties?: boolean): void;
     /**

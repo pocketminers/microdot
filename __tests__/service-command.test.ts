@@ -1,4 +1,4 @@
-import { Command, CommandResult, ExecutionMetrics, TaskRunner, defaultTaskRunner } from '../src/service/command';
+import { Command, TaskRunner, defaultTaskRunner } from '../src/service/command';
 import { Configuration } from '../src/artifacts/configuration';
 import { Arguments } from '../src/artifacts/arguments';
 
@@ -167,6 +167,20 @@ describe('Command', () => {
             { "test": "value" }
         ]);
         command.setArguments(args, true);
+        expect(command.getArguments()).toEqual(args);
+    });
+
+    test('should add a command named "name" to the config', () => {
+        const args = new Arguments([
+            { "name": "value" },
+            { "description": "description" },
+            { "properties": [] },
+            { "parameters": [] },
+            { "args": [] },
+            { "useArgs": true }
+        ]);
+        command.setArguments(args, true);
+        console.log(JSON.stringify(command));
         expect(command.getArguments()).toEqual(args);
     });
 });

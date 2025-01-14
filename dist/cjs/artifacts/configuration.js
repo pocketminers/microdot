@@ -13,13 +13,17 @@ const arguments_1 = require("./arguments");
  * This allows the property to be set by the argument.
  */
 class Configuration extends Map {
+    name = 'Configuration';
+    description = 'A configuration of properties that can be set by arguments';
     /**
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor(properties = [], parameters = [], args = []) {
+    constructor({ name = 'Configuration', description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false } = {}) {
         super();
-        this.addEntries({ entries: [...properties, ...parameters], args });
+        this.name = name;
+        this.description = description;
+        this.addEntries({ entries: [...properties, ...parameters], args, fromArgs: useArgs });
     }
     /**
      * Add a property to the configuration from a property entry and an argument entry.
@@ -65,7 +69,8 @@ class Configuration extends Map {
         const property = new property_1.Property({
             name: arg.name,
             required: false,
-            description: ''
+            description: '',
+            value: arg.value
         });
         property.setValue(arg.value);
         this.set(property.name, property);
@@ -77,7 +82,7 @@ class Configuration extends Map {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntries({ entries = [], args = [], overwrite = true } = {}) {
+    addEntries({ entries = [], args = [], overwrite = true, fromArgs = false } = {}) {
         //check the input entries for duplicates
         const names = entries.map(entry => entry.name);
         const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
@@ -89,13 +94,32 @@ class Configuration extends Map {
                 || entry instanceof parameter_1.Parameter) {
                 this.addEntry(entry, args, overwrite);
             }
-            else if (entry instanceof argument_1.Argument) {
+            else if ((entry instanceof argument_1.Argument
+                || typeof entry === 'object')
+                && fromArgs === true) {
                 this.addEntryFromArg(entry);
+            }
+            else if (Array.isArray(entry)) {
+                this.addEntries({ entries: entry, args, overwrite });
+            }
+            else if (typeof entry === 'object'
+                && entry.name !== undefined
+                && entry.value !== undefined) {
+                this.addEntry(new property_1.Property({
+                    name: entry.name,
+                    value: entry.value,
+                    required: entry.required,
+                    description: entry.description,
+                    defaultValue: entry.defaultValue,
+                    optionalValues: entry.optionalValues
+                }), args, overwrite);
             }
             else {
                 throw new Error(`Invalid entry: ${entry}`);
             }
-            this.addEntry(entry, args, overwrite);
+        }
+        if (fromArgs === true) {
+            this.setArguments(args, true);
         }
     }
     setArguments(args, setProperties = false) {

@@ -150,10 +150,16 @@ class Configuration
                 this.addEntry(entry, args, overwrite);
             }
             else if (
-                entry instanceof Argument
+                (
+                    entry instanceof Argument
+                    || typeof entry === 'object'
+                )
                 && fromArgs === true
             ) {
                 this.addEntryFromArg(entry);
+            }
+            else if (Array.isArray(entry)) {
+                this.addEntries({entries: entry, args, overwrite});
             }
             else if (
                 typeof entry === 'object'
@@ -172,6 +178,10 @@ class Configuration
             else {
                 throw new Error(`Invalid entry: ${entry}`);
             }
+        }
+
+        if(fromArgs === true) {
+            this.setArguments(args, true);
         }
     }
 

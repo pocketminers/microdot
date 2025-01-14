@@ -7,6 +7,10 @@ import { PropertyEntry } from '@artifacts/property';
 import { checkIsEmpty } from '@utils/checks';
 
 
+/**
+ * Command execution metrics interface.
+ * An object that contains the execution metrics of a command that has completed execution.
+ */
 interface ExecutionMetrics
     extends
         Record<'startTime', number>,
@@ -16,29 +20,41 @@ interface ExecutionMetrics
         Record<'bytesReturned', number> {}
 
 
+/**
+ * Command result entry interface.
+ * An object that contains the result of a command that has completed execution.
+ */
 interface CommandResultEntry<R, T>
     extends
+        Partial<Record<'jobId', string>>,
         Record<'command', Command<R, T>['name']>,
         Record<'args', Arguments>,
         Record<'output', R | Error | null>,
         Record<'metrics', ExecutionMetrics> {}
 
 
+/**
+ * Command result class.
+ * A class that contains the result of a command that has completed execution.
+ */
 class CommandResult<R, T>
     implements
         CommandResultEntry<R, T>
 {
+    public jobId?: string;
     public command: Command<R, T>['name'];
     public args: Arguments;
     public output: R | Error | null;
     public metrics: ExecutionMetrics;
 
     constructor({
+        jobId,
         command,
         args,
         output,
         metrics
     }: CommandResultEntry<R, T>) {
+        this.jobId = jobId;
         this.command = command;
         this.args = args;
         this.output = output;
@@ -68,8 +84,8 @@ const defaultTaskRunner: TaskRunner<any, any> = async (instance, args) => {
 
 class Command
 <
-    R = any,    // Result
-    T = any   // TaskRunner Instance
+    R,      // Result
+    T       // TaskRunner Instance
 >
     extends
         Hashable

@@ -77,26 +77,30 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 import { Configuration } from '../artifacts/configuration';
 import { Hashable } from '../artifacts/hashable';
 import { checkIsEmpty } from '../utils/checks';
+/**
+ * Command result class.
+ * A class that contains the result of a command that has completed execution.
+ */
 var CommandResult = /** @class */ (function () {
     function CommandResult(_a) {
-        var command = _a.command, args = _a.args, output = _a.output, metrics = _a.metrics;
-        var _this = this;
-        this.toJSON = function () {
-            return {
-                command: _this.command,
-                args: _this.args,
-                output: _this.output,
-                metrics: _this.metrics
-            };
-        };
-        this.toString = function () {
-            return JSON.stringify(_this, null, 2);
-        };
+        var jobId = _a.jobId, command = _a.command, args = _a.args, output = _a.output, metrics = _a.metrics;
+        this.jobId = jobId;
         this.command = command;
         this.args = args;
         this.output = output;
         this.metrics = metrics;
     }
+    CommandResult.prototype.toJSON = function () {
+        return {
+            command: this.command,
+            args: this.args,
+            output: this.output,
+            metrics: this.metrics
+        };
+    };
+    CommandResult.prototype.toString = function () {
+        return JSON.stringify(this, null, 2);
+    };
     return CommandResult;
 }());
 var defaultTaskRunner = function (instance, args) { return __awaiter(void 0, void 0, void 0, function () {
@@ -208,16 +212,17 @@ var Command = /** @class */ (function (_super) {
         if (config !== undefined) {
             _this.config = config;
             _this.config.addEntries({ entries: __spreadArray(__spreadArray([], __read(properties), false), __read(parameters), false), args: args });
-            _this.config.setArguments(args);
+            _this.config.setArguments(args, true);
         }
         else {
-            _this.config = new Configuration(properties, parameters, args);
+            _this.config = new Configuration({ properties: properties, parameters: parameters, args: args });
         }
         _this.taskRunner = taskRunner;
         return _this;
     }
-    Command.prototype.setArguments = function (args) {
-        this.config.setArguments(args);
+    Command.prototype.setArguments = function (args, fromArgs) {
+        if (fromArgs === void 0) { fromArgs = false; }
+        this.config.setArguments(args, fromArgs);
     };
     Command.prototype.getArguments = function () {
         return this.config.toArguments();

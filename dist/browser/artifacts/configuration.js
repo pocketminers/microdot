@@ -66,12 +66,14 @@ var Configuration = /** @class */ (function (_super) {
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    function Configuration(properties, parameters, args) {
-        if (properties === void 0) { properties = []; }
-        if (parameters === void 0) { parameters = []; }
-        if (args === void 0) { args = []; }
+    function Configuration(_a) {
+        var _b = _a === void 0 ? {} : _a, _c = _b.name, name = _c === void 0 ? 'Configuration' : _c, _d = _b.description, description = _d === void 0 ? 'A configuration of properties that can be set by arguments' : _d, _e = _b.properties, properties = _e === void 0 ? [] : _e, _f = _b.parameters, parameters = _f === void 0 ? [] : _f, _g = _b.args, args = _g === void 0 ? [] : _g, _h = _b.useArgs, useArgs = _h === void 0 ? false : _h;
         var _this = _super.call(this) || this;
-        _this.addEntries({ entries: __spreadArray(__spreadArray([], __read(properties), false), __read(parameters), false), args: args });
+        _this.name = 'Configuration';
+        _this.description = 'A configuration of properties that can be set by arguments';
+        _this.name = name;
+        _this.description = description;
+        _this.addEntries({ entries: __spreadArray(__spreadArray([], __read(properties), false), __read(parameters), false), args: args, fromArgs: useArgs });
         return _this;
     }
     /**
@@ -120,7 +122,8 @@ var Configuration = /** @class */ (function (_super) {
         var property = new Property({
             name: arg.name,
             required: false,
-            description: ''
+            description: '',
+            value: arg.value
         });
         property.setValue(arg.value);
         this.set(property.name, property);
@@ -135,7 +138,7 @@ var Configuration = /** @class */ (function (_super) {
     Configuration.prototype.addEntries = function (_a) {
         //check the input entries for duplicates
         var e_1, _b;
-        var _c = _a === void 0 ? {} : _a, _d = _c.entries, entries = _d === void 0 ? [] : _d, _e = _c.args, args = _e === void 0 ? [] : _e, _f = _c.overwrite, overwrite = _f === void 0 ? true : _f;
+        var _c = _a === void 0 ? {} : _a, _d = _c.entries, entries = _d === void 0 ? [] : _d, _e = _c.args, args = _e === void 0 ? [] : _e, _f = _c.overwrite, overwrite = _f === void 0 ? true : _f, _g = _c.fromArgs, fromArgs = _g === void 0 ? false : _g;
         var names = entries.map(function (entry) { return entry.name; });
         var duplicates = names.filter(function (name, index) { return names.indexOf(name) !== index; });
         if (duplicates.length > 0) {
@@ -148,13 +151,29 @@ var Configuration = /** @class */ (function (_super) {
                     || entry instanceof Parameter) {
                     this.addEntry(entry, args, overwrite);
                 }
-                else if (entry instanceof Argument) {
+                else if ((entry instanceof Argument
+                    || typeof entry === 'object')
+                    && fromArgs === true) {
                     this.addEntryFromArg(entry);
+                }
+                else if (Array.isArray(entry)) {
+                    this.addEntries({ entries: entry, args: args, overwrite: overwrite });
+                }
+                else if (typeof entry === 'object'
+                    && entry.name !== undefined
+                    && entry.value !== undefined) {
+                    this.addEntry(new Property({
+                        name: entry.name,
+                        value: entry.value,
+                        required: entry.required,
+                        description: entry.description,
+                        defaultValue: entry.defaultValue,
+                        optionalValues: entry.optionalValues
+                    }), args, overwrite);
                 }
                 else {
                     throw new Error("Invalid entry: ".concat(entry));
                 }
-                this.addEntry(entry, args, overwrite);
             }
         }
         catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -163,6 +182,9 @@ var Configuration = /** @class */ (function (_super) {
                 if (entries_1_1 && !entries_1_1.done && (_b = entries_1.return)) _b.call(entries_1);
             }
             finally { if (e_1) throw e_1.error; }
+        }
+        if (fromArgs === true) {
+            this.setArguments(args, true);
         }
     };
     Configuration.prototype.setArguments = function (args, setProperties) {

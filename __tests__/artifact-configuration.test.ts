@@ -96,4 +96,16 @@ describe('Configuration', () => {
         expect(config.size).toBe(4);
         expect(config.get('prop4')?.argument?.value).toBe('newValue');
     });
+
+    test('should create a new configuration from arguments', () => {
+        const args = [
+            { name: 'prop1', value: 'newValue' },
+            { name: 'prop2', value: 84 },
+            { name: 'prop3', value: false }
+        ];
+        const newConfig = new Configuration({args, useArgs: true});
+        expect(newConfig.get('prop1')?.getValue()).toBe('newValue');
+        expect(newConfig.get('prop2')?.getValue()).toBe(84);
+        expect(newConfig.get('prop3')?.getValue()).toBe(false);
+    });
 });

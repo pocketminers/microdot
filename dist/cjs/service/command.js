@@ -4,28 +4,34 @@ exports.defaultTaskRunner = exports.Command = void 0;
 const configuration_1 = require("../artifacts/configuration");
 const hashable_1 = require("../artifacts/hashable");
 const checks_1 = require("../utils/checks");
+/**
+ * Command result class.
+ * A class that contains the result of a command that has completed execution.
+ */
 class CommandResult {
+    jobId;
     command;
     args;
     output;
     metrics;
-    constructor({ command, args, output, metrics }) {
+    constructor({ jobId, command, args, output, metrics }) {
+        this.jobId = jobId;
         this.command = command;
         this.args = args;
         this.output = output;
         this.metrics = metrics;
     }
-    toJSON = () => {
+    toJSON() {
         return {
             command: this.command,
             args: this.args,
             output: this.output,
             metrics: this.metrics
         };
-    };
-    toString = () => {
+    }
+    toString() {
         return JSON.stringify(this, null, 2);
-    };
+    }
 }
 const defaultTaskRunner = async (instance, args) => {
     return await instance(args);
@@ -43,15 +49,15 @@ class Command extends hashable_1.Hashable {
         if (config !== undefined) {
             this.config = config;
             this.config.addEntries({ entries: [...properties, ...parameters], args });
-            this.config.setArguments(args);
+            this.config.setArguments(args, true);
         }
         else {
-            this.config = new configuration_1.Configuration(properties, parameters, args);
+            this.config = new configuration_1.Configuration({ properties, parameters, args });
         }
         this.taskRunner = taskRunner;
     }
-    setArguments(args) {
-        this.config.setArguments(args);
+    setArguments(args, fromArgs = false) {
+        this.config.setArguments(args, fromArgs);
     }
     getArguments() {
         return this.config.toArguments();
