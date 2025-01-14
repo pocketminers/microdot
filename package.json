@@ -1,6 +1,6 @@
 {
   "name": "@pocketminers/microdot",
-  "version": "0.0.1-test41",
+  "version": "0.0.1-test42",
   "description": "Decentralized Micro-services Architecture",
   "main": "dist/cjs/index.js",
   "types": "dist/esm/index.d.ts",
