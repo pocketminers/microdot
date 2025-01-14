@@ -11,7 +11,7 @@ describe('Configuration', () => {
             new Property<number>({name: 'prop2', defaultValue: 42, required: true, description: 'Property 2'}),
             new Property<boolean>({name: 'prop3', defaultValue: true, required: true, description: 'Property 3', value: true})
         ];
-        config = new Configuration(properties);
+        config = new Configuration({properties});
         // console.log(`config: ${ JSON.stringify(config) }`);
     });
 

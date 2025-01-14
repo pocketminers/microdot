@@ -7,7 +7,12 @@ describe('Command', () => {
     let config: Configuration;
 
     beforeEach(() => {
-        config = new Configuration([], [], []);
+        config = new Configuration({
+            properties: [],
+            parameters: [],
+            args: new Arguments(),
+            useArgs: true
+        });
         command = new Command({
             name: 'Test Command',
             description: 'A command for testing',
@@ -142,7 +147,12 @@ describe('Command', () => {
         const args = new Arguments([
             { name: 'test', value: 'value' }
         ]);
-        config = new Configuration([], [], args);
+        config = new Configuration({
+            properties: [],
+            parameters: [],
+            args,
+            useArgs: true
+        });
         command = new Command({
             name: 'Test Command',
             description: 'A command for testing',
@@ -150,5 +160,13 @@ describe('Command', () => {
         });
 
         expect(command.config).toBe(config);
+    });
+
+    test('should set arguments', () => {
+        const args = new Arguments([
+            { "test": "value" }
+        ]);
+        command.setArguments(args, true);
+        expect(command.getArguments()).toEqual(args);
     });
 });

@@ -14,17 +14,34 @@ class Configuration
     extends
         Map<Property['name'], Property<any>>
 {
+    public name: string = 'Configuration';
+    public description: string = 'A configuration of properties that can be set by arguments';
+
     /**
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
     public constructor(
-        properties: PropertyEntry<any>[] = [],
-        parameters: ParameterEntry<any>[] = [],
-        args: ArgumentEntry<any>[] = []
+        {
+            name = 'Configuration',
+            description = 'A configuration of properties that can be set by arguments',
+            properties = [],
+            parameters = [],
+            args = [],
+            useArgs = false
+        } : {
+            name?: string,
+            description?: string,
+            properties?: PropertyEntry<any>[],
+            parameters?: ParameterEntry<any>[],
+            args?: ArgumentEntry<any>[],
+            useArgs?: boolean
+        } = {}
     ) {
         super();
-        this.addEntries({entries: [...properties, ...parameters], args});
+        this.name = name;
+        this.description = description;
+        this.addEntries({entries: [...properties, ...parameters], args, fromArgs: useArgs});
     }
 
     /**
@@ -92,7 +109,8 @@ class Configuration
         const property = new Property({
             name: arg.name,
             required: false,
-            description: ''
+            description: '',
+            value: arg.value
         });
         property.setValue(arg.value);
         this.set(property.name, property);
@@ -108,11 +126,13 @@ class Configuration
     public addEntries({
         entries = [],
         args = [],
-        overwrite = true
+        overwrite = true,
+        fromArgs = false
     }:{
-        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[],
+        entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[] | any[],
         args?: ArgumentEntry<any>[],
-        overwrite?: boolean
+        overwrite?: boolean,
+        fromArgs?: boolean
     } = {}): void {
         //check the input entries for duplicates
         
@@ -131,13 +151,27 @@ class Configuration
             }
             else if (
                 entry instanceof Argument
+                && fromArgs === true
             ) {
                 this.addEntryFromArg(entry);
+            }
+            else if (
+                typeof entry === 'object'
+                && entry.name !== undefined
+                && entry.value !== undefined
+            ) {
+                this.addEntry(new Property({
+                    name: entry.name,
+                    value: entry.value,
+                    required: entry.required,
+                    description: entry.description,
+                    defaultValue: entry.defaultValue,
+                    optionalValues: entry.optionalValues
+                }), args, overwrite);
             }
             else {
                 throw new Error(`Invalid entry: ${entry}`);
             }
-            this.addEntry(entry, args, overwrite);
         }
     }
 

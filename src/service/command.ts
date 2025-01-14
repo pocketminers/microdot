@@ -45,7 +45,7 @@ class CommandResult<R, T>
         this.metrics = metrics;
     }
 
-    public toJSON = (): CommandResultEntry<R, T> => {
+    public toJSON(): {command: string, args: Arguments, output: R | Error | null, metrics: ExecutionMetrics} {
         return {
             command: this.command,
             args: this.args,
@@ -54,7 +54,7 @@ class CommandResult<R, T>
         }
     }
 
-    public toString = (): string => {
+    public toString(): string {
         return JSON.stringify(this, null, 2);
     }
 }
@@ -104,19 +104,17 @@ class Command
         if (config !== undefined) {
             this.config = config;
             this.config.addEntries({entries: [...properties, ...parameters], args});
-            this.config.setArguments(args);
+            this.config.setArguments(args, true);
         }
         else {
-            this.config = new Configuration(properties, parameters, args);
+            this.config = new Configuration({properties, parameters, args});
         }
 
         this.taskRunner = taskRunner;
-
-        
     }
 
-    public setArguments(args: ArgumentEntry<any>[]): void {
-        this.config.setArguments(args);
+    public setArguments(args: ArgumentEntry<any>[], fromArgs: boolean = false ): void {
+        this.config.setArguments(args, fromArgs);
     }
 
     public getArguments(): Arguments {
