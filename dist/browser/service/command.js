@@ -148,7 +148,7 @@ var Command = /** @class */ (function (_super) {
                 args_1[_i] = arguments[_i];
             }
             return __awaiter(_this, __spreadArray([], __read(args_1), false), void 0, function (_a) {
-                var startTime, endTime, duration, output, bytesReceived, bytesReturned, error_1, stringified;
+                var startTime, duration, output, bytesReceived, bytesReturned, error_1, stringified, endTime;
                 var _b = _a === void 0 ? {} : _a, instance = _b.instance, args = _b.args;
                 return __generator(this, function (_c) {
                     switch (_c.label) {

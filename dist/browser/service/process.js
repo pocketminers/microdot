@@ -76,7 +76,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 };
 import { Command } from './command';
 import { Configuration } from '../artifacts/configuration';
-import { ErrorMessage, Message } from './message';
+import { ErrorMessage, Message } from '../artifacts/message';
 import { Configurable } from '../artifacts/configurable';
 var ProcessConfig = new Configuration({
     name: 'ProcessConfig',
@@ -128,8 +128,8 @@ var ProcessStatuses;
 var Process = /** @class */ (function (_super) {
     __extends(Process, _super);
     function Process(_a) {
-        var _b = _a.name, name = _b === void 0 ? 'Process' : _b, _c = _a.description, description = _c === void 0 ? '' : _c, _d = _a.configuration, configuration = _d === void 0 ? ProcessConfig : _d, _e = _a.properties, properties = _e === void 0 ? [] : _e, _f = _a.parameters, parameters = _f === void 0 ? [] : _f, _g = _a.args, args = _g === void 0 ? [] : _g, instance = _a.instance, _h = _a.commands, commands = _h === void 0 ? [] : _h;
-        var _this = _super.call(this, { name: name, description: description, configuration: configuration, properties: properties, parameters: parameters, args: args }) || this;
+        var id = _a.id, _b = _a.name, name = _b === void 0 ? 'Process' : _b, _c = _a.description, description = _c === void 0 ? '' : _c, _d = _a.configuration, configuration = _d === void 0 ? ProcessConfig : _d, _e = _a.properties, properties = _e === void 0 ? [] : _e, _f = _a.parameters, parameters = _f === void 0 ? [] : _f, _g = _a.args, args = _g === void 0 ? [] : _g, instance = _a.instance, _h = _a.commands, commands = _h === void 0 ? [] : _h;
+        var _this = _super.call(this, { id: id, name: name, description: description, configuration: configuration, properties: properties, parameters: parameters, args: args }) || this;
         _this.status = 'New';
         _this.commands = [];
         _this.runCommand = function (command_1) {
@@ -257,12 +257,13 @@ var Process = /** @class */ (function (_super) {
             }
             return command;
         };
-        _this.name = name;
-        _this.description = description;
         _this.commands = commands;
         if (instance !== undefined) {
             _this.instance = instance;
             _this.status = 'Ready';
+        }
+        else {
+            _this.status = 'New';
         }
         return _this;
     }
@@ -376,5 +377,5 @@ var Process = /** @class */ (function (_super) {
     };
     return Process;
 }(Configurable));
-export { Process, ProcessStatuses };
+export { Process, ProcessConfig, ProcessStatuses };
 //# sourceMappingURL=process.js.map

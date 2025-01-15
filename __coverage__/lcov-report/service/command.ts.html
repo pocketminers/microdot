@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.13% </span>
+                <span class="strong">92.88% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>217/233</span>
+                <span class='fraction'>209/225</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.13% </span>
+                <span class="strong">92.88% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>217/233</span>
+                <span class='fraction'>209/225</span>
             </div>
         
             
@@ -287,15 +287,7 @@
 <a name='L222'></a><a href='#L222'>222</a>
 <a name='L223'></a><a href='#L223'>223</a>
 <a name='L224'></a><a href='#L224'>224</a>
-<a name='L225'></a><a href='#L225'>225</a>
-<a name='L226'></a><a href='#L226'>226</a>
-<a name='L227'></a><a href='#L227'>227</a>
-<a name='L228'></a><a href='#L228'>228</a>
-<a name='L229'></a><a href='#L229'>229</a>
-<a name='L230'></a><a href='#L230'>230</a>
-<a name='L231'></a><a href='#L231'>231</a>
-<a name='L232'></a><a href='#L232'>232</a>
-<a name='L233'></a><a href='#L233'>233</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L225'></a><a href='#L225'>225</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -333,13 +325,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
@@ -434,7 +419,6 @@
 <span class="cline-any cline-yes">8x</span>
 <span class="cline-any cline-yes">21x</span>
 <span class="cline-any cline-yes">21x</span>
-<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-yes">7x</span>
@@ -527,12 +511,8 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { Configuration } from '@artifacts/configuration';
-import { Arguments } from '@artifacts/arguments';
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { Arguments } from '@artifacts/arguments';
 import { ArgumentEntry, Argument } from '@artifacts/argument';
-import { ParameterEntry } from '@artifacts/parameter';
-import { Hashable } from '@artifacts/hashable';
-import { PropertyEntry } from '@artifacts/property';
 import { checkIsEmpty } from '@utils/checks';
 import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
 import { createIdentifier } from '@/utils';
@@ -568,10 +548,7 @@ interface CommandResultEntry&lt;R, T&gt;
  * Command result class.
  * A class that contains the result of a command that has completed execution.
  */
-class CommandResult&lt;R, T&gt;
-    implements
-        CommandResultEntry&lt;R, T&gt;
-{
+class CommandResult&lt;R, T&gt; {
     public jobId?: string;
     public command: Command&lt;R, T&gt;['name'];
     public args: Arguments;
@@ -615,7 +592,7 @@ const defaultTaskRunner: TaskRunner&lt;any, any&gt; = <span class="fstat-no" tit
 &nbsp;
 interface CommandEntry&lt;R, T&gt;
     extends
-        Partial&lt;Pick&lt;ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args'&gt;&gt;,
+        ConfigurableEntry,
         Record&lt;'taskRunner', TaskRunner&lt;R, T&gt;&gt; {}
 &nbsp;
 /**
@@ -676,7 +653,6 @@ class Command
            CommandResult&lt;R, T&gt;
     &gt; =&gt; {
         const startTime = Date.now();
-        let endTime: number;
         let duration: number = 0;
         let output: R | undefined;
         let bytesReceived: number = 0;
@@ -726,7 +702,7 @@ class Command
             }
         }
 &nbsp;
-        endTime = Date.now();
+        const endTime = Date.now();
         duration = endTime - startTime;
 &nbsp;
         return new CommandResult&lt;R, T&gt;({
@@ -766,7 +742,7 @@ export {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-01-15T04:26:29.891Z
+                at 2025-01-15T07:21:05.326Z
             </div>
         <script src="../prettify.js"></script>
         <script>

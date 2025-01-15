@@ -28,7 +28,7 @@
         "excludeReferences": true,
         "includeFolders": true,
         "compactFolders": false,
-        "includeGroups": false
+        "includeGroups": true
     },
     "readme": "./README.md",
     "out": "./docs",

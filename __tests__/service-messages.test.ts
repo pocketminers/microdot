@@ -1,4 +1,4 @@
-import { Message, MessageLevels, ErrorMessage, ErrorMessageLevels } from "../src/service/message";
+import { Message, MessageLevels, ErrorMessage, ErrorMessageLevels } from "../src/artifacts/message";
 import { Codes } from "../src/service/status";
 
 describe('Message', () => {

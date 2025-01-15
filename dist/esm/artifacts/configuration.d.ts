@@ -1,7 +1,9 @@
 import { ArgumentEntry } from "./argument";
-import { ParameterEntry } from "./parameter";
+import { Parameter, ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
 import { Arguments } from "./arguments";
+interface ConfigurationEntry extends Record<'name', string>, Partial<Record<'description', string>>, Partial<Record<'properties', PropertyEntry<any>[] | Property<any>[]>>, Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[] | []>>, Partial<Record<'args', ArgumentEntry<any>[] | Arguments | any[]>>, Partial<Record<'useArgs', boolean>> {
+}
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -15,14 +17,7 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor({ name, description, properties, parameters, args, useArgs }?: {
-        name?: string;
-        description?: string;
-        properties?: PropertyEntry<any>[];
-        parameters?: ParameterEntry<any>[];
-        args?: ArgumentEntry<any>[];
-        useArgs?: boolean;
-    });
+    constructor({ name, description, properties, parameters, args, useArgs }: ConfigurationEntry);
     /**
      * Add a property to the configuration from a property entry and an argument entry.
      * If the property is already in the configuration, then throw an error.
@@ -72,6 +67,8 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      */
     toRecord(): Record<string, any>;
     toArguments(): Arguments;
+    toParameters(): Parameter<any>[];
+    toProperties(): Property<any>[];
 }
-export { Configuration };
+export { type ConfigurationEntry, Configuration };
 //# sourceMappingURL=configuration.d.ts.map

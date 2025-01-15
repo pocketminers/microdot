@@ -1,6 +1,6 @@
 import { Command } from './command';
 import { Configuration } from '../artifacts/configuration';
-import { ErrorMessage, Message } from './message';
+import { ErrorMessage, Message } from '../artifacts/message';
 import { Configurable } from '../artifacts/configurable';
 const ProcessConfig = new Configuration({
     name: 'ProcessConfig',
@@ -53,14 +53,15 @@ class Process extends Configurable {
     instance;
     status = 'New';
     commands = [];
-    constructor({ name = 'Process', description = '', configuration = ProcessConfig, properties = [], parameters = [], args = [], instance, commands = [] }) {
-        super({ name, description, configuration, properties, parameters, args });
-        this.name = name;
-        this.description = description;
+    constructor({ id, name = 'Process', description = '', configuration = ProcessConfig, properties = [], parameters = [], args = [], instance, commands = [] }) {
+        super({ id, name, description, configuration, properties, parameters, args });
         this.commands = commands;
         if (instance !== undefined) {
             this.instance = instance;
             this.status = 'Ready';
+        }
+        else {
+            this.status = 'New';
         }
     }
     async initialize() {
@@ -246,5 +247,5 @@ class Process extends Configurable {
         return command;
     };
 }
-export { Process, ProcessStatuses };
+export { Process, ProcessConfig, ProcessStatuses };
 //# sourceMappingURL=process.js.map

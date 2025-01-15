@@ -17,7 +17,7 @@ interface CommandResultEntry<R, T> extends Partial<Record<'jobId', string>>, Rec
  * Command result class.
  * A class that contains the result of a command that has completed execution.
  */
-declare class CommandResult<R, T> implements CommandResultEntry<R, T> {
+declare class CommandResult<R, T> {
     jobId?: string;
     command: Command<R, T>['name'];
     args: Arguments;
@@ -34,7 +34,7 @@ declare class CommandResult<R, T> implements CommandResultEntry<R, T> {
 }
 type TaskRunner<R = any, T = any> = (instance: T | undefined, args?: Record<string, any>) => Promise<R>;
 declare const defaultTaskRunner: TaskRunner<any, any>;
-interface CommandEntry<R, T> extends Partial<Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args'>>, Record<'taskRunner', TaskRunner<R, T>> {
+interface CommandEntry<R, T> extends ConfigurableEntry, Record<'taskRunner', TaskRunner<R, T>> {
 }
 /**
  * The Command class is a configurable class that can be executed.

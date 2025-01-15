@@ -27,6 +27,7 @@ class Historian<T>
 
     constructor(config: Configuration = HistorianConfig) {
         super({
+            id: 'historian',
             name: 'Historian',
             description: 'A historian that keeps a history of objects',
             configuration: config
@@ -38,7 +39,7 @@ class Historian<T>
     }
 
     private checkIfHistoryLimitIsReached(): boolean {
-        return this.history.length >= this.config.getValue('historyLimit');
+        return this.history.length >= this.config.getValue<number>('historyLimit');
     }
 
     private checkIfObjectIsInHistory(object: T): boolean {

@@ -19,6 +19,7 @@ __exportStar(require("./arguments"), exports);
 __exportStar(require("./configurable"), exports);
 __exportStar(require("./configuration"), exports);
 __exportStar(require("./hashable"), exports);
+__exportStar(require("./message"), exports);
 __exportStar(require("./parameter"), exports);
 __exportStar(require("./property"), exports);
 //# sourceMappingURL=index.js.map

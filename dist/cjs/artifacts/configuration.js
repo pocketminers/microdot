@@ -6,6 +6,7 @@ const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
 const property_1 = require("./property");
 const arguments_1 = require("./arguments");
+;
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -19,7 +20,7 @@ class Configuration extends Map {
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor({ name = 'Configuration', description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false } = {}) {
+    constructor({ name, description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false }) {
         super();
         this.name = name;
         this.description = description;
@@ -212,6 +213,26 @@ class Configuration extends Map {
             }));
         }
         return args;
+    }
+    toParameters() {
+        const parameters = [];
+        for (const [name, property] of this) {
+            parameters.push(new parameter_1.Parameter({
+                name: property.name,
+                description: property.description,
+                required: property.required,
+                defaultValue: property.defaultValue,
+                optionalValues: property.optionalValues,
+            }));
+        }
+        return parameters;
+    }
+    toProperties() {
+        const properties = [];
+        for (const [name, property] of this) {
+            properties.push(property);
+        }
+        return properties;
     }
 }
 exports.Configuration = Configuration;

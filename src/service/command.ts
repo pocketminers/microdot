@@ -1,9 +1,5 @@
-import { Configuration } from '@artifacts/configuration';
 import { Arguments } from '@artifacts/arguments';
 import { ArgumentEntry, Argument } from '@artifacts/argument';
-import { ParameterEntry } from '@artifacts/parameter';
-import { Hashable } from '@artifacts/hashable';
-import { PropertyEntry } from '@artifacts/property';
 import { checkIsEmpty } from '@utils/checks';
 import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
 import { createIdentifier } from '@/utils';
@@ -39,10 +35,7 @@ interface CommandResultEntry<R, T>
  * Command result class.
  * A class that contains the result of a command that has completed execution.
  */
-class CommandResult<R, T>
-    implements
-        CommandResultEntry<R, T>
-{
+class CommandResult<R, T> {
     public jobId?: string;
     public command: Command<R, T>['name'];
     public args: Arguments;
@@ -86,7 +79,7 @@ const defaultTaskRunner: TaskRunner<any, any> = async (instance, args) => {
 
 interface CommandEntry<R, T>
     extends
-        Partial<Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args'>>,
+        ConfigurableEntry,
         Record<'taskRunner', TaskRunner<R, T>> {}
 
 /**
@@ -147,7 +140,6 @@ class Command
            CommandResult<R, T>
     > => {
         const startTime = Date.now();
-        let endTime: number;
         let duration: number = 0;
         let output: R | undefined;
         let bytesReceived: number = 0;
@@ -197,7 +189,7 @@ class Command
             }
         }
 
-        endTime = Date.now();
+        const endTime = Date.now();
         duration = endTime - startTime;
 
         return new CommandResult<R, T>({

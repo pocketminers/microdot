@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.93% </span>
+                <span class="strong">84.84% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>282/332</span>
+                <span class='fraction'>280/330</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.93% </span>
+                <span class="strong">84.84% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>282/332</span>
+                <span class='fraction'>280/330</span>
             </div>
         
             
@@ -392,9 +392,7 @@
 <a name='L327'></a><a href='#L327'>327</a>
 <a name='L328'></a><a href='#L328'>328</a>
 <a name='L329'></a><a href='#L329'>329</a>
-<a name='L330'></a><a href='#L330'>330</a>
-<a name='L331'></a><a href='#L331'>331</a>
-<a name='L332'></a><a href='#L332'>332</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L330'></a><a href='#L330'>330</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -421,35 +419,33 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2069x</span>
-<span class="cline-any cline-yes">2069x</span>
-<span class="cline-any cline-yes">2073x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2048x</span>
+<span class="cline-any cline-yes">2048x</span>
+<span class="cline-any cline-yes">2052x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2073x</span>
+<span class="cline-any cline-yes">2052x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-yes">2073x</span>
+<span class="cline-any cline-yes">2052x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2073x</span>
+<span class="cline-any cline-yes">2052x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
-<span class="cline-any cline-yes">2073x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
+<span class="cline-any cline-yes">2052x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -749,8 +745,6 @@ type IdentifierType = keyof typeof IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 const createIdentifier = (
@@ -782,7 +776,7 @@ const createIdentifier = (
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
 };
 &nbsp;
-class IdentifierFactory
+class IdentifierStore
     extends Map&lt;number, Identifier&gt;
 {
     public constructor(
@@ -1055,7 +1049,7 @@ export {
     createIdentifier,
     type IdentifierType,
     IdentifierTypes,
-    IdentifierFactory
+    IdentifierStore
 };</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -1063,7 +1057,7 @@ export {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-01-15T04:26:29.891Z
+                at 2025-01-15T07:21:05.326Z
             </div>
         <script src="../prettify.js"></script>
         <script>

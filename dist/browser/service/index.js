@@ -49,6 +49,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
+    }
+    return to.concat(ar || Array.prototype.slice.call(from));
+};
 var __values = (this && this.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
@@ -60,10 +85,13 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-import { ErrorMessage, Message } from './message';
+import { ErrorMessage, Message } from '../artifacts/message';
 import { Configuration } from '../artifacts/configuration';
 import { Command } from './command';
 import { Configurable } from '../artifacts/configurable';
+import { HistorianConfig } from './historian';
+import { MessengerConfig } from './messenger';
+import { JobQueueConfig } from './queue';
 /**
  * ServiceTypes
  * @summary
@@ -76,21 +104,10 @@ var ServiceTypes;
     ServiceTypes["Internal"] = "Internal";
     ServiceTypes["External"] = "External";
 })(ServiceTypes || (ServiceTypes = {}));
-/**
- * ServiceConfig
- * @summary
- * Configuration for a Service
- */
 var ServiceConfig = new Configuration({
-    parameters: [
-        { name: 'keepHistory', required: true, description: 'Keep history of bodys', defaultValue: true },
-        { name: 'historyLimit', required: true, description: 'Limit of bodys to keep', defaultValue: 10 },
-        { name: 'queueLimit', required: true, description: 'Limit of commands to run in parallel', defaultValue: 100 },
-        { name: 'queueInterval', required: true, description: 'Interval to run commands in parallel', defaultValue: 1000 },
-        { name: 'queueInSeries', required: true, description: 'Run commands in series', defaultValue: false },
-        { name: 'startQueue', required: true, description: 'Start the queue', defaultValue: false },
-        { name: 'messanger', required: true, description: 'Messanger to use', defaultValue: 'console' }
-    ]
+    name: 'ServiceConfiguration',
+    description: 'Service configuration',
+    parameters: __spreadArray(__spreadArray(__spreadArray([], __read(HistorianConfig.toParameters()), false), __read(MessengerConfig.toParameters()), false), __read(JobQueueConfig.toParameters()), false)
 });
 /**
  * Service Class
@@ -100,8 +117,16 @@ var ServiceConfig = new Configuration({
 var Service = /** @class */ (function (_super) {
     __extends(Service, _super);
     function Service(_a) {
-        var name = _a.name, description = _a.description, type = _a.type, parameters = _a.parameters, args = _a.args, _b = _a.processes, processes = _b === void 0 ? new Map() : _b, _c = _a.commands, commands = _c === void 0 ? [] : _c;
-        var _this = _super.call(this, { name: name, description: description, parameters: parameters, args: args }) || this;
+        var id = _a.id, name = _a.name, _b = _a.description, description = _b === void 0 ? '' : _b, _c = _a.type, type = _c === void 0 ? ServiceTypes.Internal : _c, _d = _a.configuration, configuration = _d === void 0 ? ServiceConfig : _d, properties = _a.properties, parameters = _a.parameters, args = _a.args, _e = _a.processes, processes = _e === void 0 ? new Map() : _e, _f = _a.commands, commands = _f === void 0 ? [] : _f;
+        var _this = _super.call(this, {
+            id: id,
+            name: name,
+            description: description,
+            configuration: configuration,
+            properties: properties,
+            parameters: parameters,
+            args: args
+        }) || this;
         _this.queue = new Array();
         _this.queueStatus = 'Stopped';
         _this.type = type;
@@ -495,8 +520,10 @@ var Service = /** @class */ (function (_super) {
 }(Configurable));
 export { ServiceTypes, ServiceConfig, Service, };
 export * from "./command";
+export * from "./historian";
 export * from "./job";
-export * from "./message";
+export * from "./messenger";
 export * from "./process";
+export * from "./queue";
 export * from "./status";
 //# sourceMappingURL=index.js.map

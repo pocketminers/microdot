@@ -1,6 +1,6 @@
 import { Property } from "../src/artifacts/property";
 import { Argument } from "../src/artifacts/argument";
-import { Parameter } from "../src/artifacts/parameter";
+
 
 describe('Property', () => {
     let property: Property<string>;

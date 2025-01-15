@@ -19,8 +19,6 @@ interface ArgumentEntry<T>
 class Argument<T>
     extends
         Hashable
-    implements
-        ArgumentEntry<T>
 {
     /**
      * Argument Name

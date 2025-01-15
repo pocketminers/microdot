@@ -22,8 +22,6 @@ interface ParameterEntry<T>
 class Parameter<T>
     extends
         Hashable
-    implements
-        ParameterEntry<T>
 {
     public readonly name: string;
     public readonly required: boolean;

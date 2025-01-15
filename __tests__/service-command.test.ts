@@ -1,4 +1,4 @@
-import { Command, TaskRunner, defaultTaskRunner } from '../src/service/command';
+import { Command, TaskRunner } from '../src/service/command';
 import { Configuration } from '../src/artifacts/configuration';
 import { Arguments } from '../src/artifacts/arguments';
 
@@ -12,12 +12,14 @@ describe('Command', () => {
     beforeEach(() => {
         mockTaskRunner = jest.fn().mockResolvedValue('result');
         config = new Configuration({
+            name: 'test',
             properties: [],
             parameters: [],
             args: new Arguments(),
             useArgs: true
         });
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             configuration: config,
@@ -35,6 +37,7 @@ describe('Command', () => {
     it('should execute the task runner', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -49,6 +52,7 @@ describe('Command', () => {
     it('should run the command and return CommandResult', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -65,6 +69,7 @@ describe('Command', () => {
     it('should handle errors during execution', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockRejectedValue(new Error('execution error'));
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -80,6 +85,7 @@ describe('Command', () => {
     it('should calculate bytesReceived and bytesReturned correctly', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -95,6 +101,7 @@ describe('Command', () => {
     it('should handle incorrect args by throwing an error', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -110,6 +117,7 @@ describe('Command', () => {
     it('should handle undefined result', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue(undefined);
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -124,6 +132,7 @@ describe('Command', () => {
     it('should handle null result', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue(null);
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -138,6 +147,7 @@ describe('Command', () => {
     it('should handle undefined args', async () => {
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue({ data: 'result' });
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
@@ -154,12 +164,14 @@ describe('Command', () => {
         ]);
         const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         config = new Configuration({
+            name: 'test',
             properties: [],
             parameters: [],
             args,
             useArgs: true
         });
         command = new Command({
+            id: 'test',
             name: 'Test Command',
             description: 'A command for testing',
             configuration: config,

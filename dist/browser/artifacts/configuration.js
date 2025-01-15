@@ -54,6 +54,7 @@ import { Argument } from "./argument";
 import { Parameter } from "./parameter";
 import { Property } from "./property";
 import { Arguments } from "./arguments";
+;
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -67,7 +68,7 @@ var Configuration = /** @class */ (function (_super) {
      * Both, properties and arguments can be passed to the constructor.
      */
     function Configuration(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.name, name = _c === void 0 ? 'Configuration' : _c, _d = _b.description, description = _d === void 0 ? 'A configuration of properties that can be set by arguments' : _d, _e = _b.properties, properties = _e === void 0 ? [] : _e, _f = _b.parameters, parameters = _f === void 0 ? [] : _f, _g = _b.args, args = _g === void 0 ? [] : _g, _h = _b.useArgs, useArgs = _h === void 0 ? false : _h;
+        var name = _a.name, _b = _a.description, description = _b === void 0 ? 'A configuration of properties that can be set by arguments' : _b, _c = _a.properties, properties = _c === void 0 ? [] : _c, _d = _a.parameters, parameters = _d === void 0 ? [] : _d, _e = _a.args, args = _e === void 0 ? [] : _e, _f = _a.useArgs, useArgs = _f === void 0 ? false : _f;
         var _this = _super.call(this) || this;
         _this.name = 'Configuration';
         _this.description = 'A configuration of properties that can be set by arguments';
@@ -349,6 +350,48 @@ var Configuration = /** @class */ (function (_super) {
             finally { if (e_7) throw e_7.error; }
         }
         return args;
+    };
+    Configuration.prototype.toParameters = function () {
+        var e_8, _a;
+        var parameters = [];
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_7 = _d[0], property = _d[1];
+                parameters.push(new Parameter({
+                    name: property.name,
+                    description: property.description,
+                    required: property.required,
+                    defaultValue: property.defaultValue,
+                    optionalValues: property.optionalValues,
+                }));
+            }
+        }
+        catch (e_8_1) { e_8 = { error: e_8_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_8) throw e_8.error; }
+        }
+        return parameters;
+    };
+    Configuration.prototype.toProperties = function () {
+        var e_9, _a;
+        var properties = [];
+        try {
+            for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), name_8 = _d[0], property = _d[1];
+                properties.push(property);
+            }
+        }
+        catch (e_9_1) { e_9 = { error: e_9_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_9) throw e_9.error; }
+        }
+        return properties;
     };
     return Configuration;
 }(Map));

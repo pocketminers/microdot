@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IdentifierFactory = exports.IdentifierTypes = exports.createIdentifier = void 0;
+exports.IdentifierStore = exports.IdentifierTypes = exports.createIdentifier = void 0;
 const uuid_1 = require("uuid");
 const checks_1 = require("./checks");
 var IdentifierTypes;
@@ -14,8 +14,6 @@ var IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
@@ -40,7 +38,7 @@ const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
 };
 exports.createIdentifier = createIdentifier;
-class IdentifierFactory extends Map {
+class IdentifierStore extends Map {
     constructor(identifiers = []) {
         super();
         if (typeof identifiers === "object") {
@@ -239,5 +237,5 @@ class IdentifierFactory extends Map {
         return id;
     }
 }
-exports.IdentifierFactory = IdentifierFactory;
+exports.IdentifierStore = IdentifierStore;
 //# sourceMappingURL=identifier.js.map

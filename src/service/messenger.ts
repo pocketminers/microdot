@@ -1,33 +1,43 @@
 import { Configurable, Configuration, Parameter } from '@/artifacts';
-import { Message, ErrorMessage, MessageEntry, MessageLevel, MessageLevels, ErrorMessageEntry } from './message';
-import { IdentifierFactory } from '@/utils';
+import { Message, ErrorMessage, MessageEntry, MessageLevel, MessageLevels, ErrorMessageEntry } from '@artifacts/message';
+import { IdentifierStore } from '@/utils';
 import { Historian } from './historian';
 import { Codes } from './status';
 
 type Messages = Message | ErrorMessage;
 
-interface MessangerEntry<L,T> 
+interface MessengerEntry<L,T> 
     extends
-        Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
-        Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
+        Partial<Record<'id', string>>,
+        ErrorMessageEntry<L,T> {};
+        // Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
+        // Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
 
-const MessangerConfig: Configuration = new Configuration({
+const MessengerConfig: Configuration = new Configuration({
     name: 'MessangerConfiguration',
     description: 'Messanger configuration',
     parameters: [
-        new Parameter<IdentifierFactory>({
-            name: "identifierFactory",
+        new Parameter<string>({
+            name: "id",
+            description: "Messanger Identifier",
+            required: true,
+        }),
+        new Parameter<IdentifierStore>({
+            name: "IdentifierStore",
             description: "Identifier Factory",
-            defaultValue: new IdentifierFactory()
+            required: true,
+            defaultValue: new IdentifierStore()
         }),
         new Parameter<boolean>({
             name: "keepHistory",
             description: "Keep History of Messages",
+            required: true,
             defaultValue: true
         }),
         new Parameter<number>({
             name: "historyLimit",
             description: "History Limit",
+            required: false,
             defaultValue: 100
         }),
         new Parameter<MessageLevel>({
@@ -39,27 +49,28 @@ const MessangerConfig: Configuration = new Configuration({
 });
 
 
-class Messanger
+class Messenger
     extends
         Configurable
 {
 
     public readonly history: Historian<Messages>;
-    private readonly identifierFactory: IdentifierFactory;
+    private readonly identifierStore: IdentifierStore;
 
-    constructor(config: Configuration = MessangerConfig) {
+    constructor(config: Configuration = MessengerConfig) {
         super({
+            id: config.getValue('id'),
             name: 'Messanger',
             description: 'A message service',
             configuration: config
         });
         
-        this.identifierFactory = this.config.getValue('identifierFactory');
+        this.identifierStore = this.config.getValue('IdentifierStore');
         this.history = new Historian<Messages>(config);
     }
 
     public writeMessage = <L extends MessageLevel = MessageLevel, T = undefined>({
-        id = this.identifierFactory.create('UUID', {prefix: "message"}),
+        id = this.identifierStore.create('UUID', {prefix: "message"}),
         body,
         level = this.config.getValue<MessageLevel>('defaultLevel') as L,
         action,
@@ -68,7 +79,7 @@ class Messanger
         print = true,
         stack = undefined,
         throwError = false
-    } : MessangerEntry<L, T >): Messages => {
+    } : MessengerEntry<L, T >): Messages => {
         let message: Messages;
         if (
             level === 'Error'
@@ -106,6 +117,8 @@ class Messanger
 
 
 export {
-    MessangerConfig,
-    Messanger
+    type Messages,
+    type MessengerEntry,
+    MessengerConfig,
+    Messenger
 };

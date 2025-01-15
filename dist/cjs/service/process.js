@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProcessStatuses = exports.Process = void 0;
+exports.ProcessStatuses = exports.ProcessConfig = exports.Process = void 0;
 const command_1 = require("./command");
 const configuration_1 = require("../artifacts/configuration");
-const message_1 = require("./message");
+const message_1 = require("../artifacts/message");
 const configurable_1 = require("../artifacts/configurable");
 const ProcessConfig = new configuration_1.Configuration({
     name: 'ProcessConfig',
@@ -38,6 +38,7 @@ const ProcessConfig = new configuration_1.Configuration({
     ],
     args: []
 });
+exports.ProcessConfig = ProcessConfig;
 var ProcessStatuses;
 (function (ProcessStatuses) {
     ProcessStatuses["New"] = "New";
@@ -56,14 +57,15 @@ class Process extends configurable_1.Configurable {
     instance;
     status = 'New';
     commands = [];
-    constructor({ name = 'Process', description = '', configuration = ProcessConfig, properties = [], parameters = [], args = [], instance, commands = [] }) {
-        super({ name, description, configuration, properties, parameters, args });
-        this.name = name;
-        this.description = description;
+    constructor({ id, name = 'Process', description = '', configuration = ProcessConfig, properties = [], parameters = [], args = [], instance, commands = [] }) {
+        super({ id, name, description, configuration, properties, parameters, args });
         this.commands = commands;
         if (instance !== undefined) {
             this.instance = instance;
             this.status = 'Ready';
+        }
+        else {
+            this.status = 'New';
         }
     }
     async initialize() {

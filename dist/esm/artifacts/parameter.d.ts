@@ -9,7 +9,7 @@ interface ParameterEntry<T> extends Record<"name", string>, Partial<Record<"requ
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method
  */
-declare class Parameter<T> extends Hashable implements ParameterEntry<T> {
+declare class Parameter<T> extends Hashable {
     readonly name: string;
     readonly required: boolean;
     readonly description: string;

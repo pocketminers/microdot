@@ -1,23 +1,15 @@
-import { createIdentifier } from "@/utils";
+import { Identifier } from "@/utils";
 import { ArgumentEntry } from "./argument";
 import { Arguments } from "./arguments";
-import { Configuration } from "./configuration";
+import { Configuration, ConfigurationEntry } from "./configuration";
 import { Hashable } from "./hashable";
-import { Parameter, ParameterEntry } from "./parameter";
-import { PropertyEntry } from "./property";
-
 
 
 interface ConfigurableEntry
     extends
-        Partial<Record<'id', string>>,
-        Partial<Record<'name', string>>,
-        Partial<Record<'description', string>>,
+        Record<'id', Identifier>,
         Partial<Record<'configuration', Configuration>>,
-        Partial<Record<'properties', PropertyEntry<any>[] | PropertyEntry<any>[]>>,
-        Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[]>>,
-        Partial<Record<'args', ArgumentEntry<any>[] | Arguments>>,
-        Partial<Record<'useArgs', boolean>> {}
+        ConfigurationEntry {}
 
 /**
  * Configurable is a class that can be configured by arguments.
@@ -35,7 +27,7 @@ class Configurable
 
     constructor(
         {
-            id = createIdentifier(),
+            id,
             name = 'Configurable',
             description = 'A configurable object that can be set by arguments',
             configuration = undefined,
@@ -56,7 +48,7 @@ class Configurable
             this.config.setArguments(args, true);
         }
         else {
-            this.config = new Configuration({properties, parameters, args});
+            this.config = new Configuration({name, description,  properties, parameters, args});
         }
     }
 

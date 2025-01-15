@@ -1,20 +1,12 @@
-import { ArgumentEntry, Hashable, ParameterEntry, PropertyEntry } from "../artifacts";
-import { Identifier } from "../utils";
+import { Configurable, ConfigurableEntry } from "../artifacts";
 import { Command, CommandResult } from "./command";
-declare class Job extends Hashable {
-    id: Identifier;
+interface JobEntry extends ConfigurableEntry, Record<'commands', Map<number, Command<any, any>>> {
+}
+declare class Job extends Configurable {
     status: string;
     readonly commands: Map<number, Command<any, any>>;
     results: Map<number, CommandResult<any, any>>;
-    constructor({ id, name, description, properties, parameters, args, useArgs }: {
-        id: Identifier;
-        name?: string;
-        description?: string;
-        properties?: PropertyEntry<any>[];
-        parameters?: ParameterEntry<any>[];
-        args?: ArgumentEntry<any>[];
-        useArgs?: boolean;
-    });
+    constructor({ id, name, description, configuration, properties, parameters, args, useArgs }: JobEntry);
 }
-export { Job };
+export { type JobEntry, Job };
 //# sourceMappingURL=job.d.ts.map

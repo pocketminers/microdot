@@ -4,6 +4,15 @@ import { Parameter, ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
 import { Arguments } from "./arguments";
 
+interface ConfigurationEntry
+    extends
+        Record<'name', string>,
+        Partial<Record<'description', string>>,
+        Partial<Record<'properties', PropertyEntry<any>[] | Property<any>[]>>,
+        Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[] | []>>,
+        Partial<Record<'args', ArgumentEntry<any>[] | Arguments | any[]>>,
+        Partial<Record<'useArgs', boolean>> {};
+
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -21,22 +30,14 @@ class Configuration
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    public constructor(
-        {
-            name = 'Configuration',
+    public constructor({
+            name,
             description = 'A configuration of properties that can be set by arguments',
             properties = [],
             parameters = [],
             args = [],
             useArgs = false
-        } : {
-            name?: string,
-            description?: string,
-            properties?: PropertyEntry<any>[],
-            parameters?: ParameterEntry<any>[],
-            args?: ArgumentEntry<any>[],
-            useArgs?: boolean
-        } = {}
+        }: ConfigurationEntry
     ) {
         super();
         this.name = name;
@@ -292,8 +293,31 @@ class Configuration
         return args
     }
 
+    public toParameters(): Parameter<any>[] {
+        const parameters: Parameter<any>[] = [];
+        for (const [name, property] of this) {
+            parameters.push(new Parameter({
+                name: property.name,
+                description: property.description,
+                required: property.required,
+                defaultValue: property.defaultValue,
+                optionalValues: property.optionalValues,
+            }));
+        }
+        return parameters;
+    }
+
+    public toProperties(): Property<any>[] {
+        const properties: Property<any>[] = [];
+        for (const [name, property] of this) {
+            properties.push(property);
+        }
+        return properties;
+    }
+
 }
 
 export {
+    type ConfigurationEntry,
     Configuration
 };

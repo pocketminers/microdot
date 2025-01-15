@@ -11,8 +11,6 @@ var IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
@@ -36,7 +34,7 @@ const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
     }
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
 };
-class IdentifierFactory extends Map {
+class IdentifierStore extends Map {
     constructor(identifiers = []) {
         super();
         if (typeof identifiers === "object") {
@@ -235,5 +233,5 @@ class IdentifierFactory extends Map {
         return id;
     }
 }
-export { createIdentifier, IdentifierTypes, IdentifierFactory };
+export { createIdentifier, IdentifierTypes, IdentifierStore };
 //# sourceMappingURL=identifier.js.map

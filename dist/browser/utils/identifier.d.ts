@@ -16,15 +16,13 @@ type IdentifierType = keyof typeof IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 declare const createIdentifier: (type?: IdentifierType, { prefix, suffix }?: {
     prefix?: string;
     suffix?: string;
 }) => Identifier;
-declare class IdentifierFactory extends Map<number, Identifier> {
+declare class IdentifierStore extends Map<number, Identifier> {
     constructor(identifiers?: Identifier[] | Map<number, Identifier>);
     private checkIfIndexExists;
     private checkIfIdentifierExists;
@@ -51,5 +49,5 @@ declare class IdentifierFactory extends Map<number, Identifier> {
         suffix?: string;
     }): Identifier;
 }
-export { type Identifier, createIdentifier, type IdentifierType, IdentifierTypes, IdentifierFactory };
+export { type Identifier, createIdentifier, type IdentifierType, IdentifierTypes, IdentifierStore };
 //# sourceMappingURL=identifier.d.ts.map

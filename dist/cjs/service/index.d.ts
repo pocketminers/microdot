@@ -1,10 +1,9 @@
-import { ErrorMessage, Message } from './message';
+import { ErrorMessage, Message } from '../artifacts/message';
 import { Configuration } from '../artifacts/configuration';
 import { ArgumentEntry } from '../artifacts/argument';
-import { ParameterEntry } from '../artifacts/parameter';
 import { Command, QueuedCommand } from './command';
 import { Process } from './process';
-import { Configurable } from '../artifacts/configurable';
+import { Configurable, ConfigurableEntry } from '../artifacts/configurable';
 /**
  * ServiceTypes
  * @summary
@@ -24,23 +23,20 @@ declare enum ServiceTypes {
  */
 type ServiceType = keyof typeof ServiceTypes;
 /**
- * ServiceConfig
- * @summary
- * Configuration for a Service
- */
-declare const ServiceConfig: Configuration;
-/**
  * ServiceResponse
  * @summary
  * Describes the response from a service
  */
 type ServiceResponse = Message | ErrorMessage;
+interface ServiceEntry<T = ServiceType, U = any> extends ConfigurableEntry, Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args' | 'useArgs'>, Record<'type', T>, Partial<Record<'processes', Map<string, Process<U>> | undefined>>, Partial<Record<'commands', Array<Command<any, any>> | undefined>> {
+}
+declare const ServiceConfig: Configuration;
 /**
  * Service Class
  * @summary
  * A service is a collection of processes and commands that can be run
  */
-declare class Service<T = ServiceType, // Type - enum: ['Internal', 'External']
+declare class Service<T extends ServiceType = ServiceTypes.Internal, /// Type - enum: ['Internal', 'External']
 U = any> extends Configurable {
     readonly type: T;
     private processes;
@@ -48,15 +44,7 @@ U = any> extends Configurable {
     queue: Array<QueuedCommand>;
     queueStatus: 'Started' | 'Stopped';
     history: Array<ServiceResponse>;
-    constructor({ name, description, type, parameters, args, processes, commands }: {
-        name?: string;
-        description?: string;
-        type: T;
-        parameters: ParameterEntry<any>[];
-        args: ArgumentEntry<any>[];
-        processes?: Map<string, Process<U>>;
-        commands?: Array<Command<any, any>>;
-    });
+    constructor({ id, name, description, type, configuration, properties, parameters, args, processes, commands }: ServiceEntry<T, U>);
     initialize(args?: Record<string, any>): Promise<void>;
     getProcesses(): Map<Process<U>['name'], Process<U>>;
     getProcess(name: Process<U>['name']): Process<U> | undefined;
@@ -80,10 +68,12 @@ U = any> extends Configurable {
     }): Promise<void>;
     start(): Promise<void>;
 }
-export { ServiceTypes, type ServiceType, type ServiceResponse, ServiceConfig, Service, };
+export { ServiceTypes, type ServiceEntry, type ServiceType, type ServiceResponse, ServiceConfig, Service, };
 export * from "./command";
+export * from "./historian";
 export * from "./job";
-export * from "./message";
+export * from "./messenger";
 export * from "./process";
+export * from "./queue";
 export * from "./status";
 //# sourceMappingURL=index.d.ts.map

@@ -22,8 +22,6 @@ type IdentifierType = keyof typeof IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 const createIdentifier = (
@@ -55,7 +53,7 @@ const createIdentifier = (
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
 };
 
-class IdentifierFactory
+class IdentifierStore
     extends Map<number, Identifier>
 {
     public constructor(
@@ -328,5 +326,5 @@ export {
     createIdentifier,
     type IdentifierType,
     IdentifierTypes,
-    IdentifierFactory
+    IdentifierStore
 };

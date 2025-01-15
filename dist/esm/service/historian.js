@@ -19,6 +19,7 @@ class Historian extends Configurable {
     history = new Array();
     constructor(config = HistorianConfig) {
         super({
+            id: 'historian',
             name: 'Historian',
             description: 'A historian that keeps a history of objects',
             configuration: config

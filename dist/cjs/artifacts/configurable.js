@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Configurable = void 0;
-const utils_1 = require("../utils");
 const configuration_1 = require("./configuration");
 const hashable_1 = require("./hashable");
 /**
@@ -15,7 +14,7 @@ class Configurable extends hashable_1.Hashable {
     description;
     config;
     createdAt = new Date();
-    constructor({ id = (0, utils_1.createIdentifier)(), name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
+    constructor({ id, name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
         super({ id, name, description, configuration, properties, parameters, args, useArgs }, id);
         this.name = name;
         this.description = description;
@@ -25,7 +24,7 @@ class Configurable extends hashable_1.Hashable {
             this.config.setArguments(args, true);
         }
         else {
-            this.config = new configuration_1.Configuration({ properties, parameters, args });
+            this.config = new configuration_1.Configuration({ name, description, properties, parameters, args });
         }
     }
     setArguments(args, asProperties = false) {

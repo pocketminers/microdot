@@ -1,4 +1,4 @@
-import { IdentifierFactory, createIdentifier, IdentifierTypes, Identifier } from "../src/utils/identifier";
+import { IdentifierStore, createIdentifier, IdentifierTypes, Identifier } from "../src/utils/identifier";
 
 describe("createIdentifier", () => {
     it("should create a UUID identifier by default", () => {
@@ -77,11 +77,11 @@ describe("createIdentifier", () => {
 });
 
 
-describe("IdentifierFactory", () => {
-    let factory: IdentifierFactory;
+describe("IdentifierStore", () => {
+    let factory: IdentifierStore;
 
     beforeEach(() => {
-        factory = new IdentifierFactory();
+        factory = new IdentifierStore();
     });
 
     afterEach(() => {

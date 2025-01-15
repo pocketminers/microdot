@@ -35,6 +35,7 @@ var Historian = /** @class */ (function (_super) {
     function Historian(config) {
         if (config === void 0) { config = HistorianConfig; }
         var _this = _super.call(this, {
+            id: 'historian',
             name: 'Historian',
             description: 'A historian that keeps a history of objects',
             configuration: config

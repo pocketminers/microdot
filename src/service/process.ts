@@ -1,10 +1,8 @@
-import { Command, CommandResult, TaskRunner } from '@service/command';
+import { Command, CommandResult } from '@service/command';
 import { Configuration } from '@artifacts/configuration';
 import { ArgumentEntry } from '@artifacts/argument';
-import { ParameterEntry } from '@artifacts/parameter';
-import { ErrorMessage, Message } from '@service/message';
-import { PropertyEntry } from '@/artifacts';
-import { Configurable } from '@/artifacts/configurable';
+import { ErrorMessage, Message } from '@artifacts/message';
+import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
 
 
 const ProcessConfig: Configuration = new Configuration({
@@ -59,6 +57,12 @@ type ProcessStatus = keyof typeof ProcessStatuses;
 
 type ProcessResult = Message | ErrorMessage
 
+interface ProcessEntry<T>
+    extends
+        ConfigurableEntry,
+        Partial<Record<'instance', T>>,
+        Partial<Record<'commands', Array<Command<any, T>>>>
+{}
 
 class Process<T>
     extends
@@ -69,6 +73,7 @@ class Process<T>
     public commands: Array<Command<any, T>> = [];
 
     constructor({
+        id,
         name = 'Process',
         description = '',
         configuration = ProcessConfig,
@@ -77,20 +82,8 @@ class Process<T>
         args = [],
         instance,
         commands = []
-    }: {
-        name?: string,
-        description?: string,
-        configuration?: Configuration,
-        properties?: PropertyEntry<any>[],
-        parameters?: ParameterEntry<any>[],
-        args?: ArgumentEntry<any>[],
-        instance?: T,
-        commands?: Array<Command<any, T>>
-    }) {
-        super({name, description, configuration, properties, parameters, args});
-
-        this.name = name;
-        this.description = description;
+    }: ProcessEntry<T>) {
+        super({id, name, description, configuration, properties, parameters, args});
         
         this.commands = commands;
 
@@ -99,6 +92,9 @@ class Process<T>
         ) {
             this.instance = instance;
             this.status = 'Ready';
+        }
+        else {
+            this.status = 'New';
         }
     }
 
@@ -330,7 +326,9 @@ class Process<T>
 
 export {
     Process,
+    ProcessConfig,
     type ProcessStatus,
+    type ProcessEntry,
     ProcessStatuses,
     type ProcessResult
 }

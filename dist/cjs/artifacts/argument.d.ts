@@ -9,7 +9,7 @@ interface ArgumentEntry<T> extends Record<"name", string>, Record<"value", T> {
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name
  */
-declare class Argument<T> extends Hashable implements ArgumentEntry<T> {
+declare class Argument<T> extends Hashable {
     /**
      * Argument Name
      * @summary The name of the argument

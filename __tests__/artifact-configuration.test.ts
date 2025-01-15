@@ -11,7 +11,7 @@ describe('Configuration', () => {
             new Property<number>({name: 'prop2', defaultValue: 42, required: true, description: 'Property 2'}),
             new Property<boolean>({name: 'prop3', defaultValue: true, required: true, description: 'Property 3', value: true})
         ];
-        config = new Configuration({properties});
+        config = new Configuration({name: 'test', properties});
         // console.log(`config: ${ JSON.stringify(config) }`);
     });
 
@@ -103,7 +103,7 @@ describe('Configuration', () => {
             { name: 'prop2', value: 84 },
             { name: 'prop3', value: false }
         ];
-        const newConfig = new Configuration({args, useArgs: true});
+        const newConfig = new Configuration({name: 'test', args, useArgs: true});
         expect(newConfig.get('prop1')?.getValue()).toBe('newValue');
         expect(newConfig.get('prop2')?.getValue()).toBe(84);
         expect(newConfig.get('prop3')?.getValue()).toBe(false);

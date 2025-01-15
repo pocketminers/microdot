@@ -15,10 +15,13 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = exports.ServiceConfig = exports.ServiceTypes = void 0;
-const message_1 = require("./message");
+const message_1 = require("../artifacts/message");
 const configuration_1 = require("../artifacts/configuration");
 const command_1 = require("./command");
 const configurable_1 = require("../artifacts/configurable");
+const historian_1 = require("./historian");
+const messenger_1 = require("./messenger");
+const queue_1 = require("./queue");
 /**
  * ServiceTypes
  * @summary
@@ -31,20 +34,13 @@ var ServiceTypes;
     ServiceTypes["Internal"] = "Internal";
     ServiceTypes["External"] = "External";
 })(ServiceTypes || (exports.ServiceTypes = ServiceTypes = {}));
-/**
- * ServiceConfig
- * @summary
- * Configuration for a Service
- */
 const ServiceConfig = new configuration_1.Configuration({
+    name: 'ServiceConfiguration',
+    description: 'Service configuration',
     parameters: [
-        { name: 'keepHistory', required: true, description: 'Keep history of bodys', defaultValue: true },
-        { name: 'historyLimit', required: true, description: 'Limit of bodys to keep', defaultValue: 10 },
-        { name: 'queueLimit', required: true, description: 'Limit of commands to run in parallel', defaultValue: 100 },
-        { name: 'queueInterval', required: true, description: 'Interval to run commands in parallel', defaultValue: 1000 },
-        { name: 'queueInSeries', required: true, description: 'Run commands in series', defaultValue: false },
-        { name: 'startQueue', required: true, description: 'Start the queue', defaultValue: false },
-        { name: 'messanger', required: true, description: 'Messanger to use', defaultValue: 'console' }
+        ...historian_1.HistorianConfig.toParameters(),
+        ...messenger_1.MessengerConfig.toParameters(),
+        ...queue_1.JobQueueConfig.toParameters(),
     ]
 });
 exports.ServiceConfig = ServiceConfig;
@@ -60,8 +56,16 @@ class Service extends configurable_1.Configurable {
     queue = new Array();
     queueStatus = 'Stopped';
     history;
-    constructor({ name, description, type, parameters, args, processes = new Map(), commands = [] }) {
-        super({ name, description, parameters, args });
+    constructor({ id, name, description = '', type = ServiceTypes.Internal, configuration = ServiceConfig, properties, parameters, args, processes = new Map(), commands = [] }) {
+        super({
+            id,
+            name,
+            description,
+            configuration,
+            properties,
+            parameters,
+            args
+        });
         this.type = type;
         this.processes = processes || new Map();
         this.commands = commands;
@@ -272,8 +276,10 @@ class Service extends configurable_1.Configurable {
 }
 exports.Service = Service;
 __exportStar(require("./command"), exports);
+__exportStar(require("./historian"), exports);
 __exportStar(require("./job"), exports);
-__exportStar(require("./message"), exports);
+__exportStar(require("./messenger"), exports);
 __exportStar(require("./process"), exports);
+__exportStar(require("./queue"), exports);
 __exportStar(require("./status"), exports);
 //# sourceMappingURL=index.js.map

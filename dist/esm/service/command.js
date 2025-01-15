@@ -54,7 +54,6 @@ class Command extends Configurable {
     };
     run = async ({ instance, args } = {}) => {
         const startTime = Date.now();
-        let endTime;
         let duration = 0;
         let output;
         let bytesReceived = 0;
@@ -94,7 +93,7 @@ class Command extends Configurable {
                 bytesReturned = output.length;
             }
         }
-        endTime = Date.now();
+        const endTime = Date.now();
         duration = endTime - startTime;
         return new CommandResult({
             command: this.name,

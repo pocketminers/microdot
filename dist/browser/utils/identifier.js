@@ -62,8 +62,6 @@ var IdentifierTypes;
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
  * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
  * @returns The new identifier.
  */
 var createIdentifier = function (type, _a) {
@@ -89,9 +87,9 @@ var createIdentifier = function (type, _a) {
     }
     return "".concat(prefix ? prefix : "").concat(id).concat(suffix ? suffix : "");
 };
-var IdentifierFactory = /** @class */ (function (_super) {
-    __extends(IdentifierFactory, _super);
-    function IdentifierFactory(identifiers) {
+var IdentifierStore = /** @class */ (function (_super) {
+    __extends(IdentifierStore, _super);
+    function IdentifierStore(identifiers) {
         if (identifiers === void 0) { identifiers = []; }
         var _this = _super.call(this) || this;
         if (typeof identifiers === "object") {
@@ -107,10 +105,10 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return _this;
     }
-    IdentifierFactory.prototype.checkIfIndexExists = function (index) {
+    IdentifierStore.prototype.checkIfIndexExists = function (index) {
         return _super.prototype.has.call(this, index);
     };
-    IdentifierFactory.prototype.checkIfIdentifierExists = function (id) {
+    IdentifierStore.prototype.checkIfIdentifierExists = function (id) {
         var e_1, _a;
         var exists = false;
         try {
@@ -137,7 +135,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return exists;
     };
-    IdentifierFactory.prototype.addFromRecord = function (record) {
+    IdentifierStore.prototype.addFromRecord = function (record) {
         var e_2, _a, _b;
         var added = new Array();
         try {
@@ -160,7 +158,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.addFromIdentifier = function (id) {
+    IdentifierStore.prototype.addFromIdentifier = function (id) {
         var _a;
         if (this.checkIfIdentifierExists(id)
             || typeof id !== "string") {
@@ -170,7 +168,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         _super.prototype.set.call(this, key, id);
         return _a = {}, _a[key] = id, _a;
     };
-    IdentifierFactory.prototype.addFromArrayOfIdentifiers = function (ids) {
+    IdentifierStore.prototype.addFromArrayOfIdentifiers = function (ids) {
         var _this = this;
         var added = new Array();
         ids.forEach(function (id) {
@@ -179,7 +177,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         });
         return added;
     };
-    IdentifierFactory.prototype.addFromArrayOfRecords = function (ids) {
+    IdentifierStore.prototype.addFromArrayOfRecords = function (ids) {
         var e_3, _a;
         var added = new Array();
         try {
@@ -198,7 +196,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.addFromMap = function (map) {
+    IdentifierStore.prototype.addFromMap = function (map) {
         var e_4, _a, _b;
         var added = new Array();
         if (map.size === 0) {
@@ -227,7 +225,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.add = function (idsOrRecords) {
+    IdentifierStore.prototype.add = function (idsOrRecords) {
         var e_5, _a;
         var added = new Array();
         if (Array.isArray(idsOrRecords)) {
@@ -263,10 +261,10 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.getAll = function () {
+    IdentifierStore.prototype.getAll = function () {
         return this;
     };
-    IdentifierFactory.prototype.getIdentifierByIndex = function (index) {
+    IdentifierStore.prototype.getIdentifierByIndex = function (index) {
         var _a;
         var identifiers = this.getAll();
         if (index >= 0
@@ -277,7 +275,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
             }
         }
     };
-    IdentifierFactory.prototype.getIdentifierByValue = function (value) {
+    IdentifierStore.prototype.getIdentifierByValue = function (value) {
         var e_6, _a, _b;
         try {
             for (var _c = __values(this.getAll().entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -295,7 +293,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
             finally { if (e_6) throw e_6.error; }
         }
     };
-    IdentifierFactory.prototype.getRecord = function (identifier) {
+    IdentifierStore.prototype.getRecord = function (identifier) {
         var id = undefined;
         if (typeof identifier === "number") {
             id = this.getIdentifierByIndex(identifier);
@@ -308,11 +306,11 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return id;
     };
-    IdentifierFactory.prototype.getValue = function (identifier) {
+    IdentifierStore.prototype.getValue = function (identifier) {
         var id = this.getRecord(identifier);
         return Object.values(id)[0];
     };
-    IdentifierFactory.prototype.remove = function (idsOrRecords) {
+    IdentifierStore.prototype.remove = function (idsOrRecords) {
         var e_7, _a, e_8, _b, _c, e_9, _d, _e, _f;
         var removed = new Array();
         if (Array.isArray(idsOrRecords)
@@ -385,13 +383,13 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return removed;
     };
-    IdentifierFactory.prototype.create = function (type, _a) {
+    IdentifierStore.prototype.create = function (type, _a) {
         var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
         var id = createIdentifier(type, { prefix: prefix, suffix: suffix });
         this.add(id);
         return id;
     };
-    return IdentifierFactory;
+    return IdentifierStore;
 }(Map));
-export { createIdentifier, IdentifierTypes, IdentifierFactory };
+export { createIdentifier, IdentifierTypes, IdentifierStore };
 //# sourceMappingURL=identifier.js.map

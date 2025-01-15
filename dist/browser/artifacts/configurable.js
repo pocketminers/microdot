@@ -38,7 +38,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     }
     return to.concat(ar || Array.prototype.slice.call(from));
 };
-import { createIdentifier } from "../utils";
 import { Configuration } from "./configuration";
 import { Hashable } from "./hashable";
 /**
@@ -50,7 +49,7 @@ import { Hashable } from "./hashable";
 var Configurable = /** @class */ (function (_super) {
     __extends(Configurable, _super);
     function Configurable(_a) {
-        var _b = _a.id, id = _b === void 0 ? createIdentifier() : _b, _c = _a.name, name = _c === void 0 ? 'Configurable' : _c, _d = _a.description, description = _d === void 0 ? 'A configurable object that can be set by arguments' : _d, _e = _a.configuration, configuration = _e === void 0 ? undefined : _e, _f = _a.properties, properties = _f === void 0 ? [] : _f, _g = _a.parameters, parameters = _g === void 0 ? [] : _g, _h = _a.args, args = _h === void 0 ? [] : _h, _j = _a.useArgs, useArgs = _j === void 0 ? false : _j;
+        var id = _a.id, _b = _a.name, name = _b === void 0 ? 'Configurable' : _b, _c = _a.description, description = _c === void 0 ? 'A configurable object that can be set by arguments' : _c, _d = _a.configuration, configuration = _d === void 0 ? undefined : _d, _e = _a.properties, properties = _e === void 0 ? [] : _e, _f = _a.parameters, parameters = _f === void 0 ? [] : _f, _g = _a.args, args = _g === void 0 ? [] : _g, _h = _a.useArgs, useArgs = _h === void 0 ? false : _h;
         var _this = _super.call(this, { id: id, name: name, description: description, configuration: configuration, properties: properties, parameters: parameters, args: args, useArgs: useArgs }, id) || this;
         _this.createdAt = new Date();
         _this.name = name;
@@ -61,7 +60,7 @@ var Configurable = /** @class */ (function (_super) {
             _this.config.setArguments(args, true);
         }
         else {
-            _this.config = new Configuration({ properties: properties, parameters: parameters, args: args });
+            _this.config = new Configuration({ name: name, description: description, properties: properties, parameters: parameters, args: args });
         }
         return _this;
     }

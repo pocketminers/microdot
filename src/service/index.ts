@@ -1,11 +1,13 @@
 
-import { ErrorMessage, Message } from '@service/message';
+import { ErrorMessage, Message } from '@artifacts/message';
 import { Configuration } from '@artifacts/configuration';
 import { ArgumentEntry } from '@artifacts/argument';
-import { ParameterEntry } from '@artifacts/parameter';
 import { Command, QueuedCommand, CommandResult } from '@service/command';
 import { Process } from '@service/process';
-import { Configurable } from '@/artifacts/configurable';
+import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
+import { HistorianConfig } from './historian';
+import { MessengerConfig } from './messenger';
+import { JobQueueConfig } from './queue';
 
 
 /**
@@ -28,22 +30,6 @@ enum ServiceTypes {
  */
 type ServiceType = keyof typeof ServiceTypes;
 
-/**
- * ServiceConfig
- * @summary
- * Configuration for a Service
- */
-const ServiceConfig = new Configuration({
-    parameters: [
-        { name: 'keepHistory', required: true, description: 'Keep history of bodys', defaultValue: true },
-        { name: 'historyLimit', required: true, description: 'Limit of bodys to keep', defaultValue: 10 },
-        { name: 'queueLimit', required: true, description: 'Limit of commands to run in parallel', defaultValue: 100 },
-        { name: 'queueInterval', required: true, description: 'Interval to run commands in parallel', defaultValue: 1000 },
-        { name: 'queueInSeries', required: true, description: 'Run commands in series', defaultValue: false },
-        { name: 'startQueue', required: true, description: 'Start the queue', defaultValue: false },
-        { name: 'messanger', required: true, description: 'Messanger to use', defaultValue: 'console' }
-    ]
-});
 
 /**
  * ServiceResponse
@@ -53,6 +39,24 @@ const ServiceConfig = new Configuration({
 type ServiceResponse = Message | ErrorMessage;
 
 
+interface ServiceEntry<T = ServiceType, U = any>
+    extends
+        ConfigurableEntry,
+        Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration'| 'properties' | 'parameters' | 'args' | 'useArgs'>,
+        Record<'type', T>,
+        Partial<Record<'processes', Map<string, Process<U>> | undefined>>,
+        Partial<Record<'commands', Array<Command<any, any>> | undefined>> {}
+
+const ServiceConfig = new Configuration({
+    name: 'ServiceConfiguration',
+    description: 'Service configuration',
+    parameters: [
+        ...HistorianConfig.toParameters(),
+        ...MessengerConfig.toParameters(),
+        ...JobQueueConfig.toParameters(),
+    ]
+});
+
 /**
  * Service Class
  * @summary
@@ -60,8 +64,8 @@ type ServiceResponse = Message | ErrorMessage;
  */
 class Service
 <
-    T = ServiceType,        // Type - enum: ['Internal', 'External']
-    U = any                 // Instance - example: DbPsqlProcessInstance | UserTransactionsInstance
+    T extends ServiceType = ServiceTypes.Internal,        /// Type - enum: ['Internal', 'External']
+    U = any                 /// Instance - example: DbPsqlProcessInstance | UserTransactionsInstance
 >
     extends
         Configurable
@@ -74,23 +78,26 @@ class Service
     public history: Array<ServiceResponse>;
 
     constructor({
+        id,
         name,
-        description,
-        type,
+        description = '',
+        type = ServiceTypes.Internal as T,
+        configuration = ServiceConfig,
+        properties,
         parameters,
         args,
         processes = new Map<string, Process<U>>(),
         commands = []
-    }: {
-        name?: string,
-        description?: string,
-        type: T,
-        parameters: ParameterEntry<any>[],
-        args: ArgumentEntry<any>[],
-        processes?: Map<string, Process<U>>,    
-        commands?: Array<Command<any, any>>
-    }) {
-        super({name, description, parameters, args});
+    }: ServiceEntry<T, U>) {
+        super({
+            id,
+            name,
+            description,
+            configuration,
+            properties,
+            parameters,
+            args
+        });
         this.type = type;
         this.processes = processes || new Map<string, Process<U>>();
 
@@ -357,6 +364,7 @@ class Service
 
 export {
     ServiceTypes,
+    type ServiceEntry,
     type ServiceType,
     type ServiceResponse,
     ServiceConfig,
@@ -364,8 +372,10 @@ export {
 }
 
 
-export * from "./command"
-export * from "./job"
-export * from "./message"
-export * from "./process"
-export * from "./status"
+export * from "./command";
+export * from "./historian";
+export * from "./job";
+export * from "./messenger";
+export * from "./process";
+export * from "./queue";
+export * from "./status";

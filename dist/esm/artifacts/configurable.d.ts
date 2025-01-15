@@ -1,10 +1,9 @@
+import { Identifier } from "../utils";
 import { ArgumentEntry } from "./argument";
 import { Arguments } from "./arguments";
-import { Configuration } from "./configuration";
+import { Configuration, ConfigurationEntry } from "./configuration";
 import { Hashable } from "./hashable";
-import { Parameter, ParameterEntry } from "./parameter";
-import { PropertyEntry } from "./property";
-interface ConfigurableEntry extends Partial<Record<'id', string>>, Partial<Record<'name', string>>, Partial<Record<'description', string>>, Partial<Record<'configuration', Configuration>>, Partial<Record<'properties', PropertyEntry<any>[] | PropertyEntry<any>[]>>, Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[]>>, Partial<Record<'args', ArgumentEntry<any>[] | Arguments>>, Partial<Record<'useArgs', boolean>> {
+interface ConfigurableEntry extends Record<'id', Identifier>, Partial<Record<'configuration', Configuration>>, ConfigurationEntry {
 }
 /**
  * Configurable is a class that can be configured by arguments.

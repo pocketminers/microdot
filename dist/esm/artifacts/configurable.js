@@ -1,4 +1,3 @@
-import { createIdentifier } from "../utils";
 import { Configuration } from "./configuration";
 import { Hashable } from "./hashable";
 /**
@@ -12,7 +11,7 @@ class Configurable extends Hashable {
     description;
     config;
     createdAt = new Date();
-    constructor({ id = createIdentifier(), name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
+    constructor({ id, name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
         super({ id, name, description, configuration, properties, parameters, args, useArgs }, id);
         this.name = name;
         this.description = description;
@@ -22,7 +21,7 @@ class Configurable extends Hashable {
             this.config.setArguments(args, true);
         }
         else {
-            this.config = new Configuration({ properties, parameters, args });
+            this.config = new Configuration({ name, description, properties, parameters, args });
         }
     }
     setArguments(args, asProperties = false) {
