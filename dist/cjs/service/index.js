@@ -15,10 +15,10 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = exports.ServiceConfig = exports.ServiceTypes = void 0;
-const message_1 = require("@service/message");
-const configuration_1 = require("@artifacts/configuration");
-const command_1 = require("@service/command");
-const configurable_1 = require("@/artifacts/configurable");
+const message_1 = require("./message");
+const configuration_1 = require("../artifacts/configuration");
+const command_1 = require("./command");
+const configurable_1 = require("../artifacts/configurable");
 /**
  * ServiceTypes
  * @summary
@@ -78,14 +78,14 @@ class Service extends configurable_1.Configurable {
         return this.processes.get(name);
     }
     addToHistory(body) {
-        const historyLimit = this.getArgumentValue('historyLimit');
+        const historyLimit = this.config.getValue('historyLimit');
         if (this.history.length >= historyLimit) {
             this.history.shift();
         }
         this.history.push(body);
     }
     addToQueue(command) {
-        if (this.queue.length >= this.getArgumentValue('queueLimit')) {
+        if (this.queue.length >= this.config.getValue('queueLimit')) {
             message_1.ErrorMessage.create({
                 action: 'Service:AddToQueue',
                 body: 'Queue limit reached',
@@ -232,9 +232,9 @@ class Service extends configurable_1.Configurable {
         this.queueStatus = 'Stopped';
     }
     async queueManager({ forceStart = false, forceStop = false, forceConfig = false, config = undefined } = {}) {
-        const startQueue = this.getArgumentValue('startQueue');
-        const queueInterval = this.getArgumentValue('queueInterval');
-        const queueInSeries = this.getArgumentValue('queueInSeries');
+        const startQueue = this.config.getValue('startQueue');
+        const queueInterval = this.config.getValue('queueInterval');
+        const queueInSeries = this.config.getValue('queueInSeries');
         if (forceStart === true &&
             forceStop === true) {
             message_1.ErrorMessage.create({
@@ -271,4 +271,8 @@ class Service extends configurable_1.Configurable {
 }
 exports.Service = Service;
 __exportStar(require("./command"), exports);
+__exportStar(require("./job"), exports);
+__exportStar(require("./message"), exports);
+__exportStar(require("./process"), exports);
+__exportStar(require("./status"), exports);
 //# sourceMappingURL=index.js.map

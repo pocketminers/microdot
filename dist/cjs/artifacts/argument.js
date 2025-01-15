@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Argument = void 0;
-const checks_1 = require("@utils/checks");
-const hashable_1 = require("@artifacts/hashable");
+const checks_1 = require("../utils/checks");
+const hashable_1 = require("./hashable");
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name

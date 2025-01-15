@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessStatuses = exports.Process = void 0;
-const command_1 = require("@service/command");
-const configuration_1 = require("@artifacts/configuration");
-const message_1 = require("@service/message");
-const artifacts_1 = require("@/artifacts");
+const command_1 = require("./command");
+const configuration_1 = require("../artifacts/configuration");
+const message_1 = require("./message");
+const configurable_1 = require("../artifacts/configurable");
 const ProcessConfig = new configuration_1.Configuration({
     name: 'ProcessConfig',
     description: 'Process Configuration',
@@ -52,15 +52,12 @@ var ProcessStatuses;
     ProcessStatuses["Completed"] = "Completed";
     ProcessStatuses["Unknown"] = "Unknown";
 })(ProcessStatuses || (exports.ProcessStatuses = ProcessStatuses = {}));
-class Process extends artifacts_1.Hashable {
-    name;
-    description;
+class Process extends configurable_1.Configurable {
     instance;
-    commands;
     status = 'New';
-    config = ProcessConfig;
-    constructor({ name = 'Process', description = '', config, properties = [], parameters = [], args = [], instance, commands = [] }) {
-        super({ name, description, properties, parameters, args });
+    commands = [];
+    constructor({ name = 'Process', description = '', configuration = ProcessConfig, properties = [], parameters = [], args = [], instance, commands = [] }) {
+        super({ name, description, configuration, properties, parameters, args });
         this.name = name;
         this.description = description;
         this.commands = commands;
@@ -70,7 +67,7 @@ class Process extends artifacts_1.Hashable {
         }
     }
     async initialize() {
-        const initialize = this.('initialize') || false;
+        const initialize = this.config.getValue('initialize');
         // const initializer: TaskRunner | undefined = this.getArgumentValue<TaskRunner>('initializer');
         if (this.status === 'Ready' &&
             initialize === true &&
@@ -106,13 +103,12 @@ class Process extends artifacts_1.Hashable {
     async initializeInstance() {
         if (this.status === 'Initializing') {
             try {
-                const initializer = this.getArgumentValue('initializer');
-                const config = this.getArgumentValue('initializerConfig') || undefined;
+                const initializer = this.config.getValue('initializer');
+                const config = this.config.getValue('initializerConfig') || undefined;
                 let args = {};
                 if (config &&
-                    config.parameters &&
-                    config.parameters.length > 0) {
-                    args = config.getArguments();
+                    config.size > 0) {
+                    args = config.toArguments();
                     console.log('Initializer Config:', args);
                 }
                 if (initializer !== undefined) {

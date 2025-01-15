@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Configurable = void 0;
-const utils_1 = require("@/utils");
+const utils_1 = require("../utils");
 const configuration_1 = require("./configuration");
 const hashable_1 = require("./hashable");
 /**
