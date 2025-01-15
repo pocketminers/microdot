@@ -6,11 +6,11 @@ import { Arguments } from "./arguments";
 
 interface ConfigurationEntry
     extends
-        Record<'name', string>,
+        Partial<Record<'name', string>>,
         Partial<Record<'description', string>>,
         Partial<Record<'properties', PropertyEntry<any>[] | Property<any>[]>>,
         Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[] | []>>,
-        Partial<Record<'args', ArgumentEntry<any>[] | Arguments | any[]>>,
+        Partial<Record<'args', ArgumentEntry<any>[] | Arguments | { [key: string]: any}[]>>,
         Partial<Record<'useArgs', boolean>> {};
 
 /**
@@ -31,7 +31,7 @@ class Configuration
      * Both, properties and arguments can be passed to the constructor.
      */
     public constructor({
-            name,
+            name = 'Configuration',
             description = 'A configuration of properties that can be set by arguments',
             properties = [],
             parameters = [],
@@ -54,7 +54,7 @@ class Configuration
      */
     public addEntry(
         entry: PropertyEntry<any> | ParameterEntry<any>,
-        args: ArgumentEntry<any>[] = [],
+        args: ArgumentEntry<any>[] | Arguments | { [key: string]: any}[],
         overwrite = false
     ): void {
         let property: Property<any> | undefined;
@@ -131,7 +131,7 @@ class Configuration
         fromArgs = false
     }:{
         entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[] | any[],
-        args?: ArgumentEntry<any>[],
+        args?: ArgumentEntry<any>[] | Arguments | { [key: string]: any}[],
         overwrite?: boolean,
         fromArgs?: boolean
     } = {}): void {
@@ -186,7 +186,7 @@ class Configuration
         }
     }
 
-    public setArguments(args: ArgumentEntry<any>[], setProperties: boolean = false): void {
+    public setArguments(args: ArgumentEntry<any>[] | any[], setProperties: boolean = false): void {
         for (const [name, property] of this) {
             const arg = args.find(arg => arg.name === name);
             if (
@@ -296,8 +296,17 @@ class Configuration
     public toParameters(): Parameter<any>[] {
         const parameters: Parameter<any>[] = [];
         for (const [name, property] of this) {
+
+            if (property.name !== name) {
+                throw new Error(`Property name does not match parameter name: ${property.name} !== ${name}`);
+            }
+
+            if (property instanceof Parameter) {
+                parameters.push(property);
+            }
+
             parameters.push(new Parameter({
-                name: property.name,
+                name: name,
                 description: property.description,
                 required: property.required,
                 defaultValue: property.defaultValue,

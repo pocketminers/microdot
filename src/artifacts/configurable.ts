@@ -20,8 +20,8 @@ interface ConfigurableEntry
 class Configurable
     extends Hashable
 {
-    public name: string;
-    public description: string;
+    public readonly name: string;
+    public readonly description: string;
     public config: Configuration;
     public readonly createdAt: Date = new Date();
 
