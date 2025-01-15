@@ -8,14 +8,15 @@
  *   }
  * }
  */
-declare class Hashable implements Partial<Record<"hash", string>> {
+declare class Hashable implements Record<'id', string>, Partial<Record<"hash", string>> {
+    readonly id: string;
     readonly hash?: string;
     /**
      * Hashable Constructor to create a new Hashable instance from a value
      * @param value
      * @summary Create a new Hashable instance
      */
-    constructor(value: any);
+    constructor(value: any, id?: string);
     /**
      * isString Method
      * @param value

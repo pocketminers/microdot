@@ -1,5 +1,5 @@
-import { ArgumentEntry, Hashable, ParameterEntry, PropertyEntry } from "../artifacts";
-import { Identifier } from "../utils";
+import { ArgumentEntry, Hashable, ParameterEntry, PropertyEntry } from "@/artifacts";
+import { Identifier } from "@/utils";
 import { Command, CommandResult } from "./command";
 declare class Job extends Hashable {
     id: Identifier;

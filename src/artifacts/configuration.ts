@@ -222,10 +222,13 @@ class Configuration
     /**
      * Get a property from the configuration by name
      */
-    public getValue<T = any>(name: string): T | undefined {
+    public getValue<T = any>(name: string): T {
         if (this.has(name)) {
             const value = super.get(name)?.getValue();
             return value;
+        }
+        else {
+            throw new Error(`Property not found: ${name}`);
         }
     }
 

@@ -1,4 +1,4 @@
-import { Hashable } from "./hashable";
+import { Hashable } from "@artifacts/hashable";
 /**
  * Argument Entry Interface
  * @summary Argument entry interface that is used to create an argument

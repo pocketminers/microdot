@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultTaskRunner = exports.Command = void 0;
-const configuration_1 = require("../artifacts/configuration");
-const hashable_1 = require("../artifacts/hashable");
-const checks_1 = require("../utils/checks");
+const checks_1 = require("@utils/checks");
+const configurable_1 = require("@/artifacts/configurable");
+const utils_1 = require("@/utils");
 /**
  * Command result class.
  * A class that contains the result of a command that has completed execution.
@@ -37,34 +37,24 @@ const defaultTaskRunner = async (instance, args) => {
     return await instance(args);
 };
 exports.defaultTaskRunner = defaultTaskRunner;
-class Command extends hashable_1.Hashable {
-    name;
-    description;
+/**
+ * The Command class is a configurable class that can be executed.
+ */
+class Command extends configurable_1.Configurable {
     taskRunner;
-    config;
-    constructor({ name = 'Base Command', description = 'The Base Command Class', taskRunner = defaultTaskRunner, config, properties = [], parameters = [], args = [] } = {}) {
-        super({ name, description, config, properties, parameters, args });
-        this.name = name;
-        this.description = description;
-        if (config !== undefined) {
-            this.config = config;
-            this.config.addEntries({ entries: [...properties, ...parameters], args });
-            this.config.setArguments(args, true);
-        }
-        else {
-            this.config = new configuration_1.Configuration({ properties, parameters, args });
-        }
+    /**
+     * The Command class is a configurable class that can be executed.
+     */
+    constructor({ id = (0, utils_1.createIdentifier)(), name = 'Base Command', description = 'The Base Command Class', taskRunner = defaultTaskRunner, configuration, properties = [], parameters = [], args = [] }) {
+        super({ id, name, description, configuration: configuration, properties, parameters, args });
         this.taskRunner = taskRunner;
     }
-    setArguments(args, fromArgs = false) {
-        this.config.setArguments(args, fromArgs);
-    }
-    getArguments() {
-        return this.config.toArguments();
-    }
+    /**
+     * Execute the command.
+     */
     execute = async ({ instance, args } = {}) => {
         this.setArguments(args || []);
-        return await this.taskRunner(instance, this.config);
+        return await this.taskRunner(instance, this.config.toRecord());
     };
     run = async ({ instance, args } = {}) => {
         const startTime = Date.now();

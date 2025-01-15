@@ -3,7 +3,8 @@ import { Configuration } from '@artifacts/configuration';
 import { ArgumentEntry } from '@artifacts/argument';
 import { ParameterEntry } from '@artifacts/parameter';
 import { ErrorMessage, Message } from '@service/message';
-import { Hashable } from '@/artifacts';
+import { Hashable, PropertyEntry } from '@/artifacts';
+import { Configurable } from '@/artifacts/configurable';
 
 
 const ProcessConfig: Configuration = new Configuration({
@@ -61,15 +62,17 @@ type ProcessResult = Message | ErrorMessage
 
 class Process<T>
     extends
-        Hashable   
+        Configurable
 {
     public instance?: T;
-    public commands: Array<Command<any, T>>;
     public status: ProcessStatus = 'New';
+    public commands: Array<Command<any, T>> = [];
 
     constructor({
-        name,
-        description,
+        name = 'Process',
+        description = '',
+        configuration = ProcessConfig,
+        properties = [],
         parameters = [],
         args = [],
         instance,
@@ -77,13 +80,18 @@ class Process<T>
     }: {
         name?: string,
         description?: string,
+        configuration?: Configuration,
+        properties?: PropertyEntry<any>[],
         parameters?: ParameterEntry<any>[],
         args?: ArgumentEntry<any>[],
         instance?: T,
         commands?: Array<Command<any, T>>
     }) {
-        super({name, description, parameters, args});
+        super({name, description, configuration, properties, parameters, args});
 
+        this.name = name;
+        this.description = description;
+        
         this.commands = commands;
 
         if (
@@ -95,7 +103,7 @@ class Process<T>
     }
 
     public async initialize(): Promise<void> {
-        const initialize: boolean = this.getArgumentValue<boolean>('initialize') || false;
+        const initialize: boolean = this.config.getValue<boolean>('initialize');
         // const initializer: TaskRunner | undefined = this.getArgumentValue<TaskRunner>('initializer');
 
 
@@ -146,16 +154,15 @@ class Process<T>
             this.status === 'Initializing'
         ) {
             try {
-                const initializer: Function | undefined = this.getArgumentValue<Function>('initializer');
-                const config: Configuration | undefined = this.getArgumentValue<Configuration>('initializerConfig') || undefined;
+                const initializer: Function | undefined = this.config.getValue<Function>('initializer');
+                const config: Configuration | undefined = this.config.getValue<Configuration>('initializerConfig') || undefined;
                 let args: Record<string, any> = {};
 
                 if (
                     config &&
-                    config.parameters &&
-                    config.parameters.length > 0
+                    config.size > 0
                 ) {
-                    args = config.getArguments();
+                    args = config.toArguments();
                     console.log('Initializer Config:', args);
                 }
 
@@ -235,7 +242,7 @@ class Process<T>
             }
             catch (err: any) {
                 this.status = 'Error';
-                result = ErrorMessage.create<'Error', {error: any, command: Command}>({
+                result = ErrorMessage.create<'Error', {error: any, command: Command<any, any>}>({
                     action,
                     body: 'Error running command',
                     status: 500,

@@ -5,6 +5,8 @@ import { ParameterEntry } from '@artifacts/parameter';
 import { Hashable } from '@artifacts/hashable';
 import { PropertyEntry } from '@artifacts/property';
 import { checkIsEmpty } from '@utils/checks';
+import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
+import { createIdentifier } from '@/utils';
 
 
 /**
@@ -82,61 +84,45 @@ const defaultTaskRunner: TaskRunner<any, any> = async (instance, args) => {
     return await instance(args);
 }
 
+interface CommandEntry<R, T>
+    extends
+        Partial<Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args'>>,
+        Record<'taskRunner', TaskRunner<R, T>> {}
+
+/**
+ * The Command class is a configurable class that can be executed.
+ */
 class Command
 <
-    R,      // Result
-    T       // TaskRunner Instance
+    R = any,      // Result
+    T = any       // TaskRunner Instance
 >
     extends
-        Hashable
+        Configurable
 {
-    public name: string;
-    public description: string;
     public taskRunner: TaskRunner<R, T>;
-    public config: Configuration;
 
+    /**
+     * The Command class is a configurable class that can be executed.
+     */
     constructor({
+        id = createIdentifier(),
         name = 'Base Command',
         description = 'The Base Command Class',
         taskRunner = defaultTaskRunner,
-        config,
+        configuration,
         properties = [],
         parameters = [],
         args = []
-    }: {
-        name?: string,
-        description?: string,
-        taskRunner?: TaskRunner<R, T>,
-        config?: Configuration,
-        properties?: PropertyEntry<any>[],
-        parameters?: ParameterEntry<any>[],
-        args?: ArgumentEntry<any>[]
-    } = {}) {
-        super({name, description, config, properties, parameters, args});
-
-        this.name = name;
-        this.description = description;
-        
-        if (config !== undefined) {
-            this.config = config;
-            this.config.addEntries({entries: [...properties, ...parameters], args});
-            this.config.setArguments(args, true);
-        }
-        else {
-            this.config = new Configuration({properties, parameters, args});
-        }
+    }: CommandEntry<R, T>) {
+        super({id, name, description, configuration, properties, parameters, args});
 
         this.taskRunner = taskRunner;
     }
 
-    public setArguments(args: ArgumentEntry<any>[], fromArgs: boolean = false ): void {
-        this.config.setArguments(args, fromArgs);
-    }
-
-    public getArguments(): Arguments {
-        return this.config.toArguments();
-    }
-
+    /**
+     * Execute the command.
+     */
     public execute = async ({
         instance,
         args
@@ -147,7 +133,7 @@ class Command
         Promise<R> =>
     {
         this.setArguments(args || []);
-        return await this.taskRunner(instance, this.config);
+        return await this.taskRunner(instance, this.config.toRecord());
     }
 
     public run = async ({
@@ -237,6 +223,8 @@ interface QueuedCommand {
 
 export {
     Command,
+    type CommandEntry,
+    type CommandResultEntry,
     type CommandResult,
     type ExecutionMetrics,
     type TaskRunner,

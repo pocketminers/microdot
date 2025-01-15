@@ -2,11 +2,15 @@ import { Command, TaskRunner, defaultTaskRunner } from '../src/service/command';
 import { Configuration } from '../src/artifacts/configuration';
 import { Arguments } from '../src/artifacts/arguments';
 
+
 describe('Command', () => {
     let command: Command<any, any>;
     let config: Configuration;
+    let mockTaskRunner: TaskRunner<any, any>;
+
 
     beforeEach(() => {
+        mockTaskRunner = jest.fn().mockResolvedValue('result');
         config = new Configuration({
             properties: [],
             parameters: [],
@@ -16,7 +20,8 @@ describe('Command', () => {
         command = new Command({
             name: 'Test Command',
             description: 'A command for testing',
-            config
+            configuration: config,
+            taskRunner: mockTaskRunner
         });
     });
 
@@ -24,7 +29,7 @@ describe('Command', () => {
         expect(command.name).toBe('Test Command');
         expect(command.description).toBe('A command for testing');
         expect(command.config).toBe(config);
-        expect(command.taskRunner).toBe(defaultTaskRunner);
+        expect(command.taskRunner).toBe(mockTaskRunner);
     });
 
     test('should execute the task runner', async () => {
@@ -33,7 +38,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.execute({ instance: undefined, args: [] });
@@ -47,7 +52,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined, args: [] });
@@ -63,7 +68,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined, args: [] });
@@ -78,7 +83,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined, args: [] });
@@ -93,7 +98,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const args = [{ name: 'Test Command', value: 'value' }];
@@ -108,7 +113,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined, args: [] });
@@ -122,7 +127,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined, args: [] });
@@ -136,7 +141,7 @@ describe('Command', () => {
             name: 'Test Command',
             description: 'A command for testing',
             taskRunner: mockTaskRunner,
-            config
+            configuration: config
         });
 
         const result = await command.run({ instance: undefined });
@@ -147,6 +152,7 @@ describe('Command', () => {
         const args = new Arguments([
             { name: 'test', value: 'value' }
         ]);
+        const mockTaskRunner: TaskRunner<any, any> = jest.fn().mockResolvedValue('result');
         config = new Configuration({
             properties: [],
             parameters: [],
@@ -156,7 +162,8 @@ describe('Command', () => {
         command = new Command({
             name: 'Test Command',
             description: 'A command for testing',
-            config
+            configuration: config,
+            taskRunner: mockTaskRunner
         });
 
         expect(command.config).toBe(config);

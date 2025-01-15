@@ -5,6 +5,7 @@ import { ArgumentEntry } from '@artifacts/argument';
 import { ParameterEntry } from '@artifacts/parameter';
 import { Command, QueuedCommand, CommandResult } from '@service/command';
 import { Process } from '@service/process';
+import { Configurable } from '@/artifacts/configurable';
 
 
 /**
@@ -62,11 +63,11 @@ class Service
     U = any                 // Instance - example: DbPsqlProcessInstance | UserTransactionsInstance
 >
     extends
-        Configuration
+        Configurable
 {
     public readonly type: T;
     private processes: Map<string, Process<U>>;
-    public commands: Array<Command>;
+    public commands: Array<Command<any, any>>;
     public queue: Array<QueuedCommand> = new Array<QueuedCommand>();
     public queueStatus: 'Started' | 'Stopped' = 'Stopped';
     public history: Array<ServiceResponse>;
@@ -86,9 +87,9 @@ class Service
         parameters: ParameterEntry<any>[],
         args: ArgumentEntry<any>[],
         processes?: Map<string, Process<U>>,    
-        commands?: Array<Command>
+        commands?: Array<Command<any, any>>
     }) {
-        super({name, description, parameters: [...ServiceConfig.parameters, ...parameters], args});
+        super({name, description, parameters, args});
         this.type = type;
         this.processes = processes || new Map<string, Process<U>>();
 
@@ -111,7 +112,7 @@ class Service
     }
 
     private addToHistory(body: Message | ErrorMessage): void {
-        const historyLimit: number = this.getArgumentValue<number>('historyLimit');
+        const historyLimit: number = this.config.getValue<number>('historyLimit');
 
         if (this.history.length >= historyLimit) {
             this.history.shift();
@@ -121,7 +122,7 @@ class Service
     }
 
     public addToQueue(command: QueuedCommand): void {
-        if (this.queue.length >= this.getArgumentValue<number>('queueLimit')) {
+        if (this.queue.length >= this.config.getValue<number>('queueLimit')) {
             ErrorMessage.create<'Warn'>({
                 action: 'Service:AddToQueue',
                 body: 'Queue limit reached',
@@ -297,9 +298,9 @@ class Service
         {forceStart?: boolean, forceStop?: boolean, forceConfig?: boolean, config?: object | undefined} =
         {}
     ): Promise<void> {
-        const startQueue: boolean = this.getArgumentValue<boolean>('startQueue');
-        const queueInterval: number = this.getArgumentValue<number>('queueInterval');
-        const queueInSeries: boolean = this.getArgumentValue<boolean>('queueInSeries');
+        const startQueue: boolean = this.config.getValue<boolean>('startQueue');
+        const queueInterval: number = this.config.getValue<number>('queueInterval');
+        const queueInSeries: boolean = this.config.getValue<boolean>('queueInSeries');
 
         if (
             forceStart === true &&
@@ -363,3 +364,7 @@ export {
 
 
 export * from "./command"
+export * from "./job"
+export * from "./message"
+export * from "./process"
+export * from "./status"

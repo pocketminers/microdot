@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hashable = void 0;
-const crypto_1 = require("../utils/crypto");
+const crypto_1 = require("@utils/crypto");
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
@@ -13,13 +13,15 @@ const crypto_1 = require("../utils/crypto");
  * }
  */
 class Hashable {
+    id;
     hash;
     /**
      * Hashable Constructor to create a new Hashable instance from a value
      * @param value
      * @summary Create a new Hashable instance
      */
-    constructor(value) {
+    constructor(value, id = '') {
+        this.id = id;
         let str;
         if (this.isString(value)) {
             str = value;

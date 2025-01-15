@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Configuration = void 0;
-const utils_1 = require("../utils");
+const utils_1 = require("@/utils");
 const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
 const property_1 = require("./property");

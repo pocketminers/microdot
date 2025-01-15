@@ -13,8 +13,10 @@ import { checkForHash, hashValue } from "@utils/crypto";
  */
 class Hashable
     implements
+        Record<'id', string>,
         Partial<Record<"hash", string>>
 {
+    public readonly id: string;
     public readonly hash?: string;
 
     /**
@@ -22,12 +24,16 @@ class Hashable
      * @param value
      * @summary Create a new Hashable instance
      */
-    constructor(value: any) {
+    constructor(
+        value: any,
+        id: string = ''
+    ) {
+        this.id = id;
         let str: string;
 
 
         if (this.isString(value)) {
-            str = value;
+            str = value as string;
         }
         else {
             str = JSON.stringify(value);

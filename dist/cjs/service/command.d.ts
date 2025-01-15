@@ -1,9 +1,6 @@
-import { Configuration } from '../artifacts/configuration';
-import { Arguments } from '../artifacts/arguments';
-import { ArgumentEntry, Argument } from '../artifacts/argument';
-import { ParameterEntry } from '../artifacts/parameter';
-import { Hashable } from '../artifacts/hashable';
-import { PropertyEntry } from '../artifacts/property';
+import { Arguments } from '@artifacts/arguments';
+import { ArgumentEntry, Argument } from '@artifacts/argument';
+import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
 /**
  * Command execution metrics interface.
  * An object that contains the execution metrics of a command that has completed execution.
@@ -37,23 +34,21 @@ declare class CommandResult<R, T> implements CommandResultEntry<R, T> {
 }
 type TaskRunner<R = any, T = any> = (instance: T | undefined, args?: Record<string, any>) => Promise<R>;
 declare const defaultTaskRunner: TaskRunner<any, any>;
+interface CommandEntry<R, T> extends Partial<Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args'>>, Record<'taskRunner', TaskRunner<R, T>> {
+}
+/**
+ * The Command class is a configurable class that can be executed.
+ */
 declare class Command<R, // Result
-T> extends Hashable {
-    name: string;
-    description: string;
+T> extends Configurable {
     taskRunner: TaskRunner<R, T>;
-    config: Configuration;
-    constructor({ name, description, taskRunner, config, properties, parameters, args }?: {
-        name?: string;
-        description?: string;
-        taskRunner?: TaskRunner<R, T>;
-        config?: Configuration;
-        properties?: PropertyEntry<any>[];
-        parameters?: ParameterEntry<any>[];
-        args?: ArgumentEntry<any>[];
-    });
-    setArguments(args: ArgumentEntry<any>[], fromArgs?: boolean): void;
-    getArguments(): Arguments;
+    /**
+     * The Command class is a configurable class that can be executed.
+     */
+    constructor({ id, name, description, taskRunner, configuration, properties, parameters, args }: CommandEntry<R, T>);
+    /**
+     * Execute the command.
+     */
     execute: ({ instance, args }?: {
         instance?: T;
         args?: ArgumentEntry<any>[];

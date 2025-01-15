@@ -5,14 +5,25 @@ import { checkForCircularReference, checkIsEmpty } from "@utils/checks";
 import { Hashable } from "@/artifacts";
 
 
-
+/**
+ * MessageLevels is an enum of message levels.
+ * The message levels are 'Info' and 'Debug'.
+ */
 enum MessageLevels {
     Info = 'Info',
     Debug = 'Debug'
 }
 
+/**
+ * MessageLevel is a type that represents the message levels.
+ * The message levels are 'Info' and 'Debug'.
+ */
 type MessageLevel = keyof typeof MessageLevels | keyof typeof ErrorMessageLevels;
 
+/**
+ * MessageEntry is an interface that represents the message entry.
+ * The message entry contains the message properties.
+ */
 interface MessageEntry<L = MessageLevel, T = any>
     extends
         Partial<Record<'id', Identifier>>,
@@ -93,7 +104,7 @@ class Message<L = MessageLevel, T = any>
 
     public toString(): string {
         return (
-            `[${this.status}] [${this.createdAt}] ${this.message}` +
+            `[${this.status}] [${this.createdAt}] ${this.body}` +
             this.printAction() +
             this.printData()
         );
