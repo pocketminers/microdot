@@ -30,10 +30,9 @@ var MessageLevels;
 var Message = /** @class */ (function (_super) {
     __extends(Message, _super);
     function Message(_a) {
-        var _b = _a.id, id = _b === void 0 ? createIdentifier() : _b, body = _a.body, _c = _a.level, level = _c === void 0 ? MessageLevels.Info : _c, _d = _a.action, action = _d === void 0 ? undefined : _d, _e = _a.status, status = _e === void 0 ? Codes.OK : _e, _f = _a.print, print = _f === void 0 ? true : _f, data = _a.data;
-        var _this = _super.call(this, { id: id, body: body, level: level, action: action, status: status, print: print, data: data }) || this;
+        var id = _a.id, body = _a.body, _b = _a.level, level = _b === void 0 ? MessageLevels.Info : _b, _c = _a.action, action = _c === void 0 ? undefined : _c, _d = _a.status, status = _d === void 0 ? Codes.OK : _d, _e = _a.print, print = _e === void 0 ? true : _e, data = _a.data;
+        var _this = _super.call(this, id, body, level, action, status, print, data) || this;
         _this.createdAt = new Date();
-        _this.id = id;
         _this.body = body;
         _this.level = level;
         _this.action = action;

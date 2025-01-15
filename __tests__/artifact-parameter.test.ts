@@ -2,8 +2,8 @@ import { Parameter } from "../src/artifacts/parameter";
 
 describe("Parameter", () => {
     it("should create a parameter with default values", () => {
-        const param = new Parameter<number>();
-        expect(param.name).toMatch(/^Parameter-/);
+        const param = new Parameter<number>({ name: "param1" });
+        expect(param.name).toBe("param1");
         expect(param.required).toBe(false);
         expect(param.description).toBe("A parameter");
         expect(param.defaultValue).toBeUndefined();

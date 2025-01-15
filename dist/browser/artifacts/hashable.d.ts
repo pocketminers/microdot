@@ -16,7 +16,8 @@ declare class Hashable implements Record<'id', string>, Partial<Record<"hash", s
      * @param value
      * @summary Create a new Hashable instance
      */
-    constructor(value: any, id?: string);
+    constructor(id?: string, ...values: any[]);
+    private createHash;
     /**
      * isString Method
      * @param value
@@ -47,6 +48,7 @@ declare class Hashable implements Record<'id', string>, Partial<Record<"hash", s
      * hashable.checkHash("myValue");
      */
     checkHash(value: string): boolean;
+    checkHash(...hashOrValues: any[]): boolean;
     /**
      * hashString Method
      * @param value

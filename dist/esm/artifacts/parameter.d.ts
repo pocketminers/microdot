@@ -1,9 +1,10 @@
 import { Hashable } from "./hashable";
+import { ArgumentEntry } from "./argument";
 /**
  * An entry interface for a parameter
  * @summary Parameter entry interface that is used to create a parameter
  */
-interface ParameterEntry<T> extends Record<"name", string>, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
+interface ParameterEntry<T> extends Partial<Pick<Hashable, "id">>, Pick<ArgumentEntry<T>, "name">, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
 }
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
@@ -30,7 +31,7 @@ declare class Parameter<T> extends Hashable {
      *    optionalValues: [123, 456]
      * }`
      */
-    constructor({ name, required, description, defaultValue, optionalValues }?: ParameterEntry<T>);
+    constructor({ id, name, required, description, defaultValue, optionalValues }: ParameterEntry<T>);
     /**
      * Check if the Default Value or a Given Value is in the Optional Values
      * @summary Check if the value is in the optional values

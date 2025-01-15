@@ -50,7 +50,7 @@ var Configurable = /** @class */ (function (_super) {
     __extends(Configurable, _super);
     function Configurable(_a) {
         var id = _a.id, _b = _a.name, name = _b === void 0 ? 'Configurable' : _b, _c = _a.description, description = _c === void 0 ? 'A configurable object that can be set by arguments' : _c, _d = _a.configuration, configuration = _d === void 0 ? undefined : _d, _e = _a.properties, properties = _e === void 0 ? [] : _e, _f = _a.parameters, parameters = _f === void 0 ? [] : _f, _g = _a.args, args = _g === void 0 ? [] : _g, _h = _a.useArgs, useArgs = _h === void 0 ? false : _h;
-        var _this = _super.call(this, { id: id, name: name, description: description, configuration: configuration, properties: properties, parameters: parameters, args: args, useArgs: useArgs }, id) || this;
+        var _this = _super.call(this, id, name, description, configuration, properties, parameters, args, useArgs) || this;
         _this.createdAt = new Date();
         _this.name = name;
         _this.description = description;

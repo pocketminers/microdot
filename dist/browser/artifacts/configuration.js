@@ -68,7 +68,7 @@ var Configuration = /** @class */ (function (_super) {
      * Both, properties and arguments can be passed to the constructor.
      */
     function Configuration(_a) {
-        var name = _a.name, _b = _a.description, description = _b === void 0 ? 'A configuration of properties that can be set by arguments' : _b, _c = _a.properties, properties = _c === void 0 ? [] : _c, _d = _a.parameters, parameters = _d === void 0 ? [] : _d, _e = _a.args, args = _e === void 0 ? [] : _e, _f = _a.useArgs, useArgs = _f === void 0 ? false : _f;
+        var _b = _a.name, name = _b === void 0 ? 'Configuration' : _b, _c = _a.description, description = _c === void 0 ? 'A configuration of properties that can be set by arguments' : _c, _d = _a.properties, properties = _d === void 0 ? [] : _d, _e = _a.parameters, parameters = _e === void 0 ? [] : _e, _f = _a.args, args = _f === void 0 ? [] : _f, _g = _a.useArgs, useArgs = _g === void 0 ? false : _g;
         var _this = _super.call(this) || this;
         _this.name = 'Configuration';
         _this.description = 'A configuration of properties that can be set by arguments';
@@ -85,7 +85,6 @@ var Configuration = /** @class */ (function (_super) {
      * If the entry is not a parameter or a property, then throw an error.
      */
     Configuration.prototype.addEntry = function (entry, args, overwrite) {
-        if (args === void 0) { args = []; }
         if (overwrite === void 0) { overwrite = false; }
         var property;
         // If the entry is a parameter, then create a new property
@@ -357,8 +356,14 @@ var Configuration = /** @class */ (function (_super) {
         try {
             for (var _b = __values(this), _c = _b.next(); !_c.done; _c = _b.next()) {
                 var _d = __read(_c.value, 2), name_7 = _d[0], property = _d[1];
+                if (property.name !== name_7) {
+                    throw new Error("Property name does not match parameter name: ".concat(property.name, " !== ").concat(name_7));
+                }
+                if (property instanceof Parameter) {
+                    parameters.push(property);
+                }
                 parameters.push(new Parameter({
-                    name: property.name,
+                    name: name_7,
                     description: property.description,
                     required: property.required,
                     defaultValue: property.defaultValue,

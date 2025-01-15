@@ -37,7 +37,7 @@ class Configurable
             useArgs = false
         } : ConfigurableEntry
     ) {
-        super({id, name, description, configuration, properties, parameters, args, useArgs}, id);
+        super(id, name, description, configuration, properties, parameters, args, useArgs);
 
         this.name = name;
         this.description = description;

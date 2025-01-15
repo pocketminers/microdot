@@ -2,7 +2,9 @@ import { ArgumentEntry } from "./argument";
 import { Parameter, ParameterEntry } from "./parameter";
 import { Property, PropertyEntry } from "./property";
 import { Arguments } from "./arguments";
-interface ConfigurationEntry extends Record<'name', string>, Partial<Record<'description', string>>, Partial<Record<'properties', PropertyEntry<any>[] | Property<any>[]>>, Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[] | []>>, Partial<Record<'args', ArgumentEntry<any>[] | Arguments | any[]>>, Partial<Record<'useArgs', boolean>> {
+interface ConfigurationEntry extends Partial<Record<'name', string>>, Partial<Record<'description', string>>, Partial<Record<'properties', PropertyEntry<any>[] | Property<any>[]>>, Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[] | []>>, Partial<Record<'args', ArgumentEntry<any>[] | Arguments | {
+    [key: string]: any;
+}[]>>, Partial<Record<'useArgs', boolean>> {
 }
 /**
  * Configuration is a map of properties that can be set by arguments.
@@ -25,7 +27,9 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntry(entry: PropertyEntry<any> | ParameterEntry<any>, args?: ArgumentEntry<any>[], overwrite?: boolean): void;
+    addEntry(entry: PropertyEntry<any> | ParameterEntry<any>, args: ArgumentEntry<any>[] | Arguments | {
+        [key: string]: any;
+    }[], overwrite?: boolean): void;
     addEntryFromArg(arg: ArgumentEntry<any>): void;
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.
@@ -36,11 +40,13 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      */
     addEntries({ entries, args, overwrite, fromArgs }?: {
         entries?: PropertyEntry<any>[] | ParameterEntry<any>[] | ArgumentEntry<any>[] | any[];
-        args?: ArgumentEntry<any>[];
+        args?: ArgumentEntry<any>[] | Arguments | {
+            [key: string]: any;
+        }[];
         overwrite?: boolean;
         fromArgs?: boolean;
     }): void;
-    setArguments(args: ArgumentEntry<any>[], setProperties?: boolean): void;
+    setArguments(args: ArgumentEntry<any>[] | any[], setProperties?: boolean): void;
     /**
      * Get a property from the configuration by name
      */

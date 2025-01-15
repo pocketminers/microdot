@@ -12,8 +12,8 @@ interface ConfigurableEntry extends Record<'id', Identifier>, Partial<Record<'co
  * This allows the property to be set by the argument.
  */
 declare class Configurable extends Hashable {
-    name: string;
-    description: string;
+    readonly name: string;
+    readonly description: string;
     config: Configuration;
     readonly createdAt: Date;
     constructor({ id, name, description, configuration, properties, parameters, args, useArgs }: ConfigurableEntry);

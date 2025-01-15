@@ -13,7 +13,6 @@ var MessageLevels;
 })(MessageLevels || (MessageLevels = {}));
 ;
 class Message extends Hashable {
-    id;
     body;
     level;
     action;
@@ -21,9 +20,8 @@ class Message extends Hashable {
     data;
     print;
     createdAt = new Date();
-    constructor({ id = createIdentifier(), body, level = MessageLevels.Info, action = undefined, status = Codes.OK, print = true, data }) {
-        super({ id, body, level, action, status, print, data });
-        this.id = id;
+    constructor({ id, body, level = MessageLevels.Info, action = undefined, status = Codes.OK, print = true, data }) {
+        super(id, body, level, action, status, print, data);
         this.body = body;
         this.level = level;
         this.action = action;

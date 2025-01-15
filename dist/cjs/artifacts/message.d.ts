@@ -20,7 +20,6 @@ type MessageLevel = keyof typeof MessageLevels | keyof typeof ErrorMessageLevels
 interface MessageEntry<L = MessageLevel, T = any> extends Partial<Record<'id', Identifier>>, Record<'body', string>, Partial<Record<'level', L>>, Partial<Record<'action', string>>, Partial<Record<'status', number>>, Partial<Record<'data', T>>, Partial<Record<'print', boolean>> {
 }
 declare class Message<L = MessageLevel, T = any> extends Hashable {
-    readonly id: string;
     readonly body: string;
     readonly level: L;
     readonly action?: string;

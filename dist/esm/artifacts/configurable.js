@@ -12,7 +12,7 @@ class Configurable extends Hashable {
     config;
     createdAt = new Date();
     constructor({ id, name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
-        super({ id, name, description, configuration, properties, parameters, args, useArgs }, id);
+        super(id, name, description, configuration, properties, parameters, args, useArgs);
         this.name = name;
         this.description = description;
         if (configuration !== undefined) {

@@ -35,7 +35,7 @@ class Argument extends hashable_1.Hashable {
         if (Argument.isEmtpty({ name, value })) {
             throw new Error("Argument name or value cannot be empty.");
         }
-        super({ name, value });
+        super(name, value);
         this.name = name;
         this.value = value;
     }
@@ -60,7 +60,7 @@ class Argument extends hashable_1.Hashable {
      * @override Hashable.checkHash
      */
     checkHash() {
-        return super.checkHash(JSON.stringify({ name: this.name, value: this.value }));
+        return super.checkHash(this.name, this.value);
     }
     /**
      * Check if the Argument is empty

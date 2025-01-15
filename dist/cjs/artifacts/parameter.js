@@ -28,14 +28,8 @@ class Parameter extends hashable_1.Hashable {
      *    optionalValues: [123, 456]
      * }`
      */
-    constructor({ name = (0, identifier_1.createIdentifier)("Name", { prefix: "Parameter-" }), required = false, description = "A parameter", defaultValue, optionalValues = [] } = {
-        name: (0, identifier_1.createIdentifier)("Name", { prefix: "Parameter-" }),
-        required: false,
-        description: "A parameter",
-        defaultValue: undefined,
-        optionalValues: []
-    }) {
-        super({ name, required, description, defaultValue, optionalValues });
+    constructor({ id = (0, identifier_1.createIdentifier)("Name", { prefix: "Parameter-" }), name = (0, identifier_1.createIdentifier)("Name", { prefix: "Parameter-" }), required = false, description = "A parameter", defaultValue, optionalValues = [] }) {
+        super(id, name, required, description, defaultValue, optionalValues);
         this.name = name;
         this.required = required;
         this.description = description;

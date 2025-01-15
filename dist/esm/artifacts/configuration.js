@@ -17,7 +17,7 @@ class Configuration extends Map {
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor({ name, description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false }) {
+    constructor({ name = 'Configuration', description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false }) {
         super();
         this.name = name;
         this.description = description;
@@ -30,7 +30,7 @@ class Configuration extends Map {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntry(entry, args = [], overwrite = false) {
+    addEntry(entry, args, overwrite = false) {
         let property;
         // If the entry is a parameter, then create a new property
         if (entry instanceof Property) {
@@ -214,8 +214,14 @@ class Configuration extends Map {
     toParameters() {
         const parameters = [];
         for (const [name, property] of this) {
+            if (property.name !== name) {
+                throw new Error(`Property name does not match parameter name: ${property.name} !== ${name}`);
+            }
+            if (property instanceof Parameter) {
+                parameters.push(property);
+            }
             parameters.push(new Parameter({
-                name: property.name,
+                name: name,
                 description: property.description,
                 required: property.required,
                 defaultValue: property.defaultValue,

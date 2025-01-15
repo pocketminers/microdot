@@ -16,7 +16,6 @@ var MessageLevels;
 })(MessageLevels || (exports.MessageLevels = MessageLevels = {}));
 ;
 class Message extends artifacts_1.Hashable {
-    id;
     body;
     level;
     action;
@@ -24,9 +23,8 @@ class Message extends artifacts_1.Hashable {
     data;
     print;
     createdAt = new Date();
-    constructor({ id = (0, identifier_1.createIdentifier)(), body, level = MessageLevels.Info, action = undefined, status = status_1.Codes.OK, print = true, data }) {
-        super({ id, body, level, action, status, print, data });
-        this.id = id;
+    constructor({ id, body, level = MessageLevels.Info, action = undefined, status = status_1.Codes.OK, print = true, data }) {
+        super(id, body, level, action, status, print, data);
         this.body = body;
         this.level = level;
         this.action = action;

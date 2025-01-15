@@ -39,7 +39,7 @@ var Argument = /** @class */ (function (_super) {
         if (Argument.isEmtpty({ name: name, value: value })) {
             throw new Error("Argument name or value cannot be empty.");
         }
-        _this = _super.call(this, { name: name, value: value }) || this;
+        _this = _super.call(this, name, value) || this;
         _this.name = name;
         _this.value = value;
         return _this;
@@ -65,7 +65,7 @@ var Argument = /** @class */ (function (_super) {
      * @override Hashable.checkHash
      */
     Argument.prototype.checkHash = function () {
-        return _super.prototype.checkHash.call(this, JSON.stringify({ name: this.name, value: this.value }));
+        return _super.prototype.checkHash.call(this, this.name, this.value);
     };
     /**
      * Check if the Argument is empty

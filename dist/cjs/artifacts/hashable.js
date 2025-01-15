@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hashable = void 0;
+const utils_1 = require("../utils");
 const crypto_1 = require("../utils/crypto");
 /**
  * Hashable Class
@@ -20,16 +21,22 @@ class Hashable {
      * @param value
      * @summary Create a new Hashable instance
      */
-    constructor(value, id = '') {
-        this.id = id;
-        let str;
-        if (this.isString(value)) {
-            str = value;
+    constructor(id = '', ...values) {
+        this.id = id === "" ? (0, utils_1.createIdentifier)("UUID", { prefix: "Hashable-" }) : id;
+        this.hash = this.createHash(values);
+    }
+    createHash(...values) {
+        let str = "";
+        // if (Array.isArray(values)) {
+        for (const item in values) {
+            if (this.isString(item) === true) {
+                str += item;
+            }
+            else {
+                str += JSON.stringify(item);
+            }
         }
-        else {
-            str = JSON.stringify(value);
-        }
-        this.hash = Hashable.hashString(str);
+        return Hashable.hashString(str);
     }
     /**
      * isString Method
@@ -54,20 +61,28 @@ class Hashable {
             return false;
         }
     }
-    checkHash(hashOrValue) {
-        if (this.isHash(hashOrValue) === true
-            && this.hash !== hashOrValue) {
+    checkHash(hashOrValues) {
+        if (this.isHash(hashOrValues) === true
+            && this.hash !== hashOrValues) {
             throw new Error("Hash mismatch");
         }
-        else if (this.isString(hashOrValue) === true
-            && this.isHash(hashOrValue) === false
-            && this.hash !== Hashable.hashString(hashOrValue)) {
+        else if (this.isString(hashOrValues) === true
+            && this.isHash(hashOrValues) === false
+            && this.hash !== this.createHash(hashOrValues)) {
             throw new Error("Hash mismatch");
         }
-        else if (this.isHash(hashOrValue) === false
-            && this.isString(hashOrValue) === false) {
-            throw new Error("Invalid hash value");
+        else if (Array.isArray(hashOrValues)
+            && hashOrValues.length > 0) {
+            if (this.hash !== this.createHash(hashOrValues)) {
+                throw new Error("Hash mismatch");
+            }
         }
+        // else if (
+        //     this.isHash(hashOrValues) === false
+        //     && this.isString(hashOrValues) === false
+        // ) {
+        //     throw new Error("Invalid hash value");
+        // }
         return true;
     }
     /**

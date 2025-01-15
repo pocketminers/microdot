@@ -39,7 +39,6 @@ class Message<L = MessageLevel, T = any>
     extends
         Hashable
 {
-    public readonly id: string;
     public readonly body: string;
     public readonly level: L;
     public readonly action?: string;
@@ -50,7 +49,7 @@ class Message<L = MessageLevel, T = any>
 
 
     constructor({
-        id = createIdentifier(),
+        id,
         body,
         level = MessageLevels.Info as L,
         action = undefined,
@@ -58,9 +57,8 @@ class Message<L = MessageLevel, T = any>
         print = true,
         data
     }: MessageEntry<L, T>) {
-        super({ id, body, level, action, status, print, data});
+        super(id, body, level, action, status, print, data);
 
-        this.id = id;
         this.body = body;
         this.level = level;
         this.action = action;

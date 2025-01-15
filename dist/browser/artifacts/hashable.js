@@ -1,3 +1,4 @@
+import { createIdentifier } from "../utils";
 import { checkForHash, hashValue } from "../utils/crypto";
 /**
  * Hashable Class
@@ -15,18 +16,32 @@ var Hashable = /** @class */ (function () {
      * @param value
      * @summary Create a new Hashable instance
      */
-    function Hashable(value, id) {
+    function Hashable(id) {
         if (id === void 0) { id = ''; }
-        this.id = id;
-        var str;
-        if (this.isString(value)) {
-            str = value;
+        var values = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            values[_i - 1] = arguments[_i];
         }
-        else {
-            str = JSON.stringify(value);
-        }
-        this.hash = Hashable.hashString(str);
+        this.id = id === "" ? createIdentifier("UUID", { prefix: "Hashable-" }) : id;
+        this.hash = this.createHash(values);
     }
+    Hashable.prototype.createHash = function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        var str = "";
+        // if (Array.isArray(values)) {
+        for (var item in values) {
+            if (this.isString(item) === true) {
+                str += item;
+            }
+            else {
+                str += JSON.stringify(item);
+            }
+        }
+        return Hashable.hashString(str);
+    };
     /**
      * isString Method
      * @param value
@@ -50,20 +65,28 @@ var Hashable = /** @class */ (function () {
             return false;
         }
     };
-    Hashable.prototype.checkHash = function (hashOrValue) {
-        if (this.isHash(hashOrValue) === true
-            && this.hash !== hashOrValue) {
+    Hashable.prototype.checkHash = function (hashOrValues) {
+        if (this.isHash(hashOrValues) === true
+            && this.hash !== hashOrValues) {
             throw new Error("Hash mismatch");
         }
-        else if (this.isString(hashOrValue) === true
-            && this.isHash(hashOrValue) === false
-            && this.hash !== Hashable.hashString(hashOrValue)) {
+        else if (this.isString(hashOrValues) === true
+            && this.isHash(hashOrValues) === false
+            && this.hash !== this.createHash(hashOrValues)) {
             throw new Error("Hash mismatch");
         }
-        else if (this.isHash(hashOrValue) === false
-            && this.isString(hashOrValue) === false) {
-            throw new Error("Invalid hash value");
+        else if (Array.isArray(hashOrValues)
+            && hashOrValues.length > 0) {
+            if (this.hash !== this.createHash(hashOrValues)) {
+                throw new Error("Hash mismatch");
+            }
         }
+        // else if (
+        //     this.isHash(hashOrValues) === false
+        //     && this.isString(hashOrValues) === false
+        // ) {
+        //     throw new Error("Invalid hash value");
+        // }
         return true;
     };
     /**

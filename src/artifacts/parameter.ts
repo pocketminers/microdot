@@ -1,5 +1,6 @@
 import { createIdentifier } from "@utils/identifier";
 import { Hashable } from "@artifacts/hashable";
+import { ArgumentEntry } from "./argument";
 
 
 /**
@@ -8,7 +9,8 @@ import { Hashable } from "@artifacts/hashable";
  */
 interface ParameterEntry<T>
     extends
-        Record<"name", string>,
+        Partial<Pick<Hashable, "id">>,
+        Pick<ArgumentEntry<T>, "name">,
         Partial<Record<"required", boolean>>,
         Partial<Record<"description", string>>,
         Partial<Record<"defaultValue", T>>,
@@ -46,20 +48,15 @@ class Parameter<T>
      */
     constructor(
         {
+            id = createIdentifier("Name", { prefix: "Parameter-" }),
             name = createIdentifier("Name", { prefix: "Parameter-" }),
             required = false,
             description = "A parameter",
             defaultValue,
             optionalValues = []
-        }: ParameterEntry<T> = {
-            name: createIdentifier("Name", { prefix: "Parameter-" }),
-            required: false,
-            description: "A parameter",
-            defaultValue: undefined,
-            optionalValues: []
-        }
+        }: ParameterEntry<T>,
     ) {
-        super({ name, required, description, defaultValue, optionalValues });
+        super(id, name, required, description, defaultValue, optionalValues);
         this.name = name;
         this.required = required;
         this.description = description;

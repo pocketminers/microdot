@@ -55,7 +55,7 @@ class Argument<T>
             throw new Error("Argument name or value cannot be empty.");
         }
 
-        super({ name, value });
+        super(name, value);
         this.name = name;
         this.value = value as T;
     }
@@ -83,7 +83,7 @@ class Argument<T>
      * @override Hashable.checkHash
      */
     public override checkHash(): boolean {
-       return super.checkHash(JSON.stringify({ name: this.name, value: this.value }));
+        return super.checkHash(this.name, this.value);
     }
 
     /**
