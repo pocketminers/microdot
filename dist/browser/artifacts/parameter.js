@@ -37,7 +37,13 @@ var Parameter = /** @class */ (function (_super) {
      * }`
      */
     function Parameter(_a) {
-        var _b = _a === void 0 ? {} : _a, _c = _b.name, name = _c === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _c, _d = _b.required, required = _d === void 0 ? false : _d, _e = _b.description, description = _e === void 0 ? "A parameter" : _e, defaultValue = _b.defaultValue, _f = _b.optionalValues, optionalValues = _f === void 0 ? [] : _f;
+        var _b = _a === void 0 ? {
+            name: createIdentifier("Name", { prefix: "Parameter-" }),
+            required: false,
+            description: "A parameter",
+            defaultValue: undefined,
+            optionalValues: []
+        } : _a, _c = _b.name, name = _c === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _c, _d = _b.required, required = _d === void 0 ? false : _d, _e = _b.description, description = _e === void 0 ? "A parameter" : _e, defaultValue = _b.defaultValue, _f = _b.optionalValues, optionalValues = _f === void 0 ? [] : _f;
         var _this = _super.call(this, { name: name, required: required, description: description, defaultValue: defaultValue, optionalValues: optionalValues }) || this;
         _this.name = name;
         _this.required = required;

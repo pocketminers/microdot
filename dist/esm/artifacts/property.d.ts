@@ -1,12 +1,10 @@
 import { Argument } from "./argument";
-import { Parameter } from "./parameter";
-interface PropertyEntry<T = any> {
-    name: string;
-    value?: T;
-    description?: string;
-    required?: boolean;
-    defaultValue?: T;
-    optionalValues?: T[];
+import { Parameter, ParameterEntry } from "./parameter";
+/**
+ * Property entry interface
+ * An object that contains the properties of a property.
+ */
+interface PropertyEntry<T = any> extends ParameterEntry<T>, Partial<Record<'value', T>> {
 }
 /**
  * The Property class is a Parameter with an Argument

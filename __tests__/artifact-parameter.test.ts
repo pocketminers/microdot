@@ -28,14 +28,16 @@ describe("Parameter", () => {
     it("should throw an error if default value is not in optional values", () => {
         expect(() => {
             new Parameter<number>({
+                name: "param1",
                 defaultValue: 789,
                 optionalValues: [123, 456]
             });
-        }).toThrow("Value is not in optional values: Parameter-");
+        }).toThrow("Value is not in optional values: param1");
     });
 
     it("should return the default value if no value is provided", () => {
         const param = new Parameter<number>({
+            name: "param1",
             defaultValue: 123,
             optionalValues: [123, 456]
         });
@@ -44,6 +46,7 @@ describe("Parameter", () => {
 
     it("should return the provided value if it is in optional values", () => {
         const param = new Parameter<number>({
+            name: "param1",
             optionalValues: [123, 456]
         });
         expect(param.getValue(123)).toBe(123);
@@ -51,9 +54,10 @@ describe("Parameter", () => {
 
     it("should throw an error if the provided value is not in optional values", () => {
         const param = new Parameter<number>({
+            name: "param1",
             optionalValues: [123, 456]
         });
-        expect(() => param.getValue(789)).toThrow("Value is not in optional values: Parameter-");
+        expect(() => param.getValue(789)).toThrow("Value is not in optional values: param1");
     });
 
     it("should throw an error if value is required but not provided", () => {

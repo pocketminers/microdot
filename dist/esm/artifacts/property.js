@@ -1,5 +1,6 @@
 import { Argument } from "./argument";
 import { Parameter } from "./parameter";
+;
 /**
  * The Property class is a Parameter with an Argument
  */
@@ -13,7 +14,8 @@ class Property extends Parameter {
      */
     constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
         super({ name, description, required, defaultValue, optionalValues });
-        if (value !== undefined && super.checkOptionalValues(value)) {
+        if (value !== undefined
+            && this.checkOptionalValues(value)) {
             this.argument = new Argument({ name, value });
         }
     }

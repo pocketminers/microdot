@@ -20,26 +20,26 @@ describe('Configuration', () => {
         config.clear();
     })
 
-    test('should initialize with properties', () => {
+    it('should initialize with properties', () => {
         // console.log(`config: ${JSON.stringify(config)}`);
         expect(config.get('prop1')?.getValue()).toBe('value1');
         expect(config.get('prop2')?.getValue()).toBe(42);
         expect(config.get('prop3')?.getValue()).toBe(true);
     });
 
-    test('should set property value', () => {
+    it('should set property value', () => {
         const newProp = new Property({name: 'prop1', value: 'newValue', required: true, description: 'Property 1', defaultValue: 'value1'});
         config.set('prop1', newProp);
         expect(config.get('prop1')?.getValue()).toBe('newValue');
     });
 
-    test('should get property value', () => {
+    it('should get property value', () => {
         expect(config.getValue('prop1')).toBe('value1');
         expect(config.getValue('prop2')).toBe(42);
         expect(config.getValue('prop3')).toBe(true);
     });
 
-    test('should convert to JSON', () => {
+    it('should convert to JSON', () => {
         const json = config.toJSON();
         expect(json).toEqual({
             prop1: { name: 'prop1', value: 'value1', required: true, description: 'Property 1', defaultValue: 'value1', optionalValues: [] },
@@ -48,14 +48,14 @@ describe('Configuration', () => {
         });
     });
 
-    test('should convert to string', () => {
+    it('should convert to string', () => {
         const str = config.toString();
         expect(str).toContain('prop1: value1');
         expect(str).toContain('prop2: 42');
         expect(str).toContain('prop3: true');
     });
 
-    test('should convert to record', () => {
+    it('should convert to record', () => {
         const record = config.toRecord();
         expect(record).toEqual({
             prop1: { name: 'prop1', value: "value1", required: true, description: 'Property 1', defaultValue: 'value1', optionalValues: [] },
@@ -64,7 +64,7 @@ describe('Configuration', () => {
         });
     });
 
-    test('should get required values', () => {
+    it('should get required values', () => {
         const values = config.getRequiredValues();
         expect(values).toEqual({
             prop1: 'value1',
@@ -73,31 +73,31 @@ describe('Configuration', () => {
         });
     });
 
-    test('should clear configuration', () => {
+    it('should clear configuration', () => {
         config.clear();
         expect(config.size).toBe(0);
     });
 
-    test('should not add duplicate property', () => {
+    it('should not add duplicate property', () => {
         const prop = new Property({name: 'prop1', value: 'newValue', required: true, description: 'Property 1', defaultValue: 'value1'});
         expect(() => config.addEntry(prop, [{name: 'prop1', value: 'newValue'}])).toThrow('Property already exists: prop1');
         expect(config.size).toBe(3);
     });
 
-    test('should overwrite a property', () => {
+    it('should overwrite a property', () => {
         const prop = new Property({name: 'prop1', value: 'newValue', required: true, description: 'Property 1', defaultValue: 'value1'});
         config.addEntry(prop, [{name: 'prop1', value: 'newValue'}], true);
         expect(config.get('prop1')?.getValue()).toBe('newValue');
     });
 
-    test('should not set property with invalid name', () => {
+    it('should not set property with invalid name', () => {
         const prop = new Property({name: 'prop4', value: 'newValue', required: true, description: 'Property 4', defaultValue: 'value4'});
         config.addEntry(prop, [{name: 'prop5', value: 'newValue1'}]);
         expect(config.size).toBe(4);
         expect(config.get('prop4')?.argument?.value).toBe('newValue');
     });
 
-    test('should create a new configuration from arguments', () => {
+    it('should create a new configuration from arguments', () => {
         const args = [
             { name: 'prop1', value: 'newValue' },
             { name: 'prop2', value: 84 },

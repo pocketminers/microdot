@@ -8,7 +8,7 @@ import { Hashable } from "@artifacts/hashable";
  */
 interface ParameterEntry<T>
     extends
-        Partial<Record<"name", string>>,
+        Record<"name", string>,
         Partial<Record<"required", boolean>>,
         Partial<Record<"description", string>>,
         Partial<Record<"defaultValue", T>>,
@@ -53,7 +53,13 @@ class Parameter<T>
             description = "A parameter",
             defaultValue,
             optionalValues = []
-        }: ParameterEntry<T> = {}
+        }: ParameterEntry<T> = {
+            name: createIdentifier("Name", { prefix: "Parameter-" }),
+            required: false,
+            description: "A parameter",
+            defaultValue: undefined,
+            optionalValues: []
+        }
     ) {
         super({ name, required, description, defaultValue, optionalValues });
         this.name = name;

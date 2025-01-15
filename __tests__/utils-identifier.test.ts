@@ -303,12 +303,12 @@ describe("IdentifierFactory", () => {
     });
 
     it("should throw an error when adding an invalid identifier type", () => {
-        // @ts-ignorex
+        // @ts-expect-error - Testing invalid type
         expect(() => factory.add(123)).toThrow("Invalid argument type: number");
     });
 
     it("should throw an error when removing an invalid identifier type", () => {
-        // @ts-ignore
+        // @ts-expect-error - Testing invalid type
         expect(() => factory.remove(1233)).toThrow("Invalid argument type: number");
     });
 

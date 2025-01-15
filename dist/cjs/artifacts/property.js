@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Property = void 0;
 const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
+;
 /**
  * The Property class is a Parameter with an Argument
  */
@@ -16,7 +17,8 @@ class Property extends parameter_1.Parameter {
      */
     constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
         super({ name, description, required, defaultValue, optionalValues });
-        if (value !== undefined && super.checkOptionalValues(value)) {
+        if (value !== undefined
+            && this.checkOptionalValues(value)) {
             this.argument = new argument_1.Argument({ name, value });
         }
     }

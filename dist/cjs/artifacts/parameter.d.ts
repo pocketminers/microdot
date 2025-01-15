@@ -3,7 +3,7 @@ import { Hashable } from "./hashable";
  * An entry interface for a parameter
  * @summary Parameter entry interface that is used to create a parameter
  */
-interface ParameterEntry<T> extends Partial<Record<"name", string>>, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
+interface ParameterEntry<T> extends Record<"name", string>, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
 }
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
