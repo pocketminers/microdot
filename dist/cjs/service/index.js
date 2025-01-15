@@ -44,6 +44,7 @@ const ServiceConfig = new configuration_1.Configuration({
         { name: 'queueInterval', required: true, description: 'Interval to run commands in parallel', defaultValue: 1000 },
         { name: 'queueInSeries', required: true, description: 'Run commands in series', defaultValue: false },
         { name: 'startQueue', required: true, description: 'Start the queue', defaultValue: false },
+        { name: 'messanger', required: true, description: 'Messanger to use', defaultValue: 'console' }
     ]
 });
 exports.ServiceConfig = ServiceConfig;

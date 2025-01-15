@@ -308,11 +308,14 @@ class IdentifierFactory
     }
 
     public create<T extends IdentifierType>(
-        type: T,
+        type?: T,
         {
             prefix,
             suffix
-        } : {prefix?: string, suffix?: string} = {}
+        } : {
+            prefix?: string,
+            suffix?: string
+        } = {}
     ): Identifier {
         const id = createIdentifier(type, { prefix, suffix });
         this.add(id);

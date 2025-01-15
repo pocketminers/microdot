@@ -10,7 +10,7 @@ declare enum MessageLevels {
 }
 /**
  * MessageLevel is a type that represents the message levels.
- * The message levels are 'Info' and 'Debug'.
+ * The message levels are 'Info' and 'Debug' and 'Error' and 'Warn'.
  */
 type MessageLevel = keyof typeof MessageLevels | keyof typeof ErrorMessageLevels;
 /**

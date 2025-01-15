@@ -3,7 +3,7 @@ import { Configuration } from '@artifacts/configuration';
 import { ArgumentEntry } from '@artifacts/argument';
 import { ParameterEntry } from '@artifacts/parameter';
 import { ErrorMessage, Message } from '@service/message';
-import { Hashable, PropertyEntry } from '@/artifacts';
+import { PropertyEntry } from '@/artifacts';
 import { Configurable } from '@/artifacts/configurable';
 
 

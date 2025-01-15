@@ -46,7 +46,7 @@ declare class IdentifierFactory extends Map<number, Identifier> {
     remove(record: Record<number, Identifier>): Array<Record<number, Identifier | undefined>>;
     remove(records: Record<number, Identifier>[]): Array<Record<number, Identifier | undefined>>;
     remove(map: Map<number, Identifier>): Array<Record<number, Identifier | undefined>>;
-    create<T extends IdentifierType>(type: T, { prefix, suffix }?: {
+    create<T extends IdentifierType>(type?: T, { prefix, suffix }?: {
         prefix?: string;
         suffix?: string;
     }): Identifier;
