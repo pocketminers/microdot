@@ -26,7 +26,7 @@ class Arguments
      * }]`
      */
     public constructor(
-        entryOrObject: ArgumentEntry<any> | ArgumentEntry<any>[] | Record<string, any> | [] = []
+        entryOrObject: Argument<any> | ArgumentEntry<any> | ArgumentEntry<any>[] | Record<string, any> | [] = []
     ) {
         super();
         this.add(entryOrObject);
@@ -49,7 +49,7 @@ class Arguments
     /**
      * Get an argument entry by name
      */
-    private getArgumentEntry<T = any>(name: string): ArgumentEntry<T> | undefined {
+    private getArgument<T = any>(name: string): Argument<T> | undefined {
         return this.getArgumentByName<T>(name);
     }
 
@@ -63,9 +63,9 @@ class Arguments
     /**
      * Get an argument by name
      */
-    public get<T = any>(name: string, entry: boolean = false): T | ArgumentEntry<T> | undefined {
+    public get<T = any>(name: string, entry: boolean = false): T | Argument<T> | undefined {
         if (this.hasArgument(name)) {
-            return entry === true ? this.getArgumentEntry<T>(name) : this.getArgumentValue<T>(name);
+            return entry === true ? this.getArgument<T>(name) : this.getArgumentValue<T>(name);
         }
         return undefined;
     }

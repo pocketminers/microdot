@@ -1,3 +1,4 @@
+import { checkIsEmpty } from "@/utils";
 import { Argument } from "./argument";
 import { Parameter, ParameterEntry } from "./parameter";
 
@@ -9,7 +10,7 @@ import { Parameter, ParameterEntry } from "./parameter";
 interface PropertyEntry<T = any> 
     extends
         ParameterEntry<T>,
-        Partial<Record<'value', T>> {};
+        Partial<Record<'value', T>> {}
 
 /**
  * The Property class is a Parameter with an Argument
@@ -26,6 +27,7 @@ class Property<T = any>
      * Create a new Property instance from a PropertyEntry
      */
     public constructor({
+        id = '',
         name,
         value,
         description = '',
@@ -33,13 +35,14 @@ class Property<T = any>
         defaultValue = undefined,
         optionalValues = []
     }: PropertyEntry<T>) {
-        super({ name, description, required, defaultValue, optionalValues });
+        super({ id, name, description, required, defaultValue, optionalValues });
 
         if (
-            value !== undefined
+            checkIsEmpty([value]) === false
+            && value !== undefined
             && this.checkOptionalValues(value)
         ) {
-            this.argument = new Argument<T>({ name, value });
+            this.argument = new Argument<T>({ id, name, value });
         }
     }
 
@@ -65,6 +68,7 @@ class Property<T = any>
         if (
             this.required === true
             && value === undefined
+
         ) {
             throw new Error(`Value is required: ${this.name}`);
         }

@@ -10,15 +10,12 @@ describe('Hashable', () => {
     it('should throw an error if hash does not match', () => {
         const value = 'test';
         const hashable = new Hashable(value);
-        // hashable['string'] = 'invalid_hash';
-        // @ts-ignore
         try {
             // @ts-ignore
             hashable['string'] = 'invalid_hash';
         } catch (error: any) {
             expect(error.message).toBe('Cannot add property string, object is not extensible');
         }
-        // expect(() => hashable.checkHash()).toThrow('Hash mismatch');
     });
 
     it('should not throw an error if hash matches', () => {
@@ -27,19 +24,22 @@ describe('Hashable', () => {
 
         const hashString = hashable.hash as string;
 
-        expect(() => hashable.checkHash(hashString)).not.toThrow();
+        expect(() => hashable.checkHash(hashString)).not.toThrow('Hash mismatch');
     });
 
-    it('should throw "Method not implemented." error if hash matches', () => {
+    it('should throw an error if hash does not match', () => {
         const value = 'test';
         const hashable = new Hashable(value);
 
-        const hashString = hashable.hash as string;
-
-        try {
-            hashable.checkHash(hashString);
-        } catch (error: any) {
-            expect(error.message).toBe('Hash mismatch');
-        }
+        expect(() => hashable.checkHash('invalid_hash')).toThrow('Hash mismatch');
     });
+
+    it('should throw an error if hash does not match', () => {
+        const value = 'test';
+        const hashable = new Hashable("test", value);
+
+        expect(() => hashable.checkHash('invalid_hash')).toThrow('Hash mismatch');
+    });
+
+
 });

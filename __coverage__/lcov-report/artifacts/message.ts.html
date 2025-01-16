@@ -23,16 +23,16 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.13% </span>
+                <span class="strong">91.84% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>217/233</span>
+                <span class='fraction'>214/233</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80.64% </span>
+                <span class="strong">67.85% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>25/31</span>
+                <span class='fraction'>19/28</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">93.13% </span>
+                <span class="strong">91.84% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>217/233</span>
+                <span class='fraction'>214/233</span>
             </div>
         
             
@@ -377,24 +377,24 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-yes">9x</span>
@@ -473,11 +473,11 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">5x</span>
@@ -486,11 +486,11 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-yes">4x</span>
@@ -593,7 +593,7 @@ class Message&lt;L = MessageLevel, T = any&gt;
         this.action = action;
         this.status = status;
         this.print = print;
-        this.data = checkIsEmpty([data]) ? undefined : data as T;
+        this.data = checkIsEmpty([data]) <span class="branch-0 cbranch-no" title="branch not covered" >? undefined </span>: data as T;
 &nbsp;
         if (this.print) {
             this.printToConsole();
@@ -608,20 +608,20 @@ class Message&lt;L = MessageLevel, T = any&gt;
     public printAction(): string {
         const isEmpty = checkIsEmpty([this.action]);
 &nbsp;
-        if (isEmpty) {
-            return '';
-        }
-<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >        else {</span></span>
-<span class="cstat-no" title="statement not covered" >            return `\nAction: ${this.action}`;</span>
+        if (isEmpty) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >            return '';</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
+        else {
+            return `\nAction: ${this.action}`;
+        }
     }
 &nbsp;
     public printData(): string {
         const isEmpty = checkIsEmpty([this.data]);
 &nbsp;
-        if (isEmpty) {
-            return '';
-        }
+        if (isEmpty) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >            return '';</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
         else {
             const data = checkForCircularReference(this.data) <span class="branch-0 cbranch-no" title="branch not covered" >? 'Circular Reference' </span>: JSON.stringify(this.data, null, 2);
             // const data = JSON.stringify(this.data, null, 2);
@@ -704,12 +704,12 @@ class ErrorMessage&lt;L = ErrorMessageLevel, T = any&gt;
     public printStack(): string {
         const isEmpty = checkIsEmpty([this.stack]);
 &nbsp;
-        if (isEmpty) {
-            return '';
-        }
-<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >        else {</span></span>
-<span class="cstat-no" title="statement not covered" >            return `\nStack: ${this.stack}`;</span>
+        if (isEmpty) <span class="branch-0 cbranch-no" title="branch not covered" >{</span>
+<span class="cstat-no" title="statement not covered" >            return '';</span>
 <span class="cstat-no" title="statement not covered" >        }</span>
+        else {
+            return `\nStack: ${this.stack}`;
+        }
     }
 &nbsp;
     public printThrowError(): string {
@@ -720,9 +720,9 @@ class ErrorMessage&lt;L = ErrorMessageLevel, T = any&gt;
         if (!isEmpty) {
             errorThrown = this.throwError;
         }
-        else {
-            errorThrown = false;
-        }
+<span class="cstat-no" title="statement not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >        else {</span></span>
+<span class="cstat-no" title="statement not covered" >            errorThrown = false;</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
 &nbsp;
         return `\nError Thrown: ${errorThrown}`;
     }
@@ -766,7 +766,7 @@ export {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-01-15T21:15:07.053Z
+                at 2025-01-16T00:36:38.789Z
             </div>
         <script src="../prettify.js"></script>
         <script>

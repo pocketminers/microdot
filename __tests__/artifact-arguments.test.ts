@@ -42,24 +42,24 @@ describe('Argument', () => {
 
     it('should not create an Argument instance from an empty Record', () => {
         const record = {} as Record<string, string>;
-        expect(() => Argument.fromRecord<typeof record.value>(record)).toThrow('Argument name or value cannot be empty.');
+        expect(() => Argument.fromRecord<typeof record.value>(record)).toThrow('Argument:fromRecord:input cannot be empty.');
         
         const record2 = { testName: undefined };
-        expect(() => Argument.fromRecord<any>(record)).toThrow('Argument name or value cannot be empty.');
+        expect(() => Argument.fromRecord<any>(record2)).toThrow('Argument:fromRecord:input cannot be empty.');
 
         const record3 = { testName: null };
-        expect(() => Argument.fromRecord<any>(record3)).toThrow('Argument name or value cannot be empty.');
+        expect(() => Argument.fromRecord<any>(record3)).toThrow('Argument:fromRecord:input cannot be empty.');
     });
 
     it('should not create an Argument instance from an empty Argument Entry', () => {
         const entry = {};
-        // @ts-ignore
-        expect(() => new Argument<any>(entry)).toThrow('Argument name or value cannot be empty.');
+        // @ts-expect-error - Testing private property
+        expect(() => new Argument<any>(entry)).toThrow('Argument:constructor:name or value cannot be empty.');
     });
 
     it('should not create an undefined Argument name from an Argument Entry', () => {
         try {
-            // @ts-ignore
+            // @ts-expect-error - Testing private property
             new Argument<string>({ name: undefined, value: 'testValue' });
         }
         catch (error: any) {
@@ -70,7 +70,7 @@ describe('Argument', () => {
     it('should not create an improperly typed Argument instance from a Record', () => {
         const record = { testName: 123 };
         try {
-            // @ts-ignore
+            // @ts-expect-error - Testing private property
             Argument.fromRecord<string>(record);
         } 
         catch (error: any) {
@@ -82,9 +82,7 @@ describe('Argument', () => {
         const entry: ArgumentEntry<string> = { name: 'testName', value: 'testValue' };
         const arg = new Argument<string>(entry);
 
-        // @ts-ignore
         try {
-            // @ts-ignore
             entry.value = 'newValue';
         }
         catch (error: any) {
@@ -107,7 +105,7 @@ describe('Argument', () => {
     });
 
     it('should check the hash of an Argument instance', () => {
-        const entry: ArgumentEntry<string> = { name: 'testName', value: 'testValue' };
+        const entry: ArgumentEntry<string> = { id: 'test', name: 'testName', value: 'testValue' };
         const arg = new Argument<string>(entry);
 
         expect(arg.checkHash()).toBe(true);

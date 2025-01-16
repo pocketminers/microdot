@@ -52,12 +52,12 @@ class Configuration
      * If the entry is a parameter, then create a new property. 
      * If the entry is not a parameter or a property, then throw an error.
      */
-    public addEntry(
-        entry: PropertyEntry<any> | ParameterEntry<any>,
-        args: ArgumentEntry<any>[] | Arguments | { [key: string]: any}[],
+    public addEntry<T = any>(
+        entry: PropertyEntry<T> | ParameterEntry<T>,
+        args: ArgumentEntry<T>[] | Arguments | { [key: string]: T}[],
         overwrite = false
     ): void {
-        let property: Property<any> | undefined;
+        let property: Property<T> | undefined;
 
         // If the entry is a parameter, then create a new property
         if (entry instanceof Property) {
@@ -66,7 +66,7 @@ class Configuration
         else if (
             entry instanceof Parameter
         ) {
-            property = new Property(entry);
+            property = new Property<T>({...entry, value: entry.defaultValue});
         }
         else {
             throw new Error(`Invalid entry: ${entry}`);

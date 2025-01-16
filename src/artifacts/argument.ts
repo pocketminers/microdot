@@ -1,5 +1,6 @@
-import { checkIsEmpty } from "@utils/checks";
-import { Hashable } from "@artifacts/hashable";
+import { checkIsArray, checkIsEmpty } from "@utils/checks";
+import { Hashable, HashableEntry } from "@artifacts/hashable";
+import { IsNotEmpty } from "@/utils/decorators";
 
 
 /**
@@ -8,8 +9,9 @@ import { Hashable } from "@artifacts/hashable";
  */
 interface ArgumentEntry<T>
     extends
-        Record<"name", string>,
-        Record<"value", T> {}
+        HashableEntry<T>,
+        Partial<Pick<HashableEntry<T>, "id" | "value">>,
+        Record<"name", string> {}
 
 
 /**
@@ -47,15 +49,16 @@ class Argument<T>
      */
     constructor(
         {
+            id,
             name,
             value
         }: ArgumentEntry<T>
     ) {
-        if (Argument.isEmtpty({ name, value })) {
-            throw new Error("Argument name or value cannot be empty.");
+        if (checkIsEmpty([name, value])) {
+            throw new Error("Argument:constructor:name or value cannot be empty.");
         }
 
-        super(name, value);
+        super(id, name, value);
         this.name = name;
         this.value = value as T;
     }
@@ -83,15 +86,7 @@ class Argument<T>
      * @override Hashable.checkHash
      */
     public override checkHash(): boolean {
-        return super.checkHash(this.name, this.value);
-    }
-
-    /**
-     * Check if the Argument is empty
-     * @summary Check if the argument is an empty object, or if the name or value is empty
-     */
-    private static isEmtpty<T>({name, value}:{name: string, value: T}): boolean {
-        return checkIsEmpty([name, value]);
+        return super.checkHash(this.id, this.name, this.value);
     }
 
     /**
@@ -127,8 +122,24 @@ class Argument<T>
      * Create an Argument from a Record
      * @summary Create an argument from a record object
      */
+    @IsNotEmpty
     public static fromRecord<T>(record: Record<string, T>): Argument<T> {
-        return new Argument<T>({ name: Object.keys(record)[0], value: Object.values(record)[0] });
+
+        if (checkIsArray(record)) {
+            for (const entry in record) {
+                return new Argument<T>({ name: entry, value: record[entry] });
+            }
+        }
+        // decompose the record into name and value
+        else {
+            for (const [name, value] of Object.entries(record)) {
+                return new Argument<T>({ name, value });
+            }
+        }
+
+        // throw new Error("Argument:fromRecord:input cannot be empty.");
+        throw new Error(`${this.name}:${this.fromRecord.name}:name or value cannot be empty.`);
+        
     }
 }
 
