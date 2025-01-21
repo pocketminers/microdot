@@ -1,9 +1,31 @@
+
+/**
+ * Check if a value is an array. Empty arrays will return false.
+ */
+
 const checkIsArray = (value: any): boolean => {
     try {
         if (
             value !== undefined
             && value !== null
             && Array.isArray(value)
+            && value.length > 0
+        ) {
+            return true;
+        }
+    } catch (error: any) {
+        console.error(error.message);
+    }
+
+    return false;
+}
+
+const checkIsBoolean = (value: any): boolean => {
+    try {
+        if (
+            value !== undefined
+            && value !== null
+            && typeof value === "boolean"
         ) {
             return true;
         }
@@ -24,11 +46,11 @@ const checkIsString = (value: any): boolean => {
         if (
             value !== undefined
             && value !== null
-            // || (value !instanceof Number && value !instanceof Boolean && value !instanceof Array && value !instanceof Object)
+            && checkIsArray(value) === false
             && (
                 (typeof value === "string" && value.trim() !== "")
-                || typeof value === "object" && value.constructor.name === 'String' && value.trim() !== ""
-                || typeof value === "object" && value instanceof String && value.trim() !== ""
+                || (typeof value === "object" && value.constructor.name === 'String' && value.trim() !== "")
+                || (typeof value === "object" && value instanceof String && value.trim() !== "")
             )
         ) {
             return true;
@@ -39,6 +61,43 @@ const checkIsString = (value: any): boolean => {
 
     return false
 };
+
+/**
+ * Check if a value is an object. Empty objects will return false.
+ */
+const checkIsObject = (value: any): boolean => {
+    try {
+        if (
+            value !== undefined
+            && value !== null
+            && checkIsArray(value) === false
+            && typeof value === "object"
+            && Object.keys(value).length > 0
+        ) {
+            return true;
+        }
+    } catch (error: any) {
+        console.error(error.message);
+    }
+
+    return false;
+}
+
+const checkIsNumber = (value: any): boolean => {
+    try {
+        if (
+            value !== undefined
+            && value !== null
+            && typeof value === "number"
+        ) {
+            return true;
+        }
+    } catch (error: any) {
+        console.error(error.message);
+    }
+
+    return false;
+}
 
 
 /**
@@ -65,37 +124,106 @@ const checkForCircularReference = (obj: any): boolean => {
 };
 
 /**
- * Check if an array is empty or contains empty values.
+ * Check if an item is empty.
  */
-function checkIsEmpty(value: any): boolean {
-    const itemChecks: boolean[] = [];
-
-    if (value === null || value === undefined || value === '') {
-        return true;
-    }
-
-    if (Array.isArray(value)) {
-        itemChecks.push(value.every(item => checkIsEmpty(item)));
-    }
-
-    if (typeof value === 'object'){
-        itemChecks.push(Object.keys(value).every(key => checkIsEmpty(value[key])));
-    }
-
-    if (typeof value === 'string') {
-        itemChecks.push(value.trim() === '');
-    }
-
-    if (itemChecks.length > 0) {
-        return itemChecks.includes(true);
+const checkIsEmpty = (value: any): boolean => {
+    try {
+        if (
+            value === undefined || value === null
+            || ( checkIsString(value) === false && checkIsArray(value) === false && checkIsObject(value) === false && checkIsBoolean(value) === false && checkIsNumber(value) === false)
+         ) {
+            return true;
+        }
+    } catch (error: any) {
+        console.error(error.message);
     }
 
     return false;
 }
 
+const checkHasEmpties = (...values: any[]): boolean => {
+    const itemChecks: boolean[] = [];
+
+    try {
+        for (const item of values) {
+            itemChecks.push(checkIsEmpty(item));
+
+
+            if (checkIsArray(item) === true) {
+                for (const value of item) {
+                    itemChecks.push(checkIsEmpty(value));
+                }
+            }
+            
+            if (checkIsObject(item) === true) {
+                for (const key in item) {
+                    itemChecks.push(checkIsEmpty(item[key]));
+                }
+            }
+
+            // else if (checkIsEmpty(item) === true) {
+            //     return true;
+            // }
+        }
+    } catch (error: any) {
+        console.error(error.message);
+    }
+
+    if (itemChecks.length > 0) {
+        // console.log('itemChecks: ', itemChecks);
+        return itemChecks.includes(true);
+    }
+    
+    return true
+}
+
+
+// const checkIsEmpty = (value: any): boolean => {
+//     console.log('value: ', value);
+//     const itemChecks: boolean[] = [];
+
+//     if (value === null || value === undefined || value === '' || value === ' ') {
+//         itemChecks.push(true);
+//     }
+
+//     else if (Array.isArray(value)) {
+//         // itemChecks.push(value.every(item => checkIsEmpty(item)));
+//         for (const item of value) {
+//             itemChecks.push(checkIsEmpty(item));
+//         }
+//     }
+
+//     else if (typeof value === 'object'){
+//         // itemChecks.push(Object.keys(value).every(key => checkIsEmpty(value[key])));
+//         for (const key in value) {
+//             itemChecks.push(checkIsEmpty(value[key]));
+//         }
+//     }
+
+//     else if (
+//         (value instanceof String && value.trim() !== '')
+//         || (value instanceof Number)
+//         || (value instanceof Boolean)
+//         || (typeof value === 'object' && value.constructor.name === 'String' && value.trim() !== '')
+//         || (typeof value === 'object' && value instanceof String && value.trim() !== '')
+//     ) {
+//         itemChecks.push(true);
+//     }
+
+//     if (itemChecks.length > 0) {
+//         console.log('itemChecks: ', itemChecks);
+//         return itemChecks.includes(true);
+//     }
+
+//     return false;
+// }
+
 export {
     checkIsArray,
+    checkIsBoolean,
+    checkIsObject,
     checkForCircularReference,
     checkIsEmpty,
+    checkHasEmpties,
     checkIsString,
 };

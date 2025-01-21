@@ -9,7 +9,7 @@ describe('Message', () => {
         expect(message.level).toBe(MessageLevels.Info);
         expect(message.status).toBe(Codes.OK);
         expect(message.print).toBe(true);
-        expect(message.data).toBeUndefined();
+        expect(message.metadata).toBeUndefined();
     });
 
     it('should create a Message with custom values', () => {
@@ -18,14 +18,14 @@ describe('Message', () => {
             level: MessageLevels.Debug,
             status: 404,
             print: false,
-            data: { key: 'value' }
+            metadata: { key: 'value' }
         });
 
         expect(message.body).toBe('Custom message');
         expect(message.level).toBe(MessageLevels.Debug);
         expect(message.status).toBe(404);
         expect(message.print).toBe(false);
-        expect(message.data).toEqual({ key: 'value' });
+        expect(message.metadata).toEqual({ key: 'value' });
     });
 
     it('should print message to console', () => {
@@ -63,7 +63,7 @@ describe('ErrorMessage', () => {
             print: false,
             throwError: false,
             stack: 'Error stack trace',
-            data: { error: 'details' }
+            metadata: { error: 'details' }
         });
 
         expect(errorMessage.body).toBe('Custom error message');
@@ -72,7 +72,7 @@ describe('ErrorMessage', () => {
         expect(errorMessage.print).toBe(false);
         expect(errorMessage.throwError).toBe(false);
         expect(errorMessage.stack).toBe('Error stack trace');
-        expect(errorMessage.data).toEqual({ error: 'details' });
+        expect(errorMessage.metadata).toEqual({ error: 'details' });
     });
 
     it('should throw an error when throwError is true', () => {

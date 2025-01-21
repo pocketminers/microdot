@@ -1,6 +1,6 @@
+import { checkIsEmpty } from "../utils";
 import { Argument } from "./argument";
 import { Parameter } from "./parameter";
-;
 /**
  * The Property class is a Parameter with an Argument
  */
@@ -12,11 +12,12 @@ class Property extends Parameter {
     /**
      * Create a new Property instance from a PropertyEntry
      */
-    constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
-        super({ name, description, required, defaultValue, optionalValues });
-        if (value !== undefined
+    constructor({ id = '', name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
+        super({ id, name, description, required, defaultValue, optionalValues });
+        if (checkIsEmpty([value]) === false
+            && value !== undefined
             && this.checkOptionalValues(value)) {
-            this.argument = new Argument({ name, value });
+            this.argument = new Argument({ id, name, value });
         }
     }
     /**

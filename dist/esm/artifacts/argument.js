@@ -1,5 +1,15 @@
-import { checkIsEmpty } from "../utils/checks";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+import { checkHasEmpties } from "../utils/checks";
 import { Hashable } from "./hashable";
+import { IsNotEmpty } from "../utils/decorators";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name
@@ -28,11 +38,11 @@ class Argument extends Hashable {
      *  value: 123
      * }`
      */
-    constructor({ name, value }) {
-        if (Argument.isEmtpty({ name, value })) {
-            throw new Error("Argument name or value cannot be empty.");
+    constructor({ id, name, value }) {
+        if (checkHasEmpties([name, value])) {
+            throw new Error("Argument:constructor:name or value cannot be empty.");
         }
-        super(name, value);
+        super({ id, data: { name, value } });
         this.name = name;
         this.value = value;
     }
@@ -56,15 +66,8 @@ class Argument extends Hashable {
      * @summary Check if the original hash matches the current hash
      * @override Hashable.checkHash
      */
-    checkHash() {
-        return super.checkHash(this.name, this.value);
-    }
-    /**
-     * Check if the Argument is empty
-     * @summary Check if the argument is an empty object, or if the name or value is empty
-     */
-    static isEmtpty({ name, value }) {
-        return checkIsEmpty([name, value]);
+    async checkHash() {
+        return await super.checkHash({ name: this.name, value: this.value });
     }
     /**
      * Export the Argument as a JSON object
@@ -72,6 +75,7 @@ class Argument extends Hashable {
      */
     toJSON() {
         return {
+            id: this.id,
             name: this.name,
             value: this.value
         };
@@ -96,9 +100,18 @@ class Argument extends Hashable {
      * Create an Argument from a Record
      * @summary Create an argument from a record object
      */
-    static fromRecord(record) {
-        return new Argument({ name: Object.keys(record)[0], value: Object.values(record)[0] });
+    static async fromRecord(record, id = undefined) {
+        const [name, value] = Object.entries(record)[0];
+        const arg = new Argument({ id, name, value });
+        await arg.initialize();
+        return arg;
     }
 }
+__decorate([
+    IsNotEmpty,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], Argument, "fromRecord", null);
 export { Argument };
 //# sourceMappingURL=argument.js.map

@@ -10,7 +10,7 @@ interface MessengerEntry<L,T>
     extends
         Partial<Record<'id', string>>,
         ErrorMessageEntry<L,T> {};
-        // Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
+        // Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'metadata' | 'print'>,
         // Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
 
 const MessengerConfig: Configuration = new Configuration({
@@ -75,7 +75,7 @@ class Messenger
         level = this.config.getValue<MessageLevel>('defaultLevel') as L,
         action,
         status = Codes.OK,
-        data = undefined,
+        metadata = undefined,
         print = true,
         stack = undefined,
         throwError = false
@@ -92,7 +92,7 @@ class Messenger
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print,
                 stack,
                 throwError
@@ -105,7 +105,7 @@ class Messenger
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print
             });
         }

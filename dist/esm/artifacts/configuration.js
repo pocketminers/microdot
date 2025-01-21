@@ -37,7 +37,7 @@ class Configuration extends Map {
             property = entry;
         }
         else if (entry instanceof Parameter) {
-            property = new Property(entry);
+            property = new Property({ ...entry, value: entry.defaultValue });
         }
         else {
             throw new Error(`Invalid entry: ${entry}`);

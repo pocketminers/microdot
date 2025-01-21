@@ -1,6 +1,6 @@
 {
   "name": "@pocketminers/microdot",
-  "version": "0.0.1-test42",
+  "version": "0.0.1-test43",
   "description": "Decentralized Micro-services Architecture",
   "main": "dist/cjs/index.js",
   "types": "dist/esm/index.d.ts",
@@ -48,10 +48,6 @@
     "typescript-transform-paths": "^3.5.3"
   },
   "dependencies": {
-    "crypto": "^1.0.1",
-    "did-jwt": "^8.0.4",
-    "did-resolver": "^4.1.0",
-    "ethr-did-resolver": "^11.0.2",
     "express": "^4.17.1",
     "sequelize": "^6.37.5",
     "uuid": "^11.0.5"

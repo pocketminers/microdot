@@ -9,7 +9,7 @@ declare class Messenger extends Configurable {
     readonly history: Historian<Messages>;
     private readonly identifierStore;
     constructor(config?: Configuration);
-    writeMessage: <L extends MessageLevel = MessageLevel, T = undefined>({ id, body, level, action, status, data, print, stack, throwError }: MessengerEntry<L, T>) => Messages;
+    writeMessage: <L extends MessageLevel = MessageLevel, T = undefined>({ id, body, level, action, status, metadata, print, stack, throwError }: MessengerEntry<L, T>) => Messages;
 }
 export { type Messages, type MessengerEntry, MessengerConfig, Messenger };
 //# sourceMappingURL=messenger.d.ts.map

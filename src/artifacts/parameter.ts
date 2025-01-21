@@ -1,5 +1,5 @@
 import { createIdentifier } from "@utils/identifier";
-import { Hashable } from "@artifacts/hashable";
+import { Hashable, HashableEntry } from "@artifacts/hashable";
 import { ArgumentEntry } from "./argument";
 
 
@@ -9,7 +9,7 @@ import { ArgumentEntry } from "./argument";
  */
 interface ParameterEntry<T>
     extends
-        Partial<Pick<Hashable, "id">>,
+        Partial<Pick<HashableEntry<T>, "id">>,
         Pick<ArgumentEntry<T>, "name">,
         Partial<Record<"required", boolean>>,
         Partial<Record<"description", string>>,
@@ -23,7 +23,7 @@ interface ParameterEntry<T>
  */
 class Parameter<T>
     extends
-        Hashable
+        Hashable<{ name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined }>
 {
     public readonly name: string;
     public readonly required: boolean;
@@ -56,7 +56,7 @@ class Parameter<T>
             optionalValues = []
         }: ParameterEntry<T>,
     ) {
-        super(id, name, required, description, defaultValue, optionalValues);
+        super({id, data: {name, required, description, defaultValue, optionalValues}});
         this.name = name;
         this.required = required;
         this.description = description;

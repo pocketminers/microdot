@@ -19,7 +19,7 @@ import { IdentifierStore } from '../utils';
 import { Historian } from './historian';
 import { Codes } from './status';
 ;
-// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
+// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'metadata' | 'print'>,
 // Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
 var MessengerConfig = new Configuration({
     name: 'MessangerConfiguration',
@@ -66,7 +66,7 @@ var Messenger = /** @class */ (function (_super) {
             configuration: config
         }) || this;
         _this.writeMessage = function (_a) {
-            var _b = _a.id, id = _b === void 0 ? _this.identifierStore.create('UUID', { prefix: "message" }) : _b, body = _a.body, _c = _a.level, level = _c === void 0 ? _this.config.getValue('defaultLevel') : _c, action = _a.action, _d = _a.status, status = _d === void 0 ? Codes.OK : _d, _e = _a.data, data = _e === void 0 ? undefined : _e, _f = _a.print, print = _f === void 0 ? true : _f, _g = _a.stack, stack = _g === void 0 ? undefined : _g, _h = _a.throwError, throwError = _h === void 0 ? false : _h;
+            var _b = _a.id, id = _b === void 0 ? _this.identifierStore.create('UUID', { prefix: "message" }) : _b, body = _a.body, _c = _a.level, level = _c === void 0 ? _this.config.getValue('defaultLevel') : _c, action = _a.action, _d = _a.status, status = _d === void 0 ? Codes.OK : _d, _e = _a.metadata, metadata = _e === void 0 ? undefined : _e, _f = _a.print, print = _f === void 0 ? true : _f, _g = _a.stack, stack = _g === void 0 ? undefined : _g, _h = _a.throwError, throwError = _h === void 0 ? false : _h;
             var message;
             if (level === 'Error'
                 || level === 'Warn'
@@ -77,7 +77,7 @@ var Messenger = /** @class */ (function (_super) {
                     level: level,
                     action: action,
                     status: status,
-                    data: data,
+                    metadata: metadata,
                     print: print,
                     stack: stack,
                     throwError: throwError
@@ -90,7 +90,7 @@ var Messenger = /** @class */ (function (_super) {
                     level: level,
                     action: action,
                     status: status,
-                    data: data,
+                    metadata: metadata,
                     print: print
                 });
             }

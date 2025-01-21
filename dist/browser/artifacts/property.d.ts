@@ -17,7 +17,7 @@ declare class Property<T = any> extends Parameter<T> {
     /**
      * Create a new Property instance from a PropertyEntry
      */
-    constructor({ name, value, description, required, defaultValue, optionalValues }: PropertyEntry<T>);
+    constructor({ id, name, value, description, required, defaultValue, optionalValues }: PropertyEntry<T>);
     /**
      * Get the value of the Property.
      * If no value is set in attribute field, then return the default value.

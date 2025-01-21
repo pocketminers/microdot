@@ -1,61 +1,51 @@
+interface HashableEntry<T = any> extends Record<"data", T>, Partial<Record<"id", string>>, Partial<Record<"hash", string>> {
+}
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
- * @example
- * class MyClass extends Hashable {
- *    constructor(value: any) {
- *       super(value);
- *   }
- * }
  */
-declare class Hashable implements Record<'id', string>, Partial<Record<"hash", string>> {
+declare class Hashable<T> implements Record<'id', string>, Record<'data', T>, Partial<Record<"hash", string | undefined>> {
     readonly id: string;
-    readonly hash?: string;
+    readonly data: T;
+    hash?: string;
     /**
-     * Hashable Constructor to create a new Hashable instance from a value
-     * @param value
+     * Hashable Constructor to create a new Hashable instance from a data
+     * @param data
      * @summary Create a new Hashable instance
      */
-    constructor(id?: string, ...values: any[]);
-    private createHash;
+    constructor({ id, hash, data }: HashableEntry<T>);
+    initialize(): Promise<void>;
     /**
-     * isString Method
-     * @param value
-     * @returns boolean
-     * @summary Check if the value is a string
+     * checkHash Method
+     * @summary Check if the original hash matches the current hash
      */
-    private isString;
+    hasEqualHash(hash: string): boolean;
     /**
-     * isHash Method
-     * @param value
-     * @returns boolean
-     * @summary Check if the value is a hash, which is the result of a sha256 hash
+     * checkFromValue Method - Check if the original hash matches the current hash
+     * @summary Check if the original hash matches the current hash
      */
-    private isHash;
+    hasEqualValue<T>(data: T): Promise<boolean>;
     /**
-     * check if a hash is the same as the hash of the value
-     * @overload checkHash
-     * @example
-     * const hashable = new Hashable("myValue");
-     * hashable.checkHash("myHash");
+     * isEquivalent Method
+     * @summary Check if the given values are equivalent to the current
      */
-    checkHash(hash: string): boolean;
+    private isEquivalent;
     /**
-     * check if a string is the same as the hash of the value
-     * @overload checkHash
-     * @example
-     * const hashable = new Hashable("myValue");
-     * hashable.checkHash("myValue");
+     * checkFromHashOrValue Method
+     * @summary Check if the original hash matches the current hash
      */
-    checkHash(value: string): boolean;
-    checkHash(...hashOrValues: any[]): boolean;
+    private checkFromHashOrValue;
     /**
-     * hashString Method
-     * @param value
-     * @returns string
+     * checkHash Method
+     * @summary Check if the original hash matches the current hash
+     */
+    checkHash(hashOrValues: T | string): Promise<boolean>;
+    /**
+     * hashString static Method - Hash the given string using sha256
      * @summary Hash the given string using sha256
      */
-    static hashString(value: string): string;
+    static hashString(data: string): Promise<string>;
+    static create<T>(values: T): Promise<Hashable<T>>;
 }
-export { Hashable };
+export { type HashableEntry, Hashable };
 //# sourceMappingURL=hashable.d.ts.map

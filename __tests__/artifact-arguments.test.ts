@@ -13,8 +13,9 @@ describe('Argument', () => {
     it('should convert an Argument instance to JSON', () => {
         const entry: ArgumentEntry<number> = { name: 'testName', value: 123 };
         const arg = new Argument<number>(entry);
+        const id = arg.id;
 
-        expect(arg.toJSON()).toEqual({ name: 'testName', value: 123 });
+        expect(arg.toJSON()).toEqual({ id, name: 'testName', value: 123 });
     });
 
     it('should convert an Argument instance to string', () => {
@@ -32,9 +33,11 @@ describe('Argument', () => {
         expect(arg.toRecord()).toEqual({ testName: 'testValue' });
     });
 
-    it('should create an Argument instance from a Record', () => {
+    it('should create an Argument instance from a Record', async () => {
         const record = { testName: 'testValue' };
-        const args = Argument.fromRecord<string>(record);
+        const args = await Argument.fromRecord<string>(record);
+
+        console.log(`args: ${args}`);
 
         expect(args.name).toBe('testName');
         expect(args.value).toBe('testValue');
@@ -101,14 +104,17 @@ describe('Argument', () => {
         const entry: ArgumentEntry<number> = { name: 'testName', value: 123 };
         const arg = new Argument<number>(entry);
 
+        console.log(`arg: ${arg}`);
         expect(arg.get()).toBe(123);
     });
 
-    it('should check the hash of an Argument instance', () => {
+    it('should check the hash of an Argument instance', async () => {
         const entry: ArgumentEntry<string> = { id: 'test', name: 'testName', value: 'testValue' };
         const arg = new Argument<string>(entry);
 
-        expect(arg.checkHash()).toBe(true);
+        console.log(`arg: ${arg}`);
+
+        expect(await arg.checkHash()).toBe(true);
     })
 
 });
@@ -138,8 +144,8 @@ describe('Arguments', () => {
 
     it('should remove an argument from the Arguments instance', () => {
         const entries: ArgumentEntry<string>[] = [
-            { name: 'arg1', value: 'value1' },
-            { name: 'arg2', value: 'value2' }
+            {id: 'hello', name: 'arg1', value: 'value1' },
+            {id: "world", name: 'arg2', value: 'value2' }
         ];
         const args = new Arguments(entries);
 
@@ -156,10 +162,12 @@ describe('Arguments', () => {
             { name: 'arg2', value: false }
         ];
         const args = new Arguments(entries);
+        const id1 = args.get('arg1', true)?.id;
+        const id2 = args.get('arg2', true)?.id;
 
         expect(args.toJSON()).toEqual([
-            { name: 'arg1', value: true },
-            { name: 'arg2', value: false }
+            { id: id1, name: 'arg1', value: true },
+            { id: id2, name: 'arg2', value: false }
         ]);
     });
 

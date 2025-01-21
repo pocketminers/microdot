@@ -129,9 +129,9 @@ class Service
         this.history.push(body);
     }
 
-    public addToQueue(command: QueuedCommand): void {
+    public async addToQueue(command: QueuedCommand): Promise<void> {
         if (this.queue.length >= this.config.getValue<number>('queueLimit')) {
-            ErrorMessage.create<'Warn'>({
+            await ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:AddToQueue',
                 body: 'Queue limit reached',
                 status: 400,
@@ -145,7 +145,7 @@ class Service
     public getCommand(name: string): Command | ErrorMessage {
         const command: Command | undefined = this.commands.find(command => command.name === name);
         if (!command) {
-            return ErrorMessage.create<'Warn'>({
+            return ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:GetCommand',
                 body: `Command not found: ${name}`,
                 status: 404,
@@ -161,7 +161,7 @@ class Service
             return process.getCommand(commandName);
         }
         else {
-            return ErrorMessage.create<'Warn'>({
+            return ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:GetSubCommand',
                 body: `Process not found: ${processName}`,
                 status: 404,
@@ -172,7 +172,7 @@ class Service
 
     public async runServiceCommand(commandName: Command['name'], args: ArgumentEntry<any>[] = []): Promise<ServiceResponse> {
         const action: string = 'Service:Run';
-        let result: Message | ErrorMessage = ErrorMessage.create<'Warn'>({
+        let result: Message | ErrorMessage = ErrorMessage.createMsg<'Warn'>({
             action,
             body: 'Command not found',
             status: 404,
@@ -187,11 +187,11 @@ class Service
                 result = output;
             }
             else {
-                result = Message.create<'Info', CommandResult<any, any>>({
+                result = Message.createMsg<'Info', CommandResult<any, any>>({
                     action,
                     body: 'Command executed',
                     status: 200,
-                    data: output
+                    metadata: output
                 });
             }
         }
@@ -208,7 +208,7 @@ class Service
         const process = this.processes.get(processName);
 
         if (!process) {
-            return ErrorMessage.create<'Warn'>({
+            return ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:Run',
                 body: `Process not found: ${processName}`,
                 status: 404,
@@ -233,7 +233,7 @@ class Service
             result = await this.runProcessCommand(args[2], args[0], args[1]);
         }
         else {
-            result = ErrorMessage.create<'Warn'>({
+            result = ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:Run',
                 body: 'Invalid arguments',
                 status: 400,
@@ -283,11 +283,11 @@ class Service
         }
         catch (error: any) {
             this.queueStatus = 'Stopped';
-            ErrorMessage.create<'Error'>({
+            ErrorMessage.createMsg<'Error'>({
                 action: 'Service:Queue',
                 body: 'Queue error',
                 status: 500,
-                data: error,
+                metadata: error,
                 throwError: true
             });
         }
@@ -314,7 +314,7 @@ class Service
             forceStart === true &&
             forceStop === true
         ) {
-            ErrorMessage.create<'Warn'>({
+            ErrorMessage.createMsg<'Warn'>({
                 action: 'Service:QueueManager',
                 body: 'Invalid arguments: forceStart and forceStop cannot be true at the same time',
                 status: 400,

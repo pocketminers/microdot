@@ -1,98 +1,54 @@
-import { checkIsEmpty, checkIsString, createIdentifier } from "@/utils";
+import { checkHasEmpties, checkIsEmpty, checkIsString, createIdentifier } from "@/utils";
 import { IsNotEmpty } from "@/utils/decorators";
-import { checkForHash, hashValue } from "@utils/crypto";
+import { CryptoUtils } from "@utils/crypto";
 
 
 interface HashableEntry<T = any>
     extends
+        Record<"data", T>,
         Partial<Record<"id", string>>,
-        Partial<Record<"value", T>>
-{
-    id?: string;
-    [key: string]: T | string | undefined;
-}
+        Partial<Record<"hash", string>> {}
 
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
  */
-class Hashable
+class Hashable<T>
     implements
         Record<'id', string>,
-        Partial<Record<"hash", string>>
+        Record<'data', T>,
+        Partial<Record<"hash", string | undefined>>
 {
     public readonly id: string;
-    public readonly hash?: string;
+    public readonly data: T;
+    public hash?: string;
 
     /**
-     * Hashable Constructor to create a new Hashable instance from a value
-     * @param value
+     * Hashable Constructor to create a new Hashable instance from a data
+     * @param data
      * @summary Create a new Hashable instance
      */
-    constructor(
-        id: string = '',
-        ...values: any[]
-    ) {
-        this.id = id === "" ? createIdentifier("UUID", { prefix: "Hashable-" }) : id;
-        this.hash = this.createHash(id, ...values);
-    }
+    constructor({
+        id = createIdentifier("UUID", { prefix: "Hashable-" }),
+        hash = undefined,
+        data
+    }: HashableEntry<T>) {
+        this.id = id;
+        this.hash = hash;
 
-    private appendValue(str: string, value: any): string {
-        if (checkIsEmpty(value) === false) {
-            str += "-";
+        if (checkHasEmpties(data) === true) {
+            throw new Error("Data cannot be empty");
         }
 
-        if (typeof value === 'object') {
-            return str + JSON.stringify(value);
+        this.data = data;
+    }
+
+    public async initialize(): Promise<void> {
+        if( this.hash === undefined) {
+            this.hash = await CryptoUtils.hashValue<T>(this.data);
         }
         else {
-            return str + value;
-        }
-    }
-
-    private createHashableString(values: any[]): string {
-        let str = '';
-        for (const value of values) {
-            str = this.appendValue(str, value);
-        }
-
-        return str;
-    }
-
-    private createHash(...values: any[]): string {
-        const str = this.createHashableString(values);
-        return Hashable.hashString(str);
-    }
-
-    // /**
-    //  * isString Method
-    //  * @summary Check if the value is a string
-    //  */
-    // private isString(value: any): boolean {
-    //     if (
-    //         typeof value === "string"
-    //         || (value instanceof String && checkIsEmpty([value]) === false)
-    //         || (typeof value === "object" && value !== null && value.constructor.name === 'String')
-    //         || (typeof value === "object" && value !== null && value instanceof String)
-    //     ) {
-    //         return true;
-    //     }
-
-    //     return false;
-    // }
-
-    /**
-     * isHash Method
-     * @summary Check if the value is a hash, which is the result of a sha256 hash
-     */
-    private isHash(value: any): boolean {
-        if (
-            checkForHash(value)
-        ) {
-            return true;
-        }
-        else {
-            return false;
+            await this.checkHash(this.hash as string);
         }
     }
 
@@ -100,9 +56,10 @@ class Hashable
      * checkHash Method
      * @summary Check if the original hash matches the current hash
      */
-    public checkFromHash(hash: string): boolean {
+    public hasEqualHash(hash: string): boolean {
         if (this.hash !== hash) {
-            throw new Error("Hash mismatch");
+            // throw new Error("Hash mismatch");
+            return false;
         }
 
         return true;
@@ -112,30 +69,39 @@ class Hashable
      * checkFromValue Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    public checkFromValues(...values: any[]): boolean {
-        if (this.hash !== this.createHash(this.id, values)) {
-            throw new Error("Hash mismatch");
+    public async hasEqualValue<T>(data: T): Promise<boolean> {
+        if (this.hash !== await CryptoUtils.hashValue<T>(data)) {
+            // throw new Error("Hash mismatch");
+            return false;
         }
 
         return true;
     }
 
-    public isEquivalent(...values: any[]): boolean {
-        return this.hash === this.createHash(this.id, values);
+    /**
+     * isEquivalent Method
+     * @summary Check if the given values are equivalent to the current
+     */
+    private async isEquivalent<T>(data: T): Promise<boolean> {
+        return this.hash === await CryptoUtils.hashValue<T>(data);
     }
 
-    public checkFromHashOrValue(...hashOrValues: any[]): boolean {
+    /**
+     * checkFromHashOrValue Method
+     * @summary Check if the original hash matches the current hash
+     */
+    private async checkFromHashOrValue<T>(hashOrValues: T | string): Promise<boolean> {
         if (
-            this.isHash(hashOrValues) === true
-            && this.hash !== hashOrValues[0]
+            CryptoUtils.isValueHash<T>(hashOrValues) === true
+            && this.hasEqualHash(hashOrValues as string) === false
         ) {
             throw new Error("Hash mismatch");
         }
 
         else if (
             checkIsString(hashOrValues) === true
-            && this.isHash(hashOrValues) === false
-            && this.isEquivalent(...hashOrValues) === false
+            && CryptoUtils.isValueHash<T>(hashOrValues) === false
+            && await this.isEquivalent<T>(hashOrValues as T) === false
         ) {
             throw new Error("Hash mismatch");
         }
@@ -144,7 +110,7 @@ class Hashable
             Array.isArray(hashOrValues)
             && hashOrValues[0].length > 0
         ) {
-            if (this.isEquivalent(hashOrValues) === false) {
+            if ( await this.isEquivalent(hashOrValues) === false) {
                 throw new Error("Hash mismatch");
             }
         }
@@ -152,75 +118,43 @@ class Hashable
         return true;
     }
 
+    /**
+     * checkHash Method
+     * @summary Check if the original hash matches the current hash
+     */
     @IsNotEmpty
-    public checkHash(...hashOrValues: any[]): boolean {
-        this.checkFromHashOrValue(hashOrValues);
-        return true;
+    public async checkHash(hashOrValues: T | string): Promise<boolean> {
+        try {
+            if (checkIsEmpty(hashOrValues) === true) {
+                throw new Error("Hash or data cannot be empty");
+            }
+
+            return await this.checkFromHashOrValue<T>(hashOrValues);
+        }
+        catch (error: any) {
+            throw new Error(error.message);
+        }
     }
 
-
-
-    // /**
-    //  * check if a hash is the same as the hash of the value
-    //  * @overload checkHash
-    //  * @example
-    //  * const hashable = new Hashable("myValue");
-    //  * hashable.checkHash("myHash");
-    //  */
-    // public checkHash(hash: string): boolean;
-    // /**
-    //  * check if a string is the same as the hash of the value
-    //  * @overload checkHash
-    //  * @example
-    //  * const hashable = new Hashable("myValue");
-    //  * hashable.checkHash("myValue");
-    //  */
-    // public checkHash(value: string): boolean;
-    // public checkHash(...hashOrValues: any[]): boolean;
-    // public checkHash(hashOrValues: string): boolean {
-
-    //     if (
-    //         this.isHash(hashOrValues) === true
-    //         && this.hash !== hashOrValues
-    //     ) {
-    //         throw new Error("Hash mismatch");
-    //     }
-
-    //     else if (
-    //         this.isString(hashOrValues) === true
-    //         && this.isHash(hashOrValues) === false
-    //         && this.hash !== this.createHash(this.id, hashOrValues)
-    //     ) {
-    //         throw new Error("Hash mismatch");
-    //     }
-
-    //     else if(
-    //         Array.isArray(hashOrValues)
-    //         && hashOrValues.length > 0
-    //     ) {
-    //         if (this.hash !== this.createHash(this.id, hashOrValues)) {
-    //             throw new Error("Hash mismatch");
-    //         }
-    //     }
-
-    //     // else if (
-    //     //     this.isHash(hashOrValues) === false
-    //     //     && this.isString(hashOrValues) === false
-    //     // ) {
-    //     //     throw new Error("Invalid hash value");
-    //     // }
-
-    //     return true;
-    // }
-
     /**
-     * hashString Method
-     * @param value
-     * @returns string
+     * hashString static Method - Hash the given string using sha256
      * @summary Hash the given string using sha256
      */
-    public static hashString(value: string): string {
-        return hashValue(value);
+    @IsNotEmpty
+    public static async hashString(data: string): Promise<string> {
+        try {
+            return await CryptoUtils.hashValue(data);
+        }
+        catch (error: any) {
+            throw new Error(error.message);
+        }
+    }
+
+    public static async create<T>(values: T): Promise<Hashable<T>> {
+        const id = createIdentifier("UUID", { prefix: "Hashable-" });
+        const hash = await this.hashString(JSON.stringify(values));
+        return new Hashable<typeof values>({ id, hash, data: values });   
+
     }
 }
 

@@ -49,7 +49,7 @@ U = any> extends Configurable {
     getProcesses(): Map<Process<U>['name'], Process<U>>;
     getProcess(name: Process<U>['name']): Process<U> | undefined;
     private addToHistory;
-    addToQueue(command: QueuedCommand): void;
+    addToQueue(command: QueuedCommand): Promise<void>;
     getCommand(name: string): Command | ErrorMessage;
     getProcessCommand(processName: string, commandName: string): Command | ErrorMessage;
     runServiceCommand(commandName: Command['name'], args?: ArgumentEntry<any>[]): Promise<ServiceResponse>;

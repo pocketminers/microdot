@@ -30,21 +30,21 @@ var MessageLevels;
 var Message = /** @class */ (function (_super) {
     __extends(Message, _super);
     function Message(_a) {
-        var id = _a.id, body = _a.body, _b = _a.level, level = _b === void 0 ? MessageLevels.Info : _b, _c = _a.action, action = _c === void 0 ? undefined : _c, _d = _a.status, status = _d === void 0 ? Codes.OK : _d, _e = _a.print, print = _e === void 0 ? true : _e, data = _a.data;
-        var _this = _super.call(this, id, body, level, action, status, print, data) || this;
+        var id = _a.id, body = _a.body, _b = _a.level, level = _b === void 0 ? MessageLevels.Info : _b, _c = _a.action, action = _c === void 0 ? undefined : _c, _d = _a.status, status = _d === void 0 ? Codes.OK : _d, _e = _a.print, print = _e === void 0 ? true : _e, _f = _a.metadata, metadata = _f === void 0 ? {} : _f;
+        var _this = _super.call(this, { id: id, data: { body: body, level: level, action: action, status: status, print: print, metadata: metadata } }) || this;
         _this.createdAt = new Date();
         _this.body = body;
         _this.level = level;
         _this.action = action;
         _this.status = status;
         _this.print = print;
-        _this.data = checkIsEmpty([data]) ? undefined : data;
+        _this.metadata = checkIsEmpty([metadata]) ? undefined : metadata;
         if (_this.print) {
             _this.printToConsole();
         }
         return _this;
     }
-    Message.create = function (entry) {
+    Message.createMsg = function (entry) {
         var message = new Message(entry);
         return message;
     };
@@ -58,14 +58,14 @@ var Message = /** @class */ (function (_super) {
         }
     };
     Message.prototype.printData = function () {
-        var isEmpty = checkIsEmpty([this.data]);
+        var isEmpty = checkIsEmpty([this.metadata]);
         if (isEmpty) {
             return '';
         }
         else {
-            var data = checkForCircularReference(this.data) ? 'Circular Reference' : JSON.stringify(this.data, null, 2);
-            // const data = JSON.stringify(this.data, null, 2);
-            return "\nData: ".concat(data);
+            var metadata = checkForCircularReference(this.metadata) ? 'Circular Reference' : JSON.stringify(this.metadata, null, 2);
+            // const metadata = JSON.stringify(this.metadata, null, 2);
+            return "\nData: ".concat(metadata);
         }
     };
     Message.prototype.toString = function () {
@@ -94,14 +94,14 @@ var ErrorMessageLevels;
 var ErrorMessage = /** @class */ (function (_super) {
     __extends(ErrorMessage, _super);
     function ErrorMessage(_a) {
-        var _b = _a.id, id = _b === void 0 ? createIdentifier() : _b, body = _a.body, _c = _a.level, level = _c === void 0 ? ErrorMessageLevels.Error : _c, _d = _a.action, action = _d === void 0 ? 'Error Message Creation' : _d, _e = _a.status, status = _e === void 0 ? 500 : _e, _f = _a.print, print = _f === void 0 ? true : _f, _g = _a.throwError, throwError = _g === void 0 ? false : _g, _h = _a.stack, stack = _h === void 0 ? undefined : _h, _j = _a.data, data = _j === void 0 ? {} : _j;
-        var _this = _super.call(this, { id: id, body: body, level: level, action: action, status: status, print: print, data: data }) || this;
+        var _b = _a.id, id = _b === void 0 ? createIdentifier() : _b, body = _a.body, _c = _a.level, level = _c === void 0 ? ErrorMessageLevels.Error : _c, _d = _a.action, action = _d === void 0 ? 'Error Message Creation' : _d, _e = _a.status, status = _e === void 0 ? 500 : _e, _f = _a.print, print = _f === void 0 ? true : _f, _g = _a.throwError, throwError = _g === void 0 ? false : _g, _h = _a.stack, stack = _h === void 0 ? undefined : _h, _j = _a.metadata, metadata = _j === void 0 ? {} : _j;
+        var _this = _super.call(this, { id: id, body: body, level: level, action: action, status: status, print: print, metadata: metadata }) || this;
         _this.throwError = throwError !== undefined ? throwError : false;
         _this.stack = stack !== undefined ? stack : '';
         _this.throw_();
         return _this;
     }
-    ErrorMessage.create = function (entry) {
+    ErrorMessage.createMsg = function (entry) {
         var message = new ErrorMessage(entry);
         return message;
     };

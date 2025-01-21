@@ -27,8 +27,8 @@ declare class Configuration extends Map<Property['name'], Property<any>> {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntry(entry: PropertyEntry<any> | ParameterEntry<any>, args: ArgumentEntry<any>[] | Arguments | {
-        [key: string]: any;
+    addEntry<T = any>(entry: PropertyEntry<T> | ParameterEntry<T>, args: ArgumentEntry<T>[] | Arguments | {
+        [key: string]: T;
     }[], overwrite?: boolean): void;
     addEntryFromArg(arg: ArgumentEntry<any>): void;
     /**

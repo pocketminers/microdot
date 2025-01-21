@@ -1,6 +1,7 @@
-import { checkIsArray, checkIsEmpty } from "@utils/checks";
+import { checkHasEmpties, checkIsArray, checkIsEmpty } from "@utils/checks";
 import { Hashable, HashableEntry } from "@artifacts/hashable";
 import { IsNotEmpty } from "@/utils/decorators";
+import { Identifier, IdentifierStore } from "@/utils";
 
 
 /**
@@ -9,9 +10,9 @@ import { IsNotEmpty } from "@/utils/decorators";
  */
 interface ArgumentEntry<T>
     extends
-        HashableEntry<T>,
-        Partial<Pick<HashableEntry<T>, "id" | "value">>,
-        Record<"name", string> {}
+        Partial<Pick<HashableEntry<T>, "id">>,
+        Record<"name", string>,
+        Record<"value", T> {}
 
 
 /**
@@ -20,7 +21,7 @@ interface ArgumentEntry<T>
  */
 class Argument<T>
     extends
-        Hashable
+        Hashable<{ name: string, value: T }>
 {
     /**
      * Argument Name
@@ -54,11 +55,11 @@ class Argument<T>
             value
         }: ArgumentEntry<T>
     ) {
-        if (checkIsEmpty([name, value])) {
+        if (checkHasEmpties([name, value])) {
             throw new Error("Argument:constructor:name or value cannot be empty.");
         }
 
-        super(id, name, value);
+        super({id, data: { name, value }});
         this.name = name;
         this.value = value as T;
     }
@@ -85,16 +86,17 @@ class Argument<T>
      * @summary Check if the original hash matches the current hash
      * @override Hashable.checkHash
      */
-    public override checkHash(): boolean {
-        return super.checkHash(this.id, this.name, this.value);
+    public override async checkHash(): Promise<boolean> {
+        return await super.checkHash({name: this.name, value: this.value});
     }
 
     /**
      * Export the Argument as a JSON object
      * @summary Convert the argument to a JSON object and return it
      */
-    public toJSON(): { name: string, value: T } {
+    public toJSON(): { id: string, name: string, value: T } {
         return {
+            id: this.id,
             name: this.name,
             value: this.value
         };
@@ -123,23 +125,11 @@ class Argument<T>
      * @summary Create an argument from a record object
      */
     @IsNotEmpty
-    public static fromRecord<T>(record: Record<string, T>): Argument<T> {
-
-        if (checkIsArray(record)) {
-            for (const entry in record) {
-                return new Argument<T>({ name: entry, value: record[entry] });
-            }
-        }
-        // decompose the record into name and value
-        else {
-            for (const [name, value] of Object.entries(record)) {
-                return new Argument<T>({ name, value });
-            }
-        }
-
-        // throw new Error("Argument:fromRecord:input cannot be empty.");
-        throw new Error(`${this.name}:${this.fromRecord.name}:name or value cannot be empty.`);
-        
+    public static async fromRecord<T>(record: Record<string, T>, id: Identifier | undefined = undefined): Promise<Argument<T>> {
+        const [name, value] = Object.entries(record)[0];
+        const arg = new Argument<T>({ id, name, value });
+        await arg.initialize();
+        return arg;
     }
 }
 

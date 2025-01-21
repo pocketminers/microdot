@@ -40,7 +40,7 @@ class Configuration extends Map {
             property = entry;
         }
         else if (entry instanceof parameter_1.Parameter) {
-            property = new property_1.Property(entry);
+            property = new property_1.Property({ ...entry, value: entry.defaultValue });
         }
         else {
             throw new Error(`Invalid entry: ${entry}`);

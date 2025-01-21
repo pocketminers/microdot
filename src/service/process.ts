@@ -109,7 +109,7 @@ class Process<T>
             // initializer !== undefined && 
             this.instance !== undefined
         ) {
-            ErrorMessage.create<'Error'>({
+            ErrorMessage.createMsg<'Error'>({
                 action: 'Process:Initialize',
                 body: 'Instance already initialized, but a seperate initializer is defined, disregarding the initializer',
                 status: 400,
@@ -124,7 +124,7 @@ class Process<T>
         ) {
             this.status = 'Initializing';
 
-            Message.create<'Info'>({
+            Message.createMsg<'Info'>({
                 action: 'Process:Initialize',
                 body: `Initializing process - ${this.name}`,
                 status: 200,
@@ -170,7 +170,7 @@ class Process<T>
                     return;
                 }
                 else {
-                    ErrorMessage.create<'Warn'>({
+                    ErrorMessage.createMsg<'Warn'>({
                         action: 'Process:Initialize',
                         body: 'Initializer function not defined',
                         status: 400,
@@ -180,11 +180,11 @@ class Process<T>
             }
             catch (error: any) {
                 this.status = 'Error';
-                ErrorMessage.create<'Error'>({
+                ErrorMessage.createMsg<'Error'>({
                     action: 'Process:Initialize',
                     body: 'Error initializing process',
                     status: 500,
-                    data: error.body,
+                    metadata: error.body,
                     throwError: true
                 });
             }
@@ -199,7 +199,7 @@ class Process<T>
             this.status === 'Completed' ||
             this.status === 'Unknown'
         ) {
-            ErrorMessage.create<'Warn'>({
+            ErrorMessage.createMsg<'Warn'>({
                 action: 'Process:Initialize',
                 body: 'Process is already initialized',
                 status: 400,
@@ -210,7 +210,7 @@ class Process<T>
 
     public runCommand = async <R>(command: Command<R, T>, args: ArgumentEntry<any>[] = []): Promise<Message | ErrorMessage> => {
         const action: string = 'Process:RunCommand';
-        let result: Message | ErrorMessage = ErrorMessage.create<'Warn'>({
+        let result: Message | ErrorMessage = ErrorMessage.createMsg<'Warn'>({
             action,
             body: 'Process not initialized',
             status: 400,
@@ -227,22 +227,22 @@ class Process<T>
                 const commandOutput: CommandResult<R, T> = await command.run({instance: this.instance, args});
                 this.status = 'Completed';
 
-                result = Message.create<'Info', CommandResult<R, T>>({
+                result = Message.createMsg<'Info', CommandResult<R, T>>({
                     action,
                     body: 'Command executed successfully',
                     status: 200,
-                    data: commandOutput,
+                    metadata: commandOutput,
                     print: false
                 });
 
             }
             catch (err: any) {
                 this.status = 'Error';
-                result = ErrorMessage.create<'Error', {error: any, command: Command<any, any>}>({
+                result = ErrorMessage.createMsg<'Error', {error: any, command: Command<any, any>}>({
                     action,
                     body: 'Error running command',
                     status: 500,
-                    data: {
+                    metadata: {
                         error: err,
                         command
                     },
@@ -253,12 +253,12 @@ class Process<T>
         }
 
         else {
-            result = ErrorMessage.create<'Warn', { status: ProcessStatus }>({
+            result = ErrorMessage.createMsg<'Warn', { status: ProcessStatus }>({
                 action,
                 body: 'Process not ready to run command',
                 status: 400,
                 throwError: false,
-                data: {
+                metadata: {
                     status: this.status as ProcessStatus
                 }
             });
@@ -270,7 +270,7 @@ class Process<T>
 
     public run = async (commandName: string, args?: ArgumentEntry<any>[]): Promise<Message | ErrorMessage> => {
         const action: string = 'Process:Run';
-        let result: Message | ErrorMessage = ErrorMessage.create<'Warn'>({
+        let result: Message | ErrorMessage = ErrorMessage.createMsg<'Warn'>({
             action,
             body: 'Process not initialized',
             status: 400,
@@ -295,12 +295,12 @@ class Process<T>
         }
 
         else {
-            result = ErrorMessage.create<'Warn', { status: ProcessStatus }>({
+            result = ErrorMessage.createMsg<'Warn', { status: ProcessStatus }>({
                 action,
                 body: 'Process not ready to run command, ',
                 status: 400,
                 throwError: false,
-                data: {
+                metadata: {
                     status: this.status as ProcessStatus
                 }
             });
@@ -313,7 +313,7 @@ class Process<T>
     public getCommand = (name: string): Command<any, T> | ErrorMessage => {
         const command: Command<any, T> | undefined = this.commands.find(command => command.name === name);
         if (!command) {
-            return ErrorMessage.create<'Warn'>({
+            return ErrorMessage.createMsg<'Warn'>({
                 action: 'Process:GetCommand',
                 body: `Command not found: ${name} in process: ${this.name}`,
                 status: 404,

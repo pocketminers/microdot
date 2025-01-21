@@ -1,45 +1,70 @@
 import { Hashable } from "../src/artifacts/hashable";
+import { CryptoUtils } from '../src/utils/crypto';
+
+
+const { sha256 } = CryptoUtils;
 
 describe('Hashable', () => {
-    it('should create a hash when hashing is enabled', () => {
-        const value = 'test';
-        const hashable = new Hashable(value);
-        expect(hashable).toHaveProperty('hash');
-    });
+    it('should create a hashable instance with the given data', async () => {
+        const data = 'test';
+        const hashable = new Hashable({id:'test', data});
+        await hashable.initialize();
+
+        const hash = await sha256(`test`);
+
+        expect(hashable.hash).toEqual(hash);
+    })
+
 
     it('should throw an error if hash does not match', () => {
-        const value = 'test';
-        const hashable = new Hashable(value);
+        const data = 'test';
+        const hashable = new Hashable({data});
         try {
-            // @ts-ignore
+            // @ts-expect-error - Testing private property
             hashable['string'] = 'invalid_hash';
         } catch (error: any) {
             expect(error.message).toBe('Cannot add property string, object is not extensible');
         }
     });
 
-    it('should not throw an error if hash matches', () => {
-        const value = 'test';
-        const hashable = new Hashable(value);
-
+    it('should not throw an error if hash matches', async () => {
+        const data = 'test';
+        const hashable = new Hashable({data});
+        await hashable.initialize();
         const hashString = hashable.hash as string;
 
-        expect(() => hashable.checkHash(hashString)).not.toThrow('Hash mismatch');
+        expect(async () => await hashable.checkHash(hashString)).not.toThrow('Hash mismatch');
     });
 
-    it('should throw an error if hash does not match', () => {
-        const value = 'test';
-        const hashable = new Hashable(value);
+    it('should not throw an error if the hashed data is the same', async () => {
+        const data = 'test';
+        const hashable = new Hashable({data});
+        await hashable.initialize();
 
-        expect(() => hashable.checkHash('invalid_hash')).toThrow('Hash mismatch');
+        expect(await hashable.checkHash(hashable.hash as string)).toBe(true);
     });
 
-    it('should throw an error if hash does not match', () => {
-        const value = 'test';
-        const hashable = new Hashable("test", value);
+    it('should throw an error if hash does not match', async () => {
+        const data = 'test';
+        const hashable = new Hashable({data});
+        await hashable.initialize();
 
-        expect(() => hashable.checkHash('invalid_hash')).toThrow('Hash mismatch');
+        console.log(hashable.hash);
+
+        expect(async () => await hashable.checkHash('invalid_string')).toThrow('Hash mismatch');
     });
+
+    // it('should not throw an error if the hashes match', async () => {
+    //     const data = 'test';
+    //     const hashable = new Hashable({id: "test", data});
+    //     await hashable.initialize();
+    //     console.log(hashable.hash);
+
+    //     const badHash = await sha256(`test-test`);
+    //     console.log(`badHash: ${badHash}`);
+
+    //     expect(await hashable.checkHash(badHash)).toThrow('Hash mismatch');
+    // });
 
 
 });

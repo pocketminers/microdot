@@ -4,7 +4,7 @@ import { IdentifierStore } from '../utils';
 import { Historian } from './historian';
 import { Codes } from './status';
 ;
-// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
+// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'metadata' | 'print'>,
 // Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
 const MessengerConfig = new Configuration({
     name: 'MessangerConfiguration',
@@ -53,7 +53,7 @@ class Messenger extends Configurable {
         this.identifierStore = this.config.getValue('IdentifierStore');
         this.history = new Historian(config);
     }
-    writeMessage = ({ id = this.identifierStore.create('UUID', { prefix: "message" }), body, level = this.config.getValue('defaultLevel'), action, status = Codes.OK, data = undefined, print = true, stack = undefined, throwError = false }) => {
+    writeMessage = ({ id = this.identifierStore.create('UUID', { prefix: "message" }), body, level = this.config.getValue('defaultLevel'), action, status = Codes.OK, metadata = undefined, print = true, stack = undefined, throwError = false }) => {
         let message;
         if (level === 'Error'
             || level === 'Warn'
@@ -64,7 +64,7 @@ class Messenger extends Configurable {
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print,
                 stack,
                 throwError
@@ -77,7 +77,7 @@ class Messenger extends Configurable {
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print
             });
         }

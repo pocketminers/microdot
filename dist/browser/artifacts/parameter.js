@@ -38,7 +38,7 @@ var Parameter = /** @class */ (function (_super) {
      */
     function Parameter(_a) {
         var _b = _a.id, id = _b === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _b, _c = _a.name, name = _c === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _c, _d = _a.required, required = _d === void 0 ? false : _d, _e = _a.description, description = _e === void 0 ? "A parameter" : _e, defaultValue = _a.defaultValue, _f = _a.optionalValues, optionalValues = _f === void 0 ? [] : _f;
-        var _this = _super.call(this, id, name, required, description, defaultValue, optionalValues) || this;
+        var _this = _super.call(this, { id: id, data: { name: name, required: required, description: description, defaultValue: defaultValue, optionalValues: optionalValues } }) || this;
         _this.name = name;
         _this.required = required;
         _this.description = description;

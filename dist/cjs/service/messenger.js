@@ -7,7 +7,7 @@ const utils_1 = require("../utils");
 const historian_1 = require("./historian");
 const status_1 = require("./status");
 ;
-// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'data' | 'print'>,
+// Pick<MessageEntry<L,T>, 'id' | 'body' | 'level' | 'action' | 'status' | 'metadata' | 'print'>,
 // Pick<ErrorMessageEntry<L,T>, 'stack' | 'throwError'> {}
 const MessengerConfig = new artifacts_1.Configuration({
     name: 'MessangerConfiguration',
@@ -57,7 +57,7 @@ class Messenger extends artifacts_1.Configurable {
         this.identifierStore = this.config.getValue('IdentifierStore');
         this.history = new historian_1.Historian(config);
     }
-    writeMessage = ({ id = this.identifierStore.create('UUID', { prefix: "message" }), body, level = this.config.getValue('defaultLevel'), action, status = status_1.Codes.OK, data = undefined, print = true, stack = undefined, throwError = false }) => {
+    writeMessage = ({ id = this.identifierStore.create('UUID', { prefix: "message" }), body, level = this.config.getValue('defaultLevel'), action, status = status_1.Codes.OK, metadata = undefined, print = true, stack = undefined, throwError = false }) => {
         let message;
         if (level === 'Error'
             || level === 'Warn'
@@ -68,7 +68,7 @@ class Messenger extends artifacts_1.Configurable {
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print,
                 stack,
                 throwError
@@ -81,7 +81,7 @@ class Messenger extends artifacts_1.Configurable {
                 level,
                 action,
                 status,
-                data,
+                metadata,
                 print
             });
         }

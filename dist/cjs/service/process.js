@@ -75,7 +75,7 @@ class Process extends configurable_1.Configurable {
             initialize === true &&
             // initializer !== undefined && 
             this.instance !== undefined) {
-            message_1.ErrorMessage.create({
+            message_1.ErrorMessage.createMsg({
                 action: 'Process:Initialize',
                 body: 'Instance already initialized, but a seperate initializer is defined, disregarding the initializer',
                 status: 400,
@@ -87,7 +87,7 @@ class Process extends configurable_1.Configurable {
         // initializer !== undefined
         ) {
             this.status = 'Initializing';
-            message_1.Message.create({
+            message_1.Message.createMsg({
                 action: 'Process:Initialize',
                 body: `Initializing process - ${this.name}`,
                 status: 200,
@@ -119,7 +119,7 @@ class Process extends configurable_1.Configurable {
                     return;
                 }
                 else {
-                    message_1.ErrorMessage.create({
+                    message_1.ErrorMessage.createMsg({
                         action: 'Process:Initialize',
                         body: 'Initializer function not defined',
                         status: 400,
@@ -129,11 +129,11 @@ class Process extends configurable_1.Configurable {
             }
             catch (error) {
                 this.status = 'Error';
-                message_1.ErrorMessage.create({
+                message_1.ErrorMessage.createMsg({
                     action: 'Process:Initialize',
                     body: 'Error initializing process',
                     status: 500,
-                    data: error.body,
+                    metadata: error.body,
                     throwError: true
                 });
             }
@@ -145,7 +145,7 @@ class Process extends configurable_1.Configurable {
             this.status === 'Error' ||
             this.status === 'Completed' ||
             this.status === 'Unknown') {
-            message_1.ErrorMessage.create({
+            message_1.ErrorMessage.createMsg({
                 action: 'Process:Initialize',
                 body: 'Process is already initialized',
                 status: 400,
@@ -155,7 +155,7 @@ class Process extends configurable_1.Configurable {
     }
     runCommand = async (command, args = []) => {
         const action = 'Process:RunCommand';
-        let result = message_1.ErrorMessage.create({
+        let result = message_1.ErrorMessage.createMsg({
             action,
             body: 'Process not initialized',
             status: 400,
@@ -168,21 +168,21 @@ class Process extends configurable_1.Configurable {
             try {
                 const commandOutput = await command.run({ instance: this.instance, args });
                 this.status = 'Completed';
-                result = message_1.Message.create({
+                result = message_1.Message.createMsg({
                     action,
                     body: 'Command executed successfully',
                     status: 200,
-                    data: commandOutput,
+                    metadata: commandOutput,
                     print: false
                 });
             }
             catch (err) {
                 this.status = 'Error';
-                result = message_1.ErrorMessage.create({
+                result = message_1.ErrorMessage.createMsg({
                     action,
                     body: 'Error running command',
                     status: 500,
-                    data: {
+                    metadata: {
                         error: err,
                         command
                     },
@@ -192,12 +192,12 @@ class Process extends configurable_1.Configurable {
             }
         }
         else {
-            result = message_1.ErrorMessage.create({
+            result = message_1.ErrorMessage.createMsg({
                 action,
                 body: 'Process not ready to run command',
                 status: 400,
                 throwError: false,
-                data: {
+                metadata: {
                     status: this.status
                 }
             });
@@ -207,7 +207,7 @@ class Process extends configurable_1.Configurable {
     };
     run = async (commandName, args) => {
         const action = 'Process:Run';
-        let result = message_1.ErrorMessage.create({
+        let result = message_1.ErrorMessage.createMsg({
             action,
             body: 'Process not initialized',
             status: 400,
@@ -225,12 +225,12 @@ class Process extends configurable_1.Configurable {
             }
         }
         else {
-            result = message_1.ErrorMessage.create({
+            result = message_1.ErrorMessage.createMsg({
                 action,
                 body: 'Process not ready to run command, ',
                 status: 400,
                 throwError: false,
-                data: {
+                metadata: {
                     status: this.status
                 }
             });
@@ -241,7 +241,7 @@ class Process extends configurable_1.Configurable {
     getCommand = (name) => {
         const command = this.commands.find(command => command.name === name);
         if (!command) {
-            return message_1.ErrorMessage.create({
+            return message_1.ErrorMessage.createMsg({
                 action: 'Process:GetCommand',
                 body: `Command not found: ${name} in process: ${this.name}`,
                 status: 404,

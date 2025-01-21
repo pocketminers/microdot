@@ -1,16 +1,22 @@
-import { Hashable } from "./hashable";
+import { Hashable, HashableEntry } from "./hashable";
 import { ArgumentEntry } from "./argument";
 /**
  * An entry interface for a parameter
  * @summary Parameter entry interface that is used to create a parameter
  */
-interface ParameterEntry<T> extends Partial<Pick<Hashable, "id">>, Pick<ArgumentEntry<T>, "name">, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
+interface ParameterEntry<T> extends Partial<Pick<HashableEntry<T>, "id">>, Pick<ArgumentEntry<T>, "name">, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
 }
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method
  */
-declare class Parameter<T> extends Hashable {
+declare class Parameter<T> extends Hashable<{
+    name: string;
+    required: boolean;
+    description: string;
+    defaultValue: T | undefined;
+    optionalValues: T[] | undefined;
+}> {
     readonly name: string;
     readonly required: boolean;
     readonly description: string;

@@ -144,7 +144,7 @@ var Process = /** @class */ (function (_super) {
                     switch (_a.label) {
                         case 0:
                             action = 'Process:RunCommand';
-                            result = ErrorMessage.create({
+                            result = ErrorMessage.createMsg({
                                 action: action,
                                 body: 'Process not initialized',
                                 status: 400,
@@ -161,22 +161,22 @@ var Process = /** @class */ (function (_super) {
                         case 2:
                             commandOutput = _a.sent();
                             this.status = 'Completed';
-                            result = Message.create({
+                            result = Message.createMsg({
                                 action: action,
                                 body: 'Command executed successfully',
                                 status: 200,
-                                data: commandOutput,
+                                metadata: commandOutput,
                                 print: false
                             });
                             return [3 /*break*/, 4];
                         case 3:
                             err_1 = _a.sent();
                             this.status = 'Error';
-                            result = ErrorMessage.create({
+                            result = ErrorMessage.createMsg({
                                 action: action,
                                 body: 'Error running command',
                                 status: 500,
-                                data: {
+                                metadata: {
                                     error: err_1,
                                     command: command
                                 },
@@ -186,12 +186,12 @@ var Process = /** @class */ (function (_super) {
                             return [3 /*break*/, 4];
                         case 4: return [3 /*break*/, 6];
                         case 5:
-                            result = ErrorMessage.create({
+                            result = ErrorMessage.createMsg({
                                 action: action,
                                 body: 'Process not ready to run command',
                                 status: 400,
                                 throwError: false,
-                                data: {
+                                metadata: {
                                     status: this.status
                                 }
                             });
@@ -209,7 +209,7 @@ var Process = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         action = 'Process:Run';
-                        result = ErrorMessage.create({
+                        result = ErrorMessage.createMsg({
                             action: action,
                             body: 'Process not initialized',
                             status: 400,
@@ -229,12 +229,12 @@ var Process = /** @class */ (function (_super) {
                         _a.label = 3;
                     case 3: return [3 /*break*/, 5];
                     case 4:
-                        result = ErrorMessage.create({
+                        result = ErrorMessage.createMsg({
                             action: action,
                             body: 'Process not ready to run command, ',
                             status: 400,
                             throwError: false,
-                            data: {
+                            metadata: {
                                 status: this.status
                             }
                         });
@@ -248,7 +248,7 @@ var Process = /** @class */ (function (_super) {
         _this.getCommand = function (name) {
             var command = _this.commands.find(function (command) { return command.name === name; });
             if (!command) {
-                return ErrorMessage.create({
+                return ErrorMessage.createMsg({
                     action: 'Process:GetCommand',
                     body: "Command not found: ".concat(name, " in process: ").concat(_this.name),
                     status: 404,
@@ -279,7 +279,7 @@ var Process = /** @class */ (function (_super) {
                             initialize === true &&
                             // initializer !== undefined && 
                             this.instance !== undefined) {
-                            ErrorMessage.create({
+                            ErrorMessage.createMsg({
                                 action: 'Process:Initialize',
                                 body: 'Instance already initialized, but a seperate initializer is defined, disregarding the initializer',
                                 status: 400,
@@ -289,7 +289,7 @@ var Process = /** @class */ (function (_super) {
                         if (!(this.status === 'New') // &&
                         ) return [3 /*break*/, 2]; // &&
                         this.status = 'Initializing';
-                        Message.create({
+                        Message.createMsg({
                             action: 'Process:Initialize',
                             body: "Initializing process - ".concat(this.name),
                             status: 200,
@@ -336,7 +336,7 @@ var Process = /** @class */ (function (_super) {
                         this.status = 'Initialized';
                         return [2 /*return*/];
                     case 3:
-                        ErrorMessage.create({
+                        ErrorMessage.createMsg({
                             action: 'Process:Initialize',
                             body: 'Initializer function not defined',
                             status: 400,
@@ -347,11 +347,11 @@ var Process = /** @class */ (function (_super) {
                     case 5:
                         error_1 = _b.sent();
                         this.status = 'Error';
-                        ErrorMessage.create({
+                        ErrorMessage.createMsg({
                             action: 'Process:Initialize',
                             body: 'Error initializing process',
                             status: 500,
-                            data: error_1.body,
+                            metadata: error_1.body,
                             throwError: true
                         });
                         return [3 /*break*/, 6];
@@ -363,7 +363,7 @@ var Process = /** @class */ (function (_super) {
                             this.status === 'Error' ||
                             this.status === 'Completed' ||
                             this.status === 'Unknown') {
-                            ErrorMessage.create({
+                            ErrorMessage.createMsg({
                                 action: 'Process:Initialize',
                                 body: 'Process is already initialized',
                                 status: 400,

@@ -185,20 +185,31 @@ var Service = /** @class */ (function (_super) {
         this.history.push(body);
     };
     Service.prototype.addToQueue = function (command) {
-        if (this.queue.length >= this.config.getValue('queueLimit')) {
-            ErrorMessage.create({
-                action: 'Service:AddToQueue',
-                body: 'Queue limit reached',
-                status: 400,
-                throwError: true
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.queue.length >= this.config.getValue('queueLimit'))) return [3 /*break*/, 2];
+                        return [4 /*yield*/, ErrorMessage.createMsg({
+                                action: 'Service:AddToQueue',
+                                body: 'Queue limit reached',
+                                status: 400,
+                                throwError: true
+                            })];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        this.queue.push(command);
+                        return [2 /*return*/];
+                }
             });
-        }
-        this.queue.push(command);
+        });
     };
     Service.prototype.getCommand = function (name) {
         var command = this.commands.find(function (command) { return command.name === name; });
         if (!command) {
-            return ErrorMessage.create({
+            return ErrorMessage.createMsg({
                 action: 'Service:GetCommand',
                 body: "Command not found: ".concat(name),
                 status: 404,
@@ -213,7 +224,7 @@ var Service = /** @class */ (function (_super) {
             return process.getCommand(commandName);
         }
         else {
-            return ErrorMessage.create({
+            return ErrorMessage.createMsg({
                 action: 'Service:GetSubCommand',
                 body: "Process not found: ".concat(processName),
                 status: 404,
@@ -229,7 +240,7 @@ var Service = /** @class */ (function (_super) {
                 switch (_a.label) {
                     case 0:
                         action = 'Service:Run';
-                        result = ErrorMessage.create({
+                        result = ErrorMessage.createMsg({
                             action: action,
                             body: 'Command not found',
                             status: 404,
@@ -244,11 +255,11 @@ var Service = /** @class */ (function (_super) {
                             result = output;
                         }
                         else {
-                            result = Message.create({
+                            result = Message.createMsg({
                                 action: action,
                                 body: 'Command executed',
                                 status: 200,
-                                data: output
+                                metadata: output
                             });
                         }
                         return [3 /*break*/, 3];
@@ -269,7 +280,7 @@ var Service = /** @class */ (function (_super) {
                     case 0:
                         process = this.processes.get(processName);
                         if (!process) {
-                            return [2 /*return*/, ErrorMessage.create({
+                            return [2 /*return*/, ErrorMessage.createMsg({
                                     action: 'Service:Run',
                                     body: "Process not found: ".concat(processName),
                                     status: 404,
@@ -307,7 +318,7 @@ var Service = /** @class */ (function (_super) {
                         result = _a.sent();
                         return [3 /*break*/, 5];
                     case 4:
-                        result = ErrorMessage.create({
+                        result = ErrorMessage.createMsg({
                             action: 'Service:Run',
                             body: 'Invalid arguments',
                             status: 400,
@@ -419,11 +430,11 @@ var Service = /** @class */ (function (_super) {
                     case 8:
                         error_1 = _a.sent();
                         this.queueStatus = 'Stopped';
-                        ErrorMessage.create({
+                        ErrorMessage.createMsg({
                             action: 'Service:Queue',
                             body: 'Queue error',
                             status: 500,
-                            data: error_1,
+                            metadata: error_1,
                             throwError: true
                         });
                         return [3 /*break*/, 9];
@@ -456,7 +467,7 @@ var Service = /** @class */ (function (_super) {
                         queueInSeries = this.config.getValue('queueInSeries');
                         if (forceStart === true &&
                             forceStop === true) {
-                            ErrorMessage.create({
+                            ErrorMessage.createMsg({
                                 action: 'Service:QueueManager',
                                 body: 'Invalid arguments: forceStart and forceStop cannot be true at the same time',
                                 status: 400,

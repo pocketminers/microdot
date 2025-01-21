@@ -26,7 +26,7 @@ class Parameter extends Hashable {
      * }`
      */
     constructor({ id = createIdentifier("Name", { prefix: "Parameter-" }), name = createIdentifier("Name", { prefix: "Parameter-" }), required = false, description = "A parameter", defaultValue, optionalValues = [] }) {
-        super(id, name, required, description, defaultValue, optionalValues);
+        super({ id, data: { name, required, description, defaultValue, optionalValues } });
         this.name = name;
         this.required = required;
         this.description = description;

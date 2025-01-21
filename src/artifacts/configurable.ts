@@ -3,6 +3,8 @@ import { ArgumentEntry } from "./argument";
 import { Arguments } from "./arguments";
 import { Configuration, ConfigurationEntry } from "./configuration";
 import { Hashable } from "./hashable";
+import { PropertyEntry } from "./property";
+import { ParameterEntry } from "./parameter";
 
 
 interface ConfigurableEntry
@@ -18,7 +20,7 @@ interface ConfigurableEntry
  * This allows the property to be set by the argument.
  */
 class Configurable
-    extends Hashable
+    extends Hashable<{ name: string, description: string, configuration?: Configuration, properties?: PropertyEntry<any>[], parameters: ParameterEntry<any>[], args?: ArgumentEntry<any>[] | Arguments | {[key: string]: any}, useArgs: boolean }>
 {
     public readonly name: string;
     public readonly description: string;
@@ -37,7 +39,7 @@ class Configurable
             useArgs = false
         } : ConfigurableEntry
     ) {
-        super(id, name, description, configuration, properties, parameters, args, useArgs);
+        super({id, data: {name, description, configuration, properties, parameters, args, useArgs}});
 
         this.name = name;
         this.description = description;

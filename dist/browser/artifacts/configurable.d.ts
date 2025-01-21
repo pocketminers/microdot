@@ -3,6 +3,8 @@ import { ArgumentEntry } from "./argument";
 import { Arguments } from "./arguments";
 import { Configuration, ConfigurationEntry } from "./configuration";
 import { Hashable } from "./hashable";
+import { PropertyEntry } from "./property";
+import { ParameterEntry } from "./parameter";
 interface ConfigurableEntry extends Record<'id', Identifier>, Partial<Record<'configuration', Configuration>>, ConfigurationEntry {
 }
 /**
@@ -11,7 +13,17 @@ interface ConfigurableEntry extends Record<'id', Identifier>, Partial<Record<'co
  * If an argument exists for a property, then the value of the property is set to the value of the argument.
  * This allows the property to be set by the argument.
  */
-declare class Configurable extends Hashable {
+declare class Configurable extends Hashable<{
+    name: string;
+    description: string;
+    configuration?: Configuration;
+    properties?: PropertyEntry<any>[];
+    parameters: ParameterEntry<any>[];
+    args?: ArgumentEntry<any>[] | Arguments | {
+        [key: string]: any;
+    };
+    useArgs: boolean;
+}> {
     readonly name: string;
     readonly description: string;
     config: Configuration;

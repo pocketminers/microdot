@@ -31,19 +31,19 @@ interface MessageEntry<L = MessageLevel, T = any>
         Partial<Record<'level', L>>,
         Partial<Record<'action', string>>,
         Partial<Record<'status', number>>,
-        Partial<Record<'data', T>>,
+        Partial<Record<'metadata', T>>,
         Partial<Record<'print', boolean>> {};
 
 
 class Message<L = MessageLevel, T = any>
     extends
-        Hashable
+        Hashable<MessageEntry<L, T>>
 {
     public readonly body: string;
     public readonly level: L;
     public readonly action?: string;
     public readonly status: number;
-    public readonly data?: T;
+    public readonly metadata?: T;
     public readonly print: boolean;
     public readonly createdAt: Date = new Date();
 
@@ -55,23 +55,23 @@ class Message<L = MessageLevel, T = any>
         action = undefined,
         status = Codes.OK,
         print = true,
-        data
+        metadata = {} as T
     }: MessageEntry<L, T>) {
-        super(id, body, level, action, status, print, data);
+        super({id, data: {body, level, action, status, print, metadata}});
 
         this.body = body;
         this.level = level;
         this.action = action;
         this.status = status;
         this.print = print;
-        this.data = checkIsEmpty([data]) ? undefined : data as T;
+        this.metadata = checkIsEmpty([metadata]) ? undefined : metadata as T;
 
         if (this.print) {
             this.printToConsole();
         }
     }
 
-    public static create<L, T = undefined>(entry: MessageEntry<L,T>): Message<L,T> {
+    public static createMsg<L, T = undefined>(entry: MessageEntry<L,T>): Message<L,T> {
         const message = new Message<L,T>(entry);
         return message;
     }
@@ -88,15 +88,15 @@ class Message<L = MessageLevel, T = any>
     }
 
     public printData(): string {
-        const isEmpty = checkIsEmpty([this.data]);
+        const isEmpty = checkIsEmpty([this.metadata]);
 
         if (isEmpty) {
             return '';
         }
         else {
-            const data = checkForCircularReference(this.data) ? 'Circular Reference' : JSON.stringify(this.data, null, 2);
-            // const data = JSON.stringify(this.data, null, 2);
-            return `\nData: ${data}`;
+            const metadata = checkForCircularReference(this.metadata) ? 'Circular Reference' : JSON.stringify(this.metadata, null, 2);
+            // const metadata = JSON.stringify(this.metadata, null, 2);
+            return `\nData: ${metadata}`;
         }
     }
 
@@ -151,17 +151,17 @@ class ErrorMessage<L = ErrorMessageLevel, T = any>
             print = true,
             throwError = false,
             stack = undefined,
-            data = {} as T
+            metadata = {} as T
         }: ErrorMessageEntry<L, T>
     ) {
-        super({ id, body, level, action, status, print, data});
+        super({ id, body, level, action, status, print, metadata});
         this.throwError = throwError !== undefined ? throwError : false;
         this.stack = stack !== undefined ? stack : '';
 
         this.throw_();
     }
 
-    public static create<L = ErrorMessageLevels.Error, T = undefined>(entry: ErrorMessageEntry<L, T>): ErrorMessage<L,T> {
+    public static createMsg<L = ErrorMessageLevels.Error, T = undefined>(entry: ErrorMessageEntry<L, T>): ErrorMessage<L,T> {
         const message = new ErrorMessage<L, T>(entry);
         return message;
     }
