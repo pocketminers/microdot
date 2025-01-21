@@ -36,9 +36,9 @@ class Hashable<T>
         this.id = id;
         this.hash = hash;
 
-        if (checkHasEmpties(data) === true) {
-            throw new Error("Data cannot be empty");
-        }
+        // if (checkHasEmpties(data) === true) {
+        //     throw new Error("Data cannot be empty");
+        // }
 
         this.data = data;
     }

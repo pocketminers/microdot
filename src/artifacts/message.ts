@@ -55,7 +55,7 @@ class Message<L = MessageLevel, T = any>
         action = undefined,
         status = Codes.OK,
         print = true,
-        metadata = {} as T
+        metadata
     }: MessageEntry<L, T>) {
         super({id, data: {body, level, action, status, print, metadata}});
 

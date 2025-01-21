@@ -23,7 +23,7 @@ interface ParameterEntry<T>
  */
 class Parameter<T>
     extends
-        Hashable<{ name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined }>
+        Hashable<{ name: string, required: boolean, description: string, defaultValue?: T | undefined, optionalValues: T[] | undefined }>
 {
     public readonly name: string;
     public readonly required: boolean;

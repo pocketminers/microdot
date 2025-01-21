@@ -47,6 +47,7 @@ describe("Parameter", () => {
     it("should return the provided value if it is in optional values", () => {
         const param = new Parameter<number>({
             name: "param1",
+            defaultValue: 123,
             optionalValues: [123, 456]
         });
         expect(param.getValue(123)).toBe(123);

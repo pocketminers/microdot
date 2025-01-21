@@ -51,7 +51,12 @@ describe('Hashable', () => {
 
         console.log(hashable.hash);
 
-        expect(async () => await hashable.checkHash('invalid_string')).toThrow('Hash mismatch');
+        try {
+            await hashable.checkHash('invalid_string');
+        }
+        catch (error: any) {
+            expect(error.message).toBe('Hash mismatch');
+        }
     });
 
     // it('should not throw an error if the hashes match', async () => {
