@@ -1,9 +1,7 @@
-import { ErrorMessage, Message } from '../artifacts/message';
-import { Configuration } from '../artifacts/configuration';
-import { ArgumentEntry } from '../artifacts/argument';
-import { Command, QueuedCommand } from './command';
-import { Process } from './process';
-import { Configurable, ConfigurableEntry } from '../artifacts/configurable';
+import { ArgumentEntry } from '@artifacts/argument';
+import { Command, QueuedCommand } from '@service/command';
+import { Process } from '@service/process';
+import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
 /**
  * ServiceTypes
  * @summary
@@ -30,7 +28,7 @@ type ServiceType = keyof typeof ServiceTypes;
 type ServiceResponse = Message | ErrorMessage;
 interface ServiceEntry<T = ServiceType, U = any> extends ConfigurableEntry, Pick<ConfigurableEntry, 'id' | 'name' | 'description' | 'configuration' | 'properties' | 'parameters' | 'args' | 'useArgs'>, Record<'type', T>, Partial<Record<'processes', Map<string, Process<U>> | undefined>>, Partial<Record<'commands', Array<Command<any, any>> | undefined>> {
 }
-declare const ServiceConfig: Configuration;
+declare const ServiceConfig: any;
 /**
  * Service Class
  * @summary

@@ -72,7 +72,7 @@ class CryptoUtils {
             case "MD5":
                 return await CryptoUtils.md5(value, digest);
             default:
-                return await CryptoUtils.hashValue(value, undefined, digest);
+                return await CryptoUtils.hashString(value, undefined, digest);
         }
     }
     ;
@@ -129,26 +129,26 @@ class CryptoUtils {
         }
         return str;
     }
-    static prepareValueForHash(value) {
+    static prepareDataForHash(value) {
         let str = '';
         if ((0, checks_1.checkIsEmpty)(value) === false
             // && typeof value === 'object'
             && Array.isArray(value) === true) {
             for (const val of value) {
-                str += this.appendValueToString(val, str);
+                str += CryptoUtils.appendValueToString(val, str);
             }
         }
         else {
-            str += this.appendValueToString(value, str);
+            str += CryptoUtils.appendValueToString(value, str);
         }
         return str;
     }
-    static async hashValue(value, algorithm = DEFUALT_ALGORITHM, digest = DEFUALT_DIGEST) {
-        const str = CryptoUtils.prepareValueForHash(value);
+    static async hashData(data, algorithm = DEFUALT_ALGORITHM, digest = DEFUALT_DIGEST) {
+        const str = CryptoUtils.prepareDataForHash(data);
         return await CryptoUtils.hashString(str, algorithm, digest);
     }
-    static isValueHash(value, algorithm = DEFUALT_ALGORITHM, digest = DEFUALT_DIGEST) {
-        const valueStr = CryptoUtils.prepareValueForHash(value);
+    static isHash(value, algorithm = DEFUALT_ALGORITHM, digest = DEFUALT_DIGEST) {
+        const valueStr = CryptoUtils.prepareDataForHash(value);
         return CryptoUtils.checkStringForHash(valueStr, algorithm, digest);
     }
 }

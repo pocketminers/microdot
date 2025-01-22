@@ -1,4 +1,4 @@
-import { Configurable, Configuration } from "../artifacts";
+import { Configurable, Configuration } from "@/artifacts";
 declare const HistorianConfig: Configuration;
 declare class Historian<T> extends Configurable {
     private readonly history;

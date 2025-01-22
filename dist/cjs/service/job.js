@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Job = void 0;
-const artifacts_1 = require("../artifacts");
+const artifacts_1 = require("@/artifacts");
 ;
 class Job extends artifacts_1.Configurable {
     status = 'pending';

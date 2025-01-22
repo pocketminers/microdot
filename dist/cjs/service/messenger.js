@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Messenger = exports.MessengerConfig = void 0;
-const artifacts_1 = require("../artifacts");
-const message_1 = require("../artifacts/message");
-const utils_1 = require("../utils");
+const artifacts_1 = require("@/artifacts");
+const message_1 = require("@artifacts/message");
+const utils_1 = require("@/utils");
 const historian_1 = require("./historian");
 const status_1 = require("./status");
 ;

@@ -1,43 +1,47 @@
 import { Command, CommandResult } from '@service/command';
-import { Configuration } from '@artifacts/configuration';
 import { ArgumentEntry } from '@artifacts/argument';
-import { ErrorMessage, Message } from '@artifacts/message';
-import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
+import { ErrorMessage, Message } from '@service/message';
+import { Configurable, ConfigurableEntry } from '@artifacts/configurable';
+import { Identifier } from '@utils/identifier';
 
 
-const ProcessConfig: Configuration = new Configuration({
-    name: 'ProcessConfig',
-    description: 'Process Configuration',
-    parameters: [
-        {
-            name: 'initialize',
-            required: true,
-            description: 'Initialize the process instance',
-            defaultValue: false,
-            optionalValues: [true, false]
-        },
-        {
-            name: 'initializer',
-            required: false,
-            description: 'Returns the process instance',
-            defaultValue: null
-        },
-        {
-            name: 'initializerConfig',
-            required: false,
-            description: 'Configuration for the initializer function',
-            defaultValue: {}
-        },
-        {
-            name: 'run',
-            required: false,
-            description: 'Run the process instance',
-            defaultValue: false,
-            optionalValues: [true, false]
-        }
-    ],
-    args: []
-});
+const ProcessConfig = (id: Identifier): ConfigurableEntry => {
+
+    return {
+        id,
+        name: 'ProcessConfig',
+        description: 'Process Configuration',
+        parameters: [
+            {
+                name: 'initialize',
+                required: true,
+                description: 'Initialize the process instance',
+                defaultValue: false,
+                optionalValues: [true, false]
+            },
+            {
+                name: 'initializer',
+                required: false,
+                description: 'Returns the process instance',
+                defaultValue: null
+            },
+            {
+                name: 'initializerConfig',
+                required: false,
+                description: 'Configuration for the initializer function',
+                defaultValue: {}
+            },
+            {
+                name: 'run',
+                required: false,
+                description: 'Run the process instance',
+                defaultValue: false,
+                optionalValues: [true, false]
+            }
+        ],
+        args: []
+    };
+}
 
 enum ProcessStatuses {
     New = 'New',
@@ -76,14 +80,12 @@ class Process<T>
         id,
         name = 'Process',
         description = '',
-        configuration = ProcessConfig,
-        properties = [],
-        parameters = [],
-        args = [],
+        parameters = ProcessConfig(id).parameters,
+        args = ProcessConfig(id).args,
         instance,
         commands = []
     }: ProcessEntry<T>) {
-        super({id, name, description, configuration, properties, parameters, args});
+        super({id, name, description, parameters, args});
         
         this.commands = commands;
 
@@ -99,7 +101,7 @@ class Process<T>
     }
 
     public async initialize(): Promise<void> {
-        const initialize: boolean = this.config.getValue<boolean>('initialize');
+        const initialize: boolean = this.getValue<boolean>('initialize');
         // const initializer: TaskRunner | undefined = this.getArgumentValue<TaskRunner>('initializer');
 
 
@@ -150,8 +152,8 @@ class Process<T>
             this.status === 'Initializing'
         ) {
             try {
-                const initializer: Function | undefined = this.config.getValue<Function>('initializer');
-                const config: Configuration | undefined = this.config.getValue<Configuration>('initializerConfig') || undefined;
+                const initializer: Function | undefined = this.getValue('initializer');
+                const config: Configurable | undefined = this.getValue('initializerConfig') || undefined;
                 let args: Record<string, any> = {};
 
                 if (

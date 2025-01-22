@@ -1,24 +1,39 @@
-import { Argument, ArgumentEntry } from "./argument";
-import { Parameter, ParameterEntry } from "./parameter";
+import { Argument, ArgumentEntry } from "@artifacts/argument";
+import { Parameter, ParameterEntry } from "@artifacts/parameter";
 
-class ArtifactStore<T extends Argument<any> | Parameter<any> = Argument<any> | Parameter<any>> 
+class ArtifactStore
+<
+    T extends Argument<any> | Parameter<any> = Argument<any> | Parameter<any>
+> 
     extends Array<T>
 {
-    constructor(items: Array<ArgumentEntry<any> | ParameterEntry<any>> = []) {
-        if (!ArtifactStore.hasUniqueNames(items)) {
+    constructor(items: (ArgumentEntry<any> | ParameterEntry<any>)[] = []) {
+        
+        if (!Array.isArray(items)) {
+            throw new TypeError("Items must be an array");
+        }
+
+        if (!ArtifactStore.hasUniqueNames({ items })) {
             throw new Error("Items must have unique names");
         }
 
-        const artifacts = items.map((item) => ArtifactStore.fromEntry(item));
+        const artifacts = []
+        for (const item of items) {
+            artifacts.push(ArtifactStore.fromEntry(item));
+        }
 
         super(...artifacts as T[]);
     }
 
-    private static hasUniqueNames(items: any[]): boolean {
-        const names = items.map((item) => item.getName());
-        const uniqueNames = new Set(names);
-
-        return names.length === uniqueNames.size;
+    private static hasUniqueNames({ items }: { items: Array<ArgumentEntry<any> | ParameterEntry<any>> }): boolean {
+        const names = new Set<string>();
+        for (const item of items) {
+            if (names.has(item.name)) {
+                return false;
+            }
+            names.add(item.name);
+        }
+        return true;
     }
 
     public static fromEntry(entry: ArgumentEntry<any> | ParameterEntry<any>): Argument<any> | Parameter<any> {
@@ -44,8 +59,8 @@ class ArtifactStore<T extends Argument<any> | Parameter<any> = Argument<any> | P
     }
 
     public addArtifact(artifact: T): void {
-        if (ArtifactStore.hasUniqueNames([artifact, ...this]) === false) {
-            throw new Error(`Artifact already exists: ${artifact.getName()}`);
+        if (this.getEntry(artifact.getName())) {
+            throw new Error(`Entry already exists: ${artifact.getName()}`);
         }
 
         this.push(artifact);
@@ -71,7 +86,11 @@ class ArtifactStore<T extends Argument<any> | Parameter<any> = Argument<any> | P
     }
 
     public getNames(): string[] {
-        return this.map((entry) => entry.getName());
+        const names: string[] = [];
+        for (const entry of this) {
+            names.push(entry.getName());
+        }
+        return names;
     }
 
     public removeEntryByName(name: string): void {
@@ -88,6 +107,16 @@ class ArtifactStore<T extends Argument<any> | Parameter<any> = Argument<any> | P
 
     public removeEntry(entry: T): void {
         this.removeEntryByName(entry.getName());
+    }
+
+    public updateEntry(entry: T): void {
+        const index = this.findIndex((item) => item.getName() === entry.getName());
+
+        if (index === -1) {
+            throw new Error(`Entry not found: ${entry.getName()}`);
+        }
+
+        this[index] = entry;
     }
 
 }

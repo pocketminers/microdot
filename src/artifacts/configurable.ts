@@ -1,14 +1,16 @@
 
-import { Argument, ArgumentEntry } from "./argument";
-import { ArtifactStore } from "./store";
-import { Parameter, ParameterEntry } from "./parameter";
-import { Identifiable, IdentifiableEntry } from "./identifiable";
+import { Argument, ArgumentEntry } from "@artifacts/argument";
+import { ArtifactStore } from "@artifacts/store";
+import { Parameter, ParameterEntry } from "@artifacts/parameter";
+import { Identifiable, IdentifiableEntry } from "@artifacts/identifiable";
+
+
 
 interface ConfigurableEntry
     extends
-        IdentifiableEntry<any>,
-        Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[]>>,
-        Partial<Record<'args', ArgumentEntry<any>[] | Argument<any>[]>> {}
+        Pick<IdentifiableEntry<any>, 'id' | 'name' | 'description'>,
+        Partial<Record<'parameters', (ParameterEntry<any> | Parameter<any>)[]>>,
+        Partial<Record<'args', (ArgumentEntry<any> | Argument<any>)[]>> {}
 
 
 class Configurable
@@ -24,8 +26,10 @@ class Configurable
             parameters = []
         }: ConfigurableEntry
     ) {
+        console.log(`Configurable:constructor:args:`, args);
+
         const argumentStore = new ArtifactStore<Argument<any>>();
-        argumentStore.add(args );
+        argumentStore.add(args);
 
         const paramStore = new ArtifactStore<Parameter<any>>();
         paramStore.add(parameters);
@@ -41,13 +45,13 @@ class Configurable
         return this.getData().parameters;
     }
 
-    public static isValidArgumentName(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean {
-        const paramNames = params.getNames();
+    public isValidArgumentName(arg: Argument<any>): boolean {
+        const paramNames = this.getParameters().getNames();
         return paramNames.includes(arg.getName());
     }
 
-    public static isValidArgumentValue(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean {
-        const param = params.getEntry(arg.getName());
+    public isValidArgumentValue(arg: Argument<any>): boolean {
+        const param = this.getParameters().getEntry(arg.getName());
 
         if (!param) {
             return false;
@@ -56,10 +60,36 @@ class Configurable
         return param.isValueInOptionalValues(arg.getValue());
     }
 
-    public getValue(name: string): any {
+    public setArgument<T>(arg: Argument<T>): void {
+        if (!this.isValidArgumentName(arg)) {
+            throw new Error(`Invalid argument name: ${arg.getName()}`);
+        }
+
+        if (!this.isValidArgumentValue(arg)) {
+            throw new Error(`Invalid argument value: ${arg.getValue()}`);
+        }
+
+        if (this.getArguments().getEntry(arg.getName())) {
+            this.getArguments().updateEntry(arg);
+        }
+        else {
+            this.getArguments().addArtifact(arg);
+        }
+    }
+
+    public setArgumentFromEntry(entry: ArgumentEntry<any>): void {
+        this.setArgument(new Argument(entry));
+    }
+
+    public getValue<T = any>(name: string): T {
         const param = this.getParameters().getEntry(name);
+
+        if (!param) {
+            throw new Error(`Parameter ${name} not found in ${this.getName()}(${this.getId()})`);
+        }
+
         const arg = this.getArguments().getEntry(name);
-        return param?.getValue(arg?.getValue());
+        return param.getValue(arg?.getValue());
     }
 
 

@@ -37,9 +37,9 @@ declare class CryptoUtils {
      */
     static checkStringForHash(str: string, algorithm?: string, digest?: HashDigest): boolean;
     static appendValueToString<T>(value: T, str: string): string;
-    static prepareValueForHash<T>(value: T): string;
-    static hashValue<T>(value: T, algorithm?: HashAlgorithm, digest?: HashDigest): Promise<string>;
-    static isValueHash<T>(value: any, algorithm?: HashAlgorithm, digest?: HashDigest): boolean;
+    static prepareDataForHash<T>(value: T): string;
+    static hashData<T>(data: T, algorithm?: HashAlgorithm, digest?: HashDigest): Promise<string>;
+    static isHash<T>(value: any, algorithm?: HashAlgorithm, digest?: HashDigest): boolean;
 }
 export { CryptoUtils };
 //# sourceMappingURL=crypto.d.ts.map

@@ -1,43 +1,45 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessStatuses = exports.ProcessConfig = exports.Process = void 0;
-const command_1 = require("./command");
-const configuration_1 = require("../artifacts/configuration");
-const message_1 = require("../artifacts/message");
-const configurable_1 = require("../artifacts/configurable");
-const ProcessConfig = new configuration_1.Configuration({
-    name: 'ProcessConfig',
-    description: 'Process Configuration',
-    parameters: [
-        {
-            name: 'initialize',
-            required: true,
-            description: 'Initialize the process instance',
-            defaultValue: false,
-            optionalValues: [true, false]
-        },
-        {
-            name: 'initializer',
-            required: false,
-            description: 'Returns the process instance',
-            defaultValue: null
-        },
-        {
-            name: 'initializerConfig',
-            required: false,
-            description: 'Configuration for the initializer function',
-            defaultValue: {}
-        },
-        {
-            name: 'run',
-            required: false,
-            description: 'Run the process instance',
-            defaultValue: false,
-            optionalValues: [true, false]
-        }
-    ],
-    args: []
-});
+const command_1 = require("@service/command");
+const message_1 = require("@artifacts/message");
+const configurable_1 = require("@artifacts/configurable");
+const ProcessConfig = (id) => {
+    return {
+        id,
+        name: 'ProcessConfig',
+        description: 'Process Configuration',
+        parameters: [
+            {
+                name: 'initialize',
+                required: true,
+                description: 'Initialize the process instance',
+                defaultValue: false,
+                optionalValues: [true, false]
+            },
+            {
+                name: 'initializer',
+                required: false,
+                description: 'Returns the process instance',
+                defaultValue: null
+            },
+            {
+                name: 'initializerConfig',
+                required: false,
+                description: 'Configuration for the initializer function',
+                defaultValue: {}
+            },
+            {
+                name: 'run',
+                required: false,
+                description: 'Run the process instance',
+                defaultValue: false,
+                optionalValues: [true, false]
+            }
+        ],
+        args: []
+    };
+};
 exports.ProcessConfig = ProcessConfig;
 var ProcessStatuses;
 (function (ProcessStatuses) {

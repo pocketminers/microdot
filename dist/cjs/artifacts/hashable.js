@@ -10,15 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hashable = void 0;
-const utils_1 = require("../utils");
-const decorators_1 = require("../utils/decorators");
-const crypto_1 = require("../utils/crypto");
+const checks_1 = require("@utils/checks");
+const decorators_1 = require("@utils/decorators");
+const crypto_1 = require("@utils/crypto");
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
  */
 class Hashable {
-    id;
     data;
     hash;
     /**
@@ -26,20 +25,38 @@ class Hashable {
      * @param data
      * @summary Create a new Hashable instance
      */
-    constructor({ id = (0, utils_1.createIdentifier)("UUID", { prefix: "Hashable-" }), hash = undefined, data }) {
-        this.id = id;
-        this.hash = hash;
-        if ((0, utils_1.checkHasEmpties)(data) === true) {
-            throw new Error("Data cannot be empty");
+    constructor({ hash = undefined, data }) {
+        if ((0, checks_1.checkIsEmpty)(data)) {
+            throw new Error("Hashable:constructor:data cannot be empty.");
         }
         this.data = data;
+        this.hash = hash;
     }
+    getData() {
+        return this.data;
+    }
+    async getHash() {
+        if ((0, checks_1.checkIsEmpty)(this.hash) === true) {
+            this.hash = await Hashable.hashData(this.data);
+        }
+        return this.hash;
+    }
+    /**
+     * hashData static Method - Hash the given data using the default hashing algorithm and digest
+     */
+    static async hashData(data) {
+        return await crypto_1.CryptoUtils.hashData(data);
+    }
+    /**
+     * initialize Method
+     * @summary Initialize the hashable instance
+     */
     async initialize() {
         if (this.hash === undefined) {
-            this.hash = await crypto_1.CryptoUtils.hashValue(this.data);
+            this.hash = await Hashable.hashData(this.data);
         }
-        else {
-            await this.checkHash(this.hash);
+        if (this.hasEqualHash(this.hash) === false) {
+            throw new Error("Hash mismatch");
         }
     }
     /**
@@ -47,92 +64,63 @@ class Hashable {
      * @summary Check if the original hash matches the current hash
      */
     hasEqualHash(hash) {
-        if (this.hash !== hash) {
-            // throw new Error("Hash mismatch");
-            return false;
-        }
-        return true;
+        return this.hash === hash;
     }
     /**
      * checkFromValue Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    async hasEqualValue(data) {
-        if (this.hash !== await crypto_1.CryptoUtils.hashValue(data)) {
-            // throw new Error("Hash mismatch");
-            return false;
+    async hasEqualData(data) {
+        return this.hash === await Hashable.hashData(data);
+    }
+    /**
+     * checkFromHashOrData Method - Check if the original hash matches the current hash or a given data
+     */
+    async checkFromHashOrData(hashOrData) {
+        if ((0, checks_1.checkIsString)(hashOrData) === true
+            && crypto_1.CryptoUtils.isHash(hashOrData) === true
+            && this.hasEqualHash(hashOrData) === false) {
+            throw new Error("Input hash does not match the current hash of the data");
+        }
+        else if (crypto_1.CryptoUtils.isHash(hashOrData) === false
+            && await this.hasEqualData(hashOrData) === false) {
+            throw new Error("When hashing the input data, the hash does not match the current hash of the data");
+        }
+        else if (crypto_1.CryptoUtils.isHash(hashOrData) === false
+            && crypto_1.CryptoUtils.isHash(hashOrData) === false) {
+            throw new Error("Input is not a hash or matcheable data");
         }
         return true;
     }
     /**
-     * isEquivalent Method
-     * @summary Check if the given values are equivalent to the current
-     */
-    async isEquivalent(data) {
-        return this.hash === await crypto_1.CryptoUtils.hashValue(data);
-    }
-    /**
-     * checkFromHashOrValue Method
+     * checkHash Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    async checkFromHashOrValue(hashOrValues) {
-        if (crypto_1.CryptoUtils.isValueHash(hashOrValues) === true
-            && this.hasEqualHash(hashOrValues) === false) {
-            throw new Error("Hash mismatch");
-        }
-        else if ((0, utils_1.checkIsString)(hashOrValues) === true
-            && crypto_1.CryptoUtils.isValueHash(hashOrValues) === false
-            && await this.isEquivalent(hashOrValues) === false) {
-            throw new Error("Hash mismatch");
-        }
-        else if (Array.isArray(hashOrValues)
-            && hashOrValues[0].length > 0) {
-            if (await this.isEquivalent(hashOrValues) === false) {
-                throw new Error("Hash mismatch");
-            }
-        }
-        return true;
-    }
-    /**
-     * checkHash Method
-     * @summary Check if the original hash matches the current hash
-     */
-    async checkHash(hashOrValues) {
+    // @IsNotEmpty
+    async checkHash(hashOrData) {
         try {
-            if ((0, utils_1.checkIsEmpty)(hashOrValues) === true) {
+            if ((0, checks_1.checkIsEmpty)(hashOrData) === true) {
                 throw new Error("Hash or data cannot be empty");
             }
-            return await this.checkFromHashOrValue(hashOrValues);
+            return await this.checkFromHashOrData(hashOrData);
         }
         catch (error) {
             throw new Error(error.message);
         }
     }
     /**
-     * hashString static Method - Hash the given string using sha256
-     * @summary Hash the given string using sha256
+     * hashString static Method - Hash the given string using the default hashing algorithm and digest
      */
-    static async hashString(data) {
+    static async hashString(value) {
         try {
-            return await crypto_1.CryptoUtils.hashValue(data);
+            return await crypto_1.CryptoUtils.hashData(value);
         }
         catch (error) {
             throw new Error(error.message);
         }
-    }
-    static async create(values) {
-        const id = (0, utils_1.createIdentifier)("UUID", { prefix: "Hashable-" });
-        const hash = await this.hashString(JSON.stringify(values));
-        return new Hashable({ id, hash, data: values });
     }
 }
 exports.Hashable = Hashable;
-__decorate([
-    decorators_1.IsNotEmpty,
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
-    __metadata("design:returntype", Promise)
-], Hashable.prototype, "checkHash", null);
 __decorate([
     decorators_1.IsNotEmpty,
     __metadata("design:type", Function),

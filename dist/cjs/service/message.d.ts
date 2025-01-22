@@ -1,5 +1,5 @@
-import { Identifier } from "../utils/identifier";
-import { Hashable } from "../artifacts";
+import { Identifier } from "@utils/identifier";
+import { Hashable } from "@/artifacts";
 /**
  * MessageLevels is an enum of message levels.
  * The message levels are 'Info' and 'Debug'.
@@ -17,19 +17,18 @@ type MessageLevel = keyof typeof MessageLevels | keyof typeof ErrorMessageLevels
  * MessageEntry is an interface that represents the message entry.
  * The message entry contains the message properties.
  */
-interface MessageEntry<L = MessageLevel, T = any> extends Partial<Record<'id', Identifier>>, Record<'body', string>, Partial<Record<'level', L>>, Partial<Record<'action', string>>, Partial<Record<'status', number>>, Partial<Record<'data', T>>, Partial<Record<'print', boolean>> {
+interface MessageEntry<L = MessageLevel, T = any> extends Partial<Record<'id', Identifier>>, Record<'body', string>, Partial<Record<'level', L>>, Partial<Record<'action', string>>, Partial<Record<'status', number>>, Partial<Record<'metadata', T>>, Partial<Record<'print', boolean>> {
 }
-declare class Message<L = MessageLevel, T = any> extends Hashable {
-    readonly id: string;
+declare class Message<L = MessageLevel, T = any> extends Hashable<MessageEntry<L, T>> {
     readonly body: string;
     readonly level: L;
     readonly action?: string;
     readonly status: number;
-    readonly data?: T;
+    readonly metadata?: T;
     readonly print: boolean;
     readonly createdAt: Date;
-    constructor({ id, body, level, action, status, print, data }: MessageEntry<L, T>);
-    static create<L, T = undefined>(entry: MessageEntry<L, T>): Message<L, T>;
+    constructor({ id, body, level, action, status, print, metadata }: MessageEntry<L, T>);
+    static createMsg<L, T = undefined>(entry: MessageEntry<L, T>): Message<L, T>;
     printAction(): string;
     printData(): string;
     toString(): string;
@@ -45,8 +44,8 @@ interface ErrorMessageEntry<L = ErrorMessageLevel, T = any> extends MessageEntry
 declare class ErrorMessage<L = ErrorMessageLevel, T = any> extends Message<L, T> {
     readonly stack: string;
     readonly throwError: boolean;
-    constructor({ id, body, level, action, status, print, throwError, stack, data }: ErrorMessageEntry<L, T>);
-    static create<L = ErrorMessageLevels.Error, T = undefined>(entry: ErrorMessageEntry<L, T>): ErrorMessage<L, T>;
+    constructor({ id, body, level, action, status, print, throwError, stack, metadata }: ErrorMessageEntry<L, T>);
+    static createMsg<L = ErrorMessageLevels.Error, T = undefined>(entry: ErrorMessageEntry<L, T>): ErrorMessage<L, T>;
     private throw_;
     printStack(): string;
     printThrowError(): string;

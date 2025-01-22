@@ -15,13 +15,11 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Service = exports.ServiceConfig = exports.ServiceTypes = void 0;
-const message_1 = require("../artifacts/message");
-const configuration_1 = require("../artifacts/configuration");
-const command_1 = require("./command");
-const configurable_1 = require("../artifacts/configurable");
+const command_1 = require("@service/command");
+const configurable_1 = require("@/artifacts/configurable");
 const historian_1 = require("./historian");
 const messenger_1 = require("./messenger");
-const queue_1 = require("./queue");
+// import { JobQueueConfig } from './queue';
 /**
  * ServiceTypes
  * @summary
@@ -34,13 +32,13 @@ var ServiceTypes;
     ServiceTypes["Internal"] = "Internal";
     ServiceTypes["External"] = "External";
 })(ServiceTypes || (exports.ServiceTypes = ServiceTypes = {}));
-const ServiceConfig = new configuration_1.Configuration({
+const ServiceConfig = new Configuration({
     name: 'ServiceConfiguration',
     description: 'Service configuration',
     parameters: [
         ...historian_1.HistorianConfig.toParameters(),
         ...messenger_1.MessengerConfig.toParameters(),
-        ...queue_1.JobQueueConfig.toParameters(),
+        ...JobQueueConfig.toParameters(),
     ]
 });
 exports.ServiceConfig = ServiceConfig;
@@ -91,7 +89,7 @@ class Service extends configurable_1.Configurable {
     }
     async addToQueue(command) {
         if (this.queue.length >= this.config.getValue('queueLimit')) {
-            await message_1.ErrorMessage.createMsg({
+            await ErrorMessage.createMsg({
                 action: 'Service:AddToQueue',
                 body: 'Queue limit reached',
                 status: 400,
@@ -103,7 +101,7 @@ class Service extends configurable_1.Configurable {
     getCommand(name) {
         const command = this.commands.find(command => command.name === name);
         if (!command) {
-            return message_1.ErrorMessage.createMsg({
+            return ErrorMessage.createMsg({
                 action: 'Service:GetCommand',
                 body: `Command not found: ${name}`,
                 status: 404,
@@ -118,7 +116,7 @@ class Service extends configurable_1.Configurable {
             return process.getCommand(commandName);
         }
         else {
-            return message_1.ErrorMessage.createMsg({
+            return ErrorMessage.createMsg({
                 action: 'Service:GetSubCommand',
                 body: `Process not found: ${processName}`,
                 status: 404,
@@ -128,7 +126,7 @@ class Service extends configurable_1.Configurable {
     }
     async runServiceCommand(commandName, args = []) {
         const action = 'Service:Run';
-        let result = message_1.ErrorMessage.createMsg({
+        let result = ErrorMessage.createMsg({
             action,
             body: 'Command not found',
             status: 404,
@@ -137,11 +135,11 @@ class Service extends configurable_1.Configurable {
         const command = this.getCommand(commandName);
         if (command instanceof command_1.Command) {
             const output = await command.run({ args });
-            if (output instanceof message_1.ErrorMessage) {
+            if (output instanceof ErrorMessage) {
                 result = output;
             }
             else {
-                result = message_1.Message.createMsg({
+                result = Message.createMsg({
                     action,
                     body: 'Command executed',
                     status: 200,
@@ -158,7 +156,7 @@ class Service extends configurable_1.Configurable {
     async runProcessCommand(processName, commandName, args = []) {
         const process = this.processes.get(processName);
         if (!process) {
-            return message_1.ErrorMessage.createMsg({
+            return ErrorMessage.createMsg({
                 action: 'Service:Run',
                 body: `Process not found: ${processName}`,
                 status: 404,
@@ -178,7 +176,7 @@ class Service extends configurable_1.Configurable {
             result = await this.runProcessCommand(args[2], args[0], args[1]);
         }
         else {
-            result = message_1.ErrorMessage.createMsg({
+            result = ErrorMessage.createMsg({
                 action: 'Service:Run',
                 body: 'Invalid arguments',
                 status: 400,
@@ -221,7 +219,7 @@ class Service extends configurable_1.Configurable {
         }
         catch (error) {
             this.queueStatus = 'Stopped';
-            message_1.ErrorMessage.createMsg({
+            ErrorMessage.createMsg({
                 action: 'Service:Queue',
                 body: 'Queue error',
                 status: 500,
@@ -242,7 +240,7 @@ class Service extends configurable_1.Configurable {
         const queueInSeries = this.config.getValue('queueInSeries');
         if (forceStart === true &&
             forceStop === true) {
-            message_1.ErrorMessage.createMsg({
+            ErrorMessage.createMsg({
                 action: 'Service:QueueManager',
                 body: 'Invalid arguments: forceStart and forceStop cannot be true at the same time',
                 status: 400,

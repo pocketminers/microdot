@@ -13,10 +13,8 @@ var IdentifierTypes;
 /**
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
- * @param type The type of identifier to create.
- * @returns The new identifier.
  */
-const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
+const createIdentifier = ({ type, prefix, suffix } = {}) => {
     let id = "";
     switch (type) {
         case "UUID":
@@ -32,7 +30,7 @@ const createIdentifier = (type = "UUID", { prefix, suffix } = {}) => {
             id = Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4);
             break;
         default:
-            id = createIdentifier("UUID");
+            id = createIdentifier({ type: IdentifierTypes.UUID });
             break;
     }
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
@@ -232,7 +230,7 @@ class IdentifierStore extends Map {
         return removed;
     }
     create(type, { prefix, suffix } = {}) {
-        const id = createIdentifier(type, { prefix, suffix });
+        const id = createIdentifier({ type, prefix, suffix });
         this.add(id);
         return id;
     }
