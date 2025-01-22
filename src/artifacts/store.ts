@@ -1,42 +1,45 @@
 import { Argument, ArgumentEntry } from "@artifacts/argument";
 import { Parameter, ParameterEntry } from "@artifacts/parameter";
 
+type PropertyStoreEntryItem = Argument<any> | ArgumentEntry<any> | Parameter<any> | ParameterEntry<any>;
+type PropertyStoreEntryItems = PropertyStoreEntryItem[];
+
+type PropertyStoreItem = Argument<any> | Parameter<any>;
+type PropertyStoreItems = PropertyStoreItem[];
+
 class PropertyStore
 <
-    T extends Argument<any> | Parameter<any> = Argument<any> | Parameter<any>
+    T extends PropertyStoreItem
 > 
     extends Array<T>
 {
-    constructor(items: (ArgumentEntry<any> | ParameterEntry<any>)[] = []) {
+    constructor(items: PropertyStoreEntryItems = []) {
+
+        super();
         
         if (!Array.isArray(items)) {
             throw new TypeError("Items must be an array");
         }
 
-        if (!PropertyStore.hasUniqueNames({ items })) {
-            throw new Error("Items must have unique names");
-        }
-
-        const artifacts = []
-        for (const item of items) {
-            artifacts.push(PropertyStore.fromEntry(item));
-        }
-
-        super(...artifacts as T[]);
+        this.add(items)
     }
 
-    private static hasUniqueNames({ items }: { items: Array<ArgumentEntry<any> | ParameterEntry<any>> }): boolean {
-        const names = new Set<string>();
-        for (const item of items) {
-            if (names.has(item.name)) {
-                return false;
-            }
-            names.add(item.name);
-        }
-        return true;
-    }
+    // private static hasUniqueNames({ items }: { items: PropertyStoreItems }): boolean {
+    //     const names = new Set<string>();
+    //     for (const item of items) {
+    //         if (
+    //             names.has(item.getName())) {
+    //             return false;
+    //         }
+    //         else {
+    //             names.add(item.getName());
+    //         }
+    //         names.add(item.name);
+    //     }
+    //     return true;
+    // }
 
-    public static fromEntry(entry: ArgumentEntry<any> | ParameterEntry<any>): Argument<any> | Parameter<any> {
+    public static fromEntry(entry: ArgumentEntry<any> | ParameterEntry<any>): PropertyStoreItem {
         if( 
             Object.prototype.hasOwnProperty.call(entry, 'value')
         ) {
@@ -66,7 +69,7 @@ class PropertyStore
         this.push(artifact);
     }
 
-    public add(artifactsOrEntries: (ArgumentEntry<any> | Argument<any> | ParameterEntry<any> | Parameter<any>)[]): void {
+    public add(artifactsOrEntries: PropertyStoreEntryItems): void {
         for (const item of artifactsOrEntries) {
             if (item instanceof Argument || item instanceof Parameter) {
                 this.addArtifact(item as T);
@@ -101,7 +104,7 @@ class PropertyStore
             }
         } 
         catch (error: any) {
-            throw new Error(`Error removing entry: ${name}`);
+            throw new Error(`Error removing entry: ${name} - ${error.message}`);
         }
     }
 
@@ -122,5 +125,9 @@ class PropertyStore
 }
 
 export {
-    PropertyStore
+    PropertyStore,
+    type PropertyStoreEntryItem,
+    type PropertyStoreEntryItems,
+    type PropertyStoreItem,
+    type PropertyStoreItems
 }

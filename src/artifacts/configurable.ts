@@ -3,6 +3,7 @@ import { Argument, ArgumentEntry } from "@artifacts/argument";
 import { PropertyStore } from "@artifacts/store";
 import { Parameter, ParameterEntry } from "@artifacts/parameter";
 import { Identifiable, IdentifiableEntry } from "@artifacts/identifiable";
+import { checkIsEmpty } from "@/utils";
 
 
 /**
@@ -87,14 +88,29 @@ class Configurable
         this.setArgument(new Argument(entry));
     }
 
+    public setArguments(args: (ArgumentEntry<any> | Argument<any>)[]): void {
+        for (const arg of args) {
+            if (arg instanceof Argument) {
+                this.setArgument(arg);
+            }
+            else {
+                this.setArgumentFromEntry(arg);
+            }
+        }
+    }
+
     public getValue<T = any>(name: string): T {
         const param = this.getParameters().getEntry(name);
 
-        if (!param) {
+        if (
+            param === undefined
+            || checkIsEmpty(param) === true
+        ) {
             throw new Error(`Parameter ${name} not found in ${this.getName()}(${this.getId()})`);
         }
 
         const arg = this.getArguments().getEntry(name);
+
         return param.getValue(arg?.getValue());
     }
 }

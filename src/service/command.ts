@@ -1,7 +1,8 @@
 import { ArgumentEntry, Argument } from '@artifacts/argument';
 import { checkIsEmpty } from '@utils/checks';
 import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
-import { createIdentifier } from '@/utils';
+import { createIdentifier, Identifier } from '@/utils';
+import { Hashable, PropertyStore } from '@/artifacts';
 
 
 /**
@@ -25,7 +26,7 @@ interface CommandResultEntry<R, T>
     extends
         Partial<Record<'jobId', string>>,
         Record<'command', Command<R, T>['name']>,
-        Record<'args', Arguments>,
+        Record<'args', (Argument<any> | ArgumentEntry<any>)[]>,
         Record<'output', R | Error | null>,
         Record<'metrics', ExecutionMetrics> {}
 
@@ -34,12 +35,11 @@ interface CommandResultEntry<R, T>
  * Command result class.
  * A class that contains the result of a command that has completed execution.
  */
-class CommandResult<R, T> {
-    public jobId?: string;
-    public command: Command<R, T>['name'];
-    public args: Arguments;
-    public output: R | Error | null;
-    public metrics: ExecutionMetrics;
+class CommandResult<R, T>
+    extends
+        Hashable<{ jobId: Identifier, command: string, args: PropertyStore<Argument<any>>, output: R | Error | null, metrics: ExecutionMetrics }>
+{
+
 
     constructor({
         jobId,
@@ -48,14 +48,20 @@ class CommandResult<R, T> {
         output,
         metrics
     }: CommandResultEntry<R, T>) {
-        this.jobId = jobId;
-        this.command = command;
-        this.args = args;
-        this.output = output;
-        this.metrics = metrics;
+        args = new PropertyStore<Argument<any>>();
+
+        super({
+            data: {
+                jobId: jobId || createIdentifier(),
+                command,
+                args: new PropertyStore<Argument<any>>(args),
+                output,
+                metrics
+            }
+        })
     }
 
-    public toJSON(): {command: string, args: Arguments, output: R | Error | null, metrics: ExecutionMetrics} {
+    public toJSON(): {command: string, args: Argument<any>[], output: R | Error | null, metrics: ExecutionMetrics} {
         return {
             command: this.command,
             args: this.args,
@@ -102,12 +108,10 @@ class Command
         name = 'Base Command',
         description = 'The Base Command Class',
         taskRunner = defaultTaskRunner,
-        configuration,
-        properties = [],
         parameters = [],
         args = []
     }: CommandEntry<R, T>) {
-        super({id, name, description, configuration, properties, parameters, args});
+        super({id, name, description, parameters, args});
 
         this.taskRunner = taskRunner;
     }

@@ -20,7 +20,6 @@ describe('Configurable', () => {
     });
 
     it('should initialize with given parameters and arguments', () => {
-        console.log(`Configurable:constructor:args:`, configurable.getArguments());
         expect(configurable.getParameters().getEntries().length).toBe(2);
         expect(configurable.getArguments().getEntries().length).toBe(0);
     });
@@ -33,12 +32,12 @@ describe('Configurable', () => {
 
     it('should throw error for invalid argument name', () => {
         const arg = new Argument({ name: 'invalidParam', value: 'value1' });
-        expect(() => configurable.setArgument(arg)).toThrow('Invalid argument name: invalidParam');
+        expect(() => configurable.setArgument<string>(arg)).toThrow('Invalid argument name: invalidParam');
     });
 
     it('should throw error for invalid argument value', () => {
         const arg = new Argument({ name: 'param1', value: 'invalidValue' });
-        expect(() => configurable.setArgument(arg)).toThrow('Value is not in optional values: param1');
+        expect(() => configurable.setArgument<string>(arg)).toThrow('Value is not in optional values: param1');
     });
 
     it('should update existing argument', () => {
@@ -51,11 +50,32 @@ describe('Configurable', () => {
 
     it('should get parameter value correctly', () => {
         const arg = new Argument({ name: 'param1', value: 'value1' });
-        configurable.setArgument(arg);
+        configurable.setArgument<string>(arg);
         expect(configurable.getValue('param1')).toBe('value1');
+    });
+
+    it('should setArguments correctly', () => {
+        configurable.setArguments([
+            { name: 'param1', value: 'value1' },
+            { name: 'param2', value: 'value3' }
+        ]);
+        expect(configurable.getArguments().getEntries().length).toBe(2);
+    });
+
+    it('should setArguments with both Argument and ArgumentEntry', () => {
+        configurable.setArguments([
+            new Argument({ name: 'param1', value: 'value1' }),
+            { name: 'param2', value: 'value3' }
+        ]);
+        expect(configurable.getArguments().getEntries().length).toBe(2);
     });
 
     it('should throw error if parameter not found', () => {
         expect(() => configurable.getValue('invalidParam')).toThrow('Parameter invalidParam not found in TestConfigurable(1)');
+    });
+
+    it('should throw error if parameter value not in optional values', () => {
+        const arg = new Argument({ name: 'param1', value: 'invalidValue' });
+        expect(() => configurable.setArgument(arg)).toThrow('Value is not in optional values: param1');
     });
 });

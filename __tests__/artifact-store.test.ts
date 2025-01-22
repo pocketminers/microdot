@@ -7,7 +7,7 @@ describe('PropertyStore<Argument<any>>', () => {
     let store: PropertyStore<Argument<any>>;
 
     beforeEach(() => {
-        store = new PropertyStore();
+        store = new PropertyStore<Argument<any>>();
     });
 
     it('should add an item', () => {
@@ -54,7 +54,7 @@ describe('PropertyStore<Parameter<any>>', () => {
     let store: PropertyStore<Parameter<any>>;
 
     beforeEach(() => {
-        store = new PropertyStore();
+        store = new PropertyStore<Parameter<any>>();
     });
 
     it('should add an item', () => {
