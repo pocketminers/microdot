@@ -13,23 +13,29 @@ enum IdentifierTypes {
     Password = "Password"
 }
 
+
+
 /**
  * The IdentifierType type is a string that is used to specify the type of identifier to create.
  */
 type IdentifierType = keyof typeof IdentifierTypes;
 
+interface IdentifierCreatorEntry
+    extends
+        Partial<Record<"type", IdentifierTypes>>,
+        Partial<Record<'prefix', string>>,
+        Partial<Record<'suffix', string>> {}
+
 /**
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
- * @param type The type of identifier to create.
- * @returns The new identifier.
  */
 const createIdentifier = (
-    type: IdentifierType = "UUID",
     {
+        type,
         prefix,
         suffix
-    } : {prefix?: string, suffix?: string} = {}
+    }: IdentifierCreatorEntry = {}
 ): Identifier => {
     let id = "";
 
@@ -47,7 +53,7 @@ const createIdentifier = (
             id =  Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4);
             break;
         default:
-            id = createIdentifier("UUID");
+            id = createIdentifier({type: IdentifierTypes.UUID});
             break;
     }
     return `${prefix ? prefix : ""}${id}${suffix ? suffix : ""}`;
@@ -305,7 +311,7 @@ class IdentifierStore
         return removed;
     }
 
-    public create<T extends IdentifierType>(
+    public create<T extends IdentifierTypes>(
         type?: T,
         {
             prefix,
@@ -315,7 +321,7 @@ class IdentifierStore
             suffix?: string
         } = {}
     ): Identifier {
-        const id = createIdentifier(type, { prefix, suffix });
+        const id = createIdentifier({type, prefix, suffix});
         this.add(id);
         return id;
     }
@@ -325,6 +331,7 @@ export {
     type Identifier,
     createIdentifier,
     type IdentifierType,
+    type IdentifierCreatorEntry,
     IdentifierTypes,
     IdentifierStore
 };

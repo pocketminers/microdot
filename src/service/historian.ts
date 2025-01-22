@@ -54,7 +54,7 @@ class Historian<T>
         return this.history[this.history.length - 1];
     }
 
-    public get(): Array<T> {
+    public override get(): Array<T> {
         return this.history;
     }
 

@@ -1,6 +1,5 @@
-import { createIdentifier } from "@utils/identifier";
-import { Hashable, HashableEntry } from "@artifacts/hashable";
-import { ArgumentEntry } from "./argument";
+import { Hashable } from "@artifacts/hashable";
+import { ArgumentEntry } from "@artifacts/argument";
 
 
 /**
@@ -9,7 +8,6 @@ import { ArgumentEntry } from "./argument";
  */
 interface ParameterEntry<T>
     extends
-        Partial<Pick<HashableEntry<T>, "id">>,
         Pick<ArgumentEntry<T>, "name">,
         Partial<Record<"required", boolean>>,
         Partial<Record<"description", string>>,
@@ -23,14 +21,14 @@ interface ParameterEntry<T>
  */
 class Parameter<T>
     extends
-        Hashable<{ name: string, required: boolean, description: string, defaultValue?: T | undefined, optionalValues: T[] | undefined }>
+        Hashable<{
+            name: string,
+            required: boolean,
+            description: string,
+            optionalValues: T[],
+            defaultValue: T | undefined,
+        }>
 {
-    public readonly name: string;
-    public readonly required: boolean;
-    public readonly description: string;
-    public readonly defaultValue: T | undefined;
-    public readonly optionalValues: T[] | undefined;
-
     /**
      * Parameter Constructor that creates a new instance of a parameter from the given parameter entry
      * @summary Create a new Parameter instance
@@ -48,85 +46,79 @@ class Parameter<T>
      */
     constructor(
         {
-            id = createIdentifier("Name", { prefix: "Parameter-" }),
-            name = createIdentifier("Name", { prefix: "Parameter-" }),
+            // id = createIdentifier("Name", { prefix: "Parameter-" }),
+            name,
             required = false,
-            description = "A parameter",
-            defaultValue,
+            description = "",
+            defaultValue = undefined,
             optionalValues = []
         }: ParameterEntry<T>,
     ) {
-        super({id, data: {name, required, description, defaultValue, optionalValues}});
-        this.name = name;
-        this.required = required;
-        this.description = description;
-        this.defaultValue = defaultValue;
-        this.optionalValues = optionalValues;
+        super({data: {name, required, description, defaultValue, optionalValues}});
 
-        this.checkOptionalValues();
+        this.isDefaultValueInOptionalValues();
     }
 
     /**
      * Check if the Default Value or a Given Value is in the Optional Values
      * @summary Check if the value is in the optional values
      */
-    public checkOptionalValues(value?: T | undefined): boolean {
-        value = value !== undefined ? value : this.defaultValue;
+    public isDefaultValueInOptionalValues(): boolean {
+        const defaultValue = this.getDefaultValue();
 
-        if (
-            this.optionalValues !== undefined
-            && this.optionalValues.length > 0
-            && value !== undefined
-            && !this.optionalValues.includes(value)
-        ) {
-            throw new Error(`Value is not in optional values: ${this.name}`);
+        if ( defaultValue !== undefined ) {
+            return this.isValueInOptionalValues(defaultValue);
         }
 
         return true;
     }
 
-    /**
-     * Get the value from the parameter and a given value
-     * @summary Get the value of the parameter which will be the default value if the given value is undefined
-     */
-    public getValue(value?: T | undefined): T {
+    public isValueInOptionalValues(value: T): boolean {
+        const optionalValues = this.getOptionalValues();
 
         if (
-            (
-                value === undefined
-                || value === null
-                || value === ""
-            )
-            && this.defaultValue === undefined
+            optionalValues !== undefined
+            && optionalValues.length > 0
+            && optionalValues.includes(value) === false
         ) {
-            throw new Error(`Value is required: ${this.name}`);
+            throw new Error(`Value is not in optional values: ${this.getName()}`);
         }
 
-        if (
-            (
-                value === undefined
-                || value === null
-                || value === ""
-            )
-            && this.defaultValue !== undefined
-        ) {
-            return this.defaultValue;
-        }
-
-        if (!this.checkOptionalValues(value)) {
-            throw new Error(`Value is not in optional values: ${this.name}`);
-        }
-
-        return value as T;
+        return true;
     }
 
-    /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
-     */
-    public set<T>(value: T): void {
-        throw new Error("Method not implemented. Unable to set value: " + value);
+    public getName(): string {
+        return this.getData().name;
+    }
+
+    public getRequired(): boolean {
+        return this.getData().required;
+    }
+
+    public getDescription(): string {
+        return this.getData().description;
+    }
+
+    public getDefaultValue(): T | undefined {
+        return this.getData().defaultValue;
+    }
+
+    public getOptionalValues(): T[] {
+        return this.getData().optionalValues;
+    }
+
+    public getValue(value?: T): T {
+        if (value !== undefined) {
+            this.isValueInOptionalValues(value);
+            return value;
+        }
+
+        const defaultValue = this.getDefaultValue();
+        if (defaultValue !== undefined) {
+            return defaultValue;
+        }
+
+        throw new Error("Value is required: " + this.getName());
     }
 
     /**
@@ -134,12 +126,14 @@ class Parameter<T>
      * @summary Convert the parameter to a JSON object
      */
     public toJSON(): { name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined } {
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
+        
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name,
+            required,
+            description,
+            defaultValue,
+            optionalValues
         };
     }
 
@@ -154,10 +148,11 @@ class Parameter<T>
      *  required: true
      *  default: 123
      *  options: 123, 456
-     *  hash: <insert sha256 hash here>`
      */
     public toString(): string {
-        return `name: ${this.name}\ndescription: ${this.description}\nrequired: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
+
+        return `name: ${name}\ndescription: ${description}\nrequired: ${required} ${defaultValue ? `\ndefault: ${defaultValue}` : ""} ${optionalValues !== undefined && optionalValues.length > 0 ? `\noptions: ${optionalValues.join(", ")}` : ""}`;
     }
 
     /**
@@ -171,12 +166,14 @@ class Parameter<T>
         | Record<"defaultValue", T | undefined>
         | Record<"optionalValues", T[] | undefined>
      {
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
+
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name,
+            required,
+            description,
+            defaultValue,
+            optionalValues
         };
     }
 }

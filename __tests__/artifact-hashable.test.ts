@@ -7,7 +7,7 @@ const { sha256 } = CryptoUtils;
 describe('Hashable', () => {
     it('should create a hashable instance with the given data', async () => {
         const data = 'test';
-        const hashable = new Hashable({id:'test', data});
+        const hashable = new Hashable({data});
         await hashable.initialize();
 
         const hash = await sha256(`test`);
@@ -55,7 +55,7 @@ describe('Hashable', () => {
             await hashable.checkHash('invalid_string');
         }
         catch (error: any) {
-            expect(error.message).toBe('Hash mismatch');
+            expect(error.message).toBe('When hashing the input data, the hash does not match the current hash of the data');
         }
     });
 

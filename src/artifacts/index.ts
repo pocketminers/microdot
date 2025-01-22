@@ -5,4 +5,3 @@ export * from "./configuration";
 export * from "./hashable";
 export * from "./message";
 export * from "./parameter";
-export * from "./property";

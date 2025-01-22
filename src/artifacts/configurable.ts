@@ -1,67 +1,64 @@
-import { Identifier } from "@/utils";
-import { ArgumentEntry } from "./argument";
-import { Arguments } from "./arguments";
-import { Configuration, ConfigurationEntry } from "./configuration";
-import { Hashable } from "./hashable";
-import { PropertyEntry } from "./property";
-import { ParameterEntry } from "./parameter";
 
+import { Argument, ArgumentEntry } from "./argument";
+import { ArtifactStore } from "./store";
+import { Parameter, ParameterEntry } from "./parameter";
+import { Identifiable, IdentifiableEntry } from "./identifiable";
 
 interface ConfigurableEntry
     extends
-        Record<'id', Identifier>,
-        Partial<Record<'configuration', Configuration>>,
-        ConfigurationEntry {}
+        IdentifiableEntry<any>,
+        Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[]>>,
+        Partial<Record<'args', ArgumentEntry<any>[] | Argument<any>[]>> {}
 
-/**
- * Configurable is a class that can be configured by arguments.
- * A 'configurable' is a hashable object that can be set by arguments.
- * If an argument exists for a property, then the value of the property is set to the value of the argument.
- * This allows the property to be set by the argument.
- */
+
 class Configurable
-    extends Hashable<{ name: string, description: string, configuration?: Configuration, properties?: PropertyEntry<any>[], parameters: ParameterEntry<any>[], args?: ArgumentEntry<any>[] | Arguments | {[key: string]: any}, useArgs: boolean }>
+    extends
+        Identifiable<{ args: ArtifactStore<Argument<any>>, parameters: ArtifactStore<Parameter<any>> }>
 {
-    public readonly name: string;
-    public readonly description: string;
-    public config: Configuration;
-    public readonly createdAt: Date = new Date();
-
     constructor(
         {
             id,
             name = 'Configurable',
             description = 'A configurable object that can be set by arguments',
-            configuration = undefined,
-            properties = [],
-            parameters = [],
             args = [],
-            useArgs = false
-        } : ConfigurableEntry
+            parameters = []
+        }: ConfigurableEntry
     ) {
-        super({id, data: {name, description, configuration, properties, parameters, args, useArgs}});
+        const argumentStore = new ArtifactStore<Argument<any>>();
+        argumentStore.add(args );
 
-        this.name = name;
-        this.description = description;
+        const paramStore = new ArtifactStore<Parameter<any>>();
+        paramStore.add(parameters);
 
-        if (configuration !== undefined) {
-            this.config = configuration;
-            this.config.addEntries({entries: [...properties, ...parameters], args});
-            this.config.setArguments(args, true);
+        super({id, name, description, data: { args: argumentStore, parameters: paramStore }});
+    }
+
+    public getArguments(): ArtifactStore<Argument<any>> {
+        return this.getData().args;
+    }
+
+    public getParameters(): ArtifactStore<Parameter<any>> {
+        return this.getData().parameters;
+    }
+
+    public static isValidArgumentName(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean {
+        const paramNames = params.getNames();
+        return paramNames.includes(arg.getName());
+    }
+
+    public static isValidArgumentValue(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean {
+        const param = params.getEntry(arg.getName());
+
+        if (!param) {
+            return false;
         }
-        else {
-            this.config = new Configuration({name, description,  properties, parameters, args});
-        }
+
+        return param.isValueInOptionalValues(arg.getValue());
     }
 
-    public setArguments(args: ArgumentEntry<any>[] | Arguments, asProperties: boolean = false): void {
-        this.config.setArguments(args, asProperties);
-    }
 
-    public getArguments(): Arguments {
-        return this.config.toArguments();
-    }
 }
+
 
 export {
     type ConfigurableEntry,

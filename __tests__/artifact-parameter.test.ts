@@ -3,11 +3,13 @@ import { Parameter } from "../src/artifacts/parameter";
 describe("Parameter", () => {
     it("should create a parameter with default values", () => {
         const param = new Parameter<number>({ name: "param1" });
-        expect(param.name).toBe("param1");
-        expect(param.required).toBe(false);
-        expect(param.description).toBe("A parameter");
-        expect(param.defaultValue).toBeUndefined();
-        expect(param.optionalValues).toEqual([]);
+        const { name, required, description, defaultValue, optionalValues } = param.toJSON();
+
+        expect(name).toBe("param1");
+        expect(required).toBe(false);
+        expect(description).toBe("");
+        expect(defaultValue).toBeUndefined();
+        expect(optionalValues).toEqual([]);
     });
 
     it("should create a parameter with given values", () => {
@@ -18,11 +20,14 @@ describe("Parameter", () => {
             defaultValue: 123,
             optionalValues: [123, 456]
         });
-        expect(param.name).toBe("param1");
-        expect(param.required).toBe(true);
-        expect(param.description).toBe("A test parameter");
-        expect(param.defaultValue).toBe(123);
-        expect(param.optionalValues).toEqual([123, 456]);
+
+        const { name, required, description, defaultValue, optionalValues } = param.toJSON();
+
+        expect(name).toBe("param1");
+        expect(required).toBe(true);
+        expect(description).toBe("A test parameter");
+        expect(defaultValue).toBe(123);
+        expect(optionalValues).toEqual([123, 456]);
     });
 
     it("should throw an error if default value is not in optional values", () => {

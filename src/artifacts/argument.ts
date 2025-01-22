@@ -1,7 +1,7 @@
-import { checkHasEmpties, checkIsArray, checkIsEmpty } from "@utils/checks";
-import { Hashable, HashableEntry } from "@artifacts/hashable";
+import { checkHasEmpties} from "@utils/checks";
+import { CryptoUtils } from "@/utils";
 import { IsNotEmpty } from "@/utils/decorators";
-import { Identifier, IdentifierStore } from "@/utils";
+import { Hashable } from "./hashable";
 
 
 /**
@@ -10,7 +10,6 @@ import { Identifier, IdentifierStore } from "@/utils";
  */
 interface ArgumentEntry<T>
     extends
-        Partial<Pick<HashableEntry<T>, "id">>,
         Record<"name", string>,
         Record<"value", T> {}
 
@@ -23,18 +22,9 @@ class Argument<T>
     extends
         Hashable<{ name: string, value: T }>
 {
-    /**
-     * Argument Name
-     * @summary The name of the argument
-     */
-    public readonly name: string;
 
-    /**
-     * Argument Value
-     * @summary The value of the argument
-     * @type T
-     */
-    public readonly value: T;
+    // public readonly name: string;
+    // public readonly value: T;
 
     /**
      * Argument Constructor
@@ -43,62 +33,49 @@ class Argument<T>
      * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
-     *  name: "arg1",
-     *  value: 123
+     *      name: "arg1",
+     *      value: 123
      * }`
      */
-    constructor(
-        {
-            id,
-            name,
-            value
-        }: ArgumentEntry<T>
-    ) {
+    constructor({
+        name,
+        value
+    }: ArgumentEntry<T>) {
         if (checkHasEmpties([name, value])) {
             throw new Error("Argument:constructor:name or value cannot be empty.");
         }
 
-        super({id, data: { name, value }});
-        this.name = name;
-        this.value = value as T;
+        super({ data: {name, value} });
     }
 
     /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
+     * returns the name of the argument
+     * @summary Get the name of the argument
      */
-    public set<T>(value: T): void {
-        throw new Error(`Method not implemented. Unable to set value: ${value}`);
+    public getName(): string {
+        return this.getData().name;
     }
 
     /**
-     * Get Method
+     * returns the value of the argument
      * @summary Get the value of the argument
      */
-    public get(): T {
-        return this.value;
+    public getValue(): T {
+        return this.getData().value;
     }
 
-    /**
-     * Check Hash Method
-     * @summary Check if the original hash matches the current hash
-     * @override Hashable.checkHash
-     */
-    public override async checkHash(): Promise<boolean> {
-        return await super.checkHash({name: this.name, value: this.value});
+    public async getHash(): Promise<string> {
+        return await CryptoUtils.hashData(this.toJSON());
     }
 
     /**
      * Export the Argument as a JSON object
      * @summary Convert the argument to a JSON object and return it
      */
-    public toJSON(): { id: string, name: string, value: T } {
+    public toJSON(): { name: string, value: T } {
         return {
-            id: this.id,
-            name: this.name,
-            value: this.value
+            name: this.getName(),
+            value: this.getValue()
         };
     }
 
@@ -107,7 +84,7 @@ class Argument<T>
      * @summary Convert the argument to a pre-formatted string and return it
      */
     public toString(): string {
-        return `${this.name}: ${this.value}`;
+        return `${this.getName()}: ${this.getValue()}`;
     }
 
     /**
@@ -116,7 +93,7 @@ class Argument<T>
      */
     public toRecord(): Record<string, T> {
         return {
-            [this.name]: this.value
+            [this.getName()]: this.getValue()
         };
     }
 
@@ -125,11 +102,22 @@ class Argument<T>
      * @summary Create an argument from a record object
      */
     @IsNotEmpty
-    public static async fromRecord<T>(record: Record<string, T>, id: Identifier | undefined = undefined): Promise<Argument<T>> {
-        const [name, value] = Object.entries(record)[0];
-        const arg = new Argument<T>({ id, name, value });
-        await arg.initialize();
-        return arg;
+    public static fromRecord<T>(record: Record<string, T>): Argument<T> {
+        const name = Object.keys(record)[0];
+        const value = record[name];
+
+        return new Argument<T>({ name, value });
+    }
+
+    /**
+     * Create an Argument from a string
+     * @summary Create an argument from a string
+     */
+    @IsNotEmpty
+    public static fromString(str: string): Argument<string> {
+        const record = JSON.parse(str);
+
+        return Argument.fromRecord<string>(record);
     }
 }
 

@@ -74,7 +74,11 @@ class CryptoUtils {
      * @example
      * hashValue("myValue");
      */
-    public static async hashString(value: string, algorithm: HashAlgorithm = DEFUALT_ALGORITHM, digest: HashDigest = DEFUALT_DIGEST): Promise<string> {
+    public static async hashString(
+        value: string,
+        algorithm: HashAlgorithm = DEFUALT_ALGORITHM,
+        digest: HashDigest = DEFUALT_DIGEST
+    ): Promise<string> {
         switch (algorithm) {
             case "SHA256":
                 return await CryptoUtils.sha256(value, digest);
@@ -83,7 +87,7 @@ class CryptoUtils {
             case "MD5":
                 return await CryptoUtils.md5(value, digest);
             default:
-                return await CryptoUtils.hashValue(value, undefined, digest);
+                return await CryptoUtils.hashString(value, undefined, digest);
         }
     };
 
@@ -146,7 +150,7 @@ class CryptoUtils {
     }
 
 
-    public static prepareValueForHash<T>(value: T): string {
+    public static prepareDataForHash<T>(value: T): string {
         let str = '';
 
         if (
@@ -155,23 +159,23 @@ class CryptoUtils {
             && Array.isArray(value) === true
         ) {
             for (const val of value as any) {
-                str += this.appendValueToString<T>(val, str);
+                str += CryptoUtils.appendValueToString<T>(val, str);
             }
         }
         else {
-            str += this.appendValueToString<T>(value, str);
+            str += CryptoUtils.appendValueToString<T>(value, str);
         }
 
         return str;
     }
 
-    public static async hashValue<T>(value: T, algorithm: HashAlgorithm = DEFUALT_ALGORITHM, digest: HashDigest = DEFUALT_DIGEST): Promise<string> {
-        const str: string = CryptoUtils.prepareValueForHash<T>(value);
+    public static async hashData<T>(data: T, algorithm: HashAlgorithm = DEFUALT_ALGORITHM, digest: HashDigest = DEFUALT_DIGEST): Promise<string> {
+        const str: string = CryptoUtils.prepareDataForHash<T>(data);
         return await CryptoUtils.hashString(str, algorithm, digest);
     }
 
-    public static isValueHash<T>(value: any, algorithm: HashAlgorithm = DEFUALT_ALGORITHM, digest: HashDigest = DEFUALT_DIGEST): boolean {
-        const valueStr = CryptoUtils.prepareValueForHash<T>(value);
+    public static isHash<T>(value: any, algorithm: HashAlgorithm = DEFUALT_ALGORITHM, digest: HashDigest = DEFUALT_DIGEST): boolean {
+        const valueStr = CryptoUtils.prepareDataForHash<T>(value);
         return CryptoUtils.checkStringForHash(valueStr, algorithm, digest);
     }
 }
