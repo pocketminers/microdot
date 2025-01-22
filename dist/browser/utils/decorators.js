@@ -35,7 +35,7 @@ function IsNotEmpty(target, propertyKey, descriptor) {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        console.log("".concat(target.name, ":").concat(propertyKey, ":input is: ").concat(args));
+        // console.log(`${target.name}:${propertyKey}:input is: ${args}`);
         // if (args === undefined || args === null || args.length === 0 || checkIsEmpty(args) === true) {
         //     // console.log(`${target.name}:${propertyKey}:input cannot be empty.`);
         //     throw new Error(`${target.name}:${propertyKey}:input cannot be empty.`);

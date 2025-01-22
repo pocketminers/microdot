@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorMessage = exports.ErrorMessageLevels = exports.Message = exports.MessageLevels = void 0;
-const status_1 = require("@service/status");
-const identifier_1 = require("@utils/identifier");
-const checks_1 = require("@utils/checks");
-const artifacts_1 = require("@/artifacts");
+const status_1 = require("./status");
+const identifier_1 = require("../utils/identifier");
+const checks_1 = require("../utils/checks");
+const artifacts_1 = require("../artifacts");
 /**
  * MessageLevels is an enum of message levels.
  * The message levels are 'Info' and 'Debug'.

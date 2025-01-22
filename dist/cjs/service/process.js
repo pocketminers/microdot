@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProcessStatuses = exports.ProcessConfig = exports.Process = void 0;
-const command_1 = require("@service/command");
-const message_1 = require("@artifacts/message");
-const configurable_1 = require("@artifacts/configurable");
+const command_1 = require("./command");
+const message_1 = require("../artifacts/message");
+const configurable_1 = require("../artifacts/configurable");
 const ProcessConfig = (id) => {
     return {
         id,

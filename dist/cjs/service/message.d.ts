@@ -1,5 +1,5 @@
-import { Identifier } from "@utils/identifier";
-import { Hashable } from "@/artifacts";
+import { Identifier } from "../utils/identifier";
+import { Hashable } from "../artifacts";
 /**
  * MessageLevels is an enum of message levels.
  * The message levels are 'Info' and 'Debug'.

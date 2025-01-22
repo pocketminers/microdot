@@ -1,36 +1,29 @@
-import { Identifier } from "../utils";
-import { ArgumentEntry } from "./argument";
-import { Arguments } from "./arguments";
-import { Configuration, ConfigurationEntry } from "./configuration";
-import { Hashable } from "./hashable";
-import { PropertyEntry } from "./property";
-import { ParameterEntry } from "./parameter";
-interface ConfigurableEntry extends Record<'id', Identifier>, Partial<Record<'configuration', Configuration>>, ConfigurationEntry {
+import { Argument, ArgumentEntry } from "./argument";
+import { PropertyStore } from "./store";
+import { Parameter, ParameterEntry } from "./parameter";
+import { Identifiable, IdentifiableEntry } from "./identifiable";
+/**
+ * Configuration entry interface that is used to create a configurable instance
+ * @summary Configuration entry interface that is used to create a configurable instance
+ */
+interface ConfigurableEntry extends Pick<IdentifiableEntry<any>, 'id' | 'name'>, Partial<Pick<IdentifiableEntry<any>, 'description'>>, Partial<Record<'parameters', (ParameterEntry<any> | Parameter<any>)[]>>, Partial<Record<'args', (ArgumentEntry<any> | Argument<any>)[]>> {
 }
 /**
- * Configurable is a class that can be configured by arguments.
- * A 'configurable' is a hashable object that can be set by arguments.
- * If an argument exists for a property, then the value of the property is set to the value of the argument.
- * This allows the property to be set by the argument.
+ * Configurable Class that extends Identifiable and adds parameters and arguments as data
+ * @summary Configurable class that extends Identifiable
  */
-declare class Configurable extends Hashable<{
-    name: string;
-    description: string;
-    configuration?: Configuration;
-    properties?: PropertyEntry<any>[];
-    parameters: ParameterEntry<any>[];
-    args?: ArgumentEntry<any>[] | Arguments | {
-        [key: string]: any;
-    };
-    useArgs: boolean;
+declare class Configurable extends Identifiable<{
+    args: PropertyStore<Argument<any>>;
+    parameters: PropertyStore<Parameter<any>>;
 }> {
-    readonly name: string;
-    readonly description: string;
-    config: Configuration;
-    readonly createdAt: Date;
-    constructor({ id, name, description, configuration, properties, parameters, args, useArgs }: ConfigurableEntry);
-    setArguments(args: ArgumentEntry<any>[] | Arguments, asProperties?: boolean): void;
-    getArguments(): Arguments;
+    constructor({ id, name, description, args, parameters }: ConfigurableEntry);
+    getArguments(): PropertyStore<Argument<any>>;
+    getParameters(): PropertyStore<Parameter<any>>;
+    isValidArgumentName(arg: Argument<any>): boolean;
+    isValidArgumentValue(arg: Argument<any>): boolean;
+    setArgument<T>(arg: Argument<T>): void;
+    setArgumentFromEntry(entry: ArgumentEntry<any>): void;
+    getValue<T = any>(name: string): T;
 }
 export { type ConfigurableEntry, Configurable };
 //# sourceMappingURL=configurable.d.ts.map

@@ -1,4 +1,4 @@
-import { Configurable, ConfigurableEntry } from "@/artifacts";
+import { Configurable, ConfigurableEntry } from "../artifacts";
 import { Command, CommandResult } from "./command";
 interface JobEntry extends ConfigurableEntry, Record<'commands', Map<number, Command<any, any>>> {
 }

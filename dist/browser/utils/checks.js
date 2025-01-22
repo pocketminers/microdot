@@ -26,6 +26,9 @@ var checkIsArray = function (value) {
     }
     return false;
 };
+/**
+ * Check if a value is a boolean. Empty values will return false.
+ */
 var checkIsBoolean = function (value) {
     try {
         if (value !== undefined
@@ -125,6 +128,9 @@ var checkIsEmpty = function (value) {
     }
     return false;
 };
+/**
+ * Check if an item has empties.
+ */
 var checkHasEmpties = function () {
     var e_1, _a, e_2, _b;
     var values = [];

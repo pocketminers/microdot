@@ -1,11 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtifactsFactory = void 0;
+exports.ArtifactFactory = void 0;
 const hashable_1 = require("./hashable");
 const argument_1 = require("./argument");
 const identifiable_1 = require("./identifiable");
 const parameter_1 = require("./parameter");
-class ArtifactsFactory {
+const configurable_1 = require("./configurable");
+class ArtifactFactory {
     static async createHashable(entry) {
         const hashable = new hashable_1.Hashable(entry);
         await hashable.initialize();
@@ -32,6 +33,14 @@ class ArtifactsFactory {
         await param.initialize();
         return param;
     }
+    static createConfigurable(entry) {
+        return new configurable_1.Configurable(entry);
+    }
+    static async createHashedConfigurable(entry) {
+        const configurable = new configurable_1.Configurable(entry);
+        await configurable.initialize();
+        return configurable;
+    }
 }
-exports.ArtifactsFactory = ArtifactsFactory;
+exports.ArtifactFactory = ArtifactFactory;
 //# sourceMappingURL=factory.js.map

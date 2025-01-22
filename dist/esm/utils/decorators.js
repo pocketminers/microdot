@@ -5,7 +5,7 @@ import { checkHasEmpties } from "./checks";
 function IsNotEmpty(target, propertyKey, descriptor = {}) {
     const originalMethod = descriptor.value;
     descriptor.value = function (...args) {
-        console.log(`${target.name}:${propertyKey}:input is: ${args}`);
+        // console.log(`${target.name}:${propertyKey}:input is: ${args}`);
         // if (args === undefined || args === null || args.length === 0 || checkIsEmpty(args) === true) {
         //     // console.log(`${target.name}:${propertyKey}:input cannot be empty.`);
         //     throw new Error(`${target.name}:${propertyKey}:input cannot be empty.`);

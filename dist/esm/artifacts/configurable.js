@@ -1,34 +1,59 @@
-import { Configuration } from "./configuration";
-import { Hashable } from "./hashable";
+import { Argument } from "./argument";
+import { PropertyStore } from "./store";
+import { Identifiable } from "./identifiable";
 /**
- * Configurable is a class that can be configured by arguments.
- * A 'configurable' is a hashable object that can be set by arguments.
- * If an argument exists for a property, then the value of the property is set to the value of the argument.
- * This allows the property to be set by the argument.
+ * Configurable Class that extends Identifiable and adds parameters and arguments as data
+ * @summary Configurable class that extends Identifiable
  */
-class Configurable extends Hashable {
-    name;
-    description;
-    config;
-    createdAt = new Date();
-    constructor({ id, name = 'Configurable', description = 'A configurable object that can be set by arguments', configuration = undefined, properties = [], parameters = [], args = [], useArgs = false }) {
-        super({ id, data: { name, description, configuration, properties, parameters, args, useArgs } });
-        this.name = name;
-        this.description = description;
-        if (configuration !== undefined) {
-            this.config = configuration;
-            this.config.addEntries({ entries: [...properties, ...parameters], args });
-            this.config.setArguments(args, true);
-        }
-        else {
-            this.config = new Configuration({ name, description, properties, parameters, args });
-        }
-    }
-    setArguments(args, asProperties = false) {
-        this.config.setArguments(args, asProperties);
+class Configurable extends Identifiable {
+    constructor({ id, name = 'Configurable', description = 'A configurable object that can be set by arguments', args = [], parameters = [] }) {
+        const argumentStore = new PropertyStore();
+        argumentStore.add(args);
+        const paramStore = new PropertyStore();
+        paramStore.add(parameters);
+        super({ id, name, description, data: { args: argumentStore, parameters: paramStore } });
     }
     getArguments() {
-        return this.config.toArguments();
+        return this.getData().args;
+    }
+    getParameters() {
+        return this.getData().parameters;
+    }
+    isValidArgumentName(arg) {
+        const paramNames = this.getParameters().getNames();
+        return paramNames.includes(arg.getName());
+    }
+    isValidArgumentValue(arg) {
+        const param = this.getParameters().getEntry(arg.getName());
+        if (!param) {
+            return false;
+        }
+        return param.isValueInOptionalValues(arg.getValue());
+    }
+    setArgument(arg) {
+        if (!this.isValidArgumentName(arg)) {
+            throw new Error(`Invalid argument name: ${arg.getName()}`);
+        }
+        if (!this.isValidArgumentValue(arg)) {
+            throw new Error(`Invalid argument value: ${arg.getValue()}`);
+        }
+        if (this.getArguments().getEntry(arg.getName())) {
+            this.getArguments().updateEntry(arg);
+        }
+        else {
+            this.getArguments().addArtifact(arg);
+        }
+    }
+    setArgumentFromEntry(entry) {
+        this.setArgument(new Argument(entry));
+    }
+    getValue(name) {
+        const param = this.getParameters().getEntry(name);
+        if (!param) {
+            throw new Error(`Parameter ${name} not found in ${this.getName()}(${this.getId()})`);
+        }
+        const arg = this.getArguments().getEntry(name);
+        return param.getValue(arg?.getValue());
     }
 }
 export { Configurable };

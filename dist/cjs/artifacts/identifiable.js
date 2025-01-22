@@ -1,10 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Identifiable = void 0;
-const utils_1 = require("@/utils");
+const utils_1 = require("../utils");
 const hashable_1 = require("./hashable");
 /**
- * Identifiable Class that extends Hashable and adds an id property,  The id property is a string that is used to identify the object and it is not included in the hash. Additionally, the Identifiable class has a name and description property - both of which are strings and are not included in the hash.
+ * Identifiable Class that extends Hashable and adds an id property.
+ * - The id property is a string that is used to identify the object and it is not included in the hash.
+ * - Additionally, the Identifiable class has a name and description property - both of which are strings and are not included in the hash.
  * @summary Identifiable class that extends Hashable
  */
 class Identifiable extends hashable_1.Hashable {
@@ -13,7 +15,7 @@ class Identifiable extends hashable_1.Hashable {
     description;
     createdAt = new Date();
     constructor({ id, name, description = "", data, hash = undefined }) {
-        if ((0, utils_1.checkHasEmpties)([id, name, data]) === true) {
+        if ((0, utils_1.checkHasEmpties)(id, name) === true) {
             throw new Error("Identifiable:constructor:id, name or data cannot be empty.");
         }
         super({ hash, data });

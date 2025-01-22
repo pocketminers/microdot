@@ -13,7 +13,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { createIdentifier } from "../utils/identifier";
 import { Hashable } from "./hashable";
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
@@ -37,71 +36,71 @@ var Parameter = /** @class */ (function (_super) {
      * }`
      */
     function Parameter(_a) {
-        var _b = _a.id, id = _b === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _b, _c = _a.name, name = _c === void 0 ? createIdentifier("Name", { prefix: "Parameter-" }) : _c, _d = _a.required, required = _d === void 0 ? false : _d, _e = _a.description, description = _e === void 0 ? "A parameter" : _e, defaultValue = _a.defaultValue, _f = _a.optionalValues, optionalValues = _f === void 0 ? [] : _f;
-        var _this = _super.call(this, { id: id, data: { name: name, required: required, description: description, defaultValue: defaultValue, optionalValues: optionalValues } }) || this;
-        _this.name = name;
-        _this.required = required;
-        _this.description = description;
-        _this.defaultValue = defaultValue;
-        _this.optionalValues = optionalValues;
-        _this.checkOptionalValues();
+        var 
+        // id = createIdentifier("Name", { prefix: "Parameter-" }),
+        name = _a.name, _b = _a.required, required = _b === void 0 ? false : _b, _c = _a.description, description = _c === void 0 ? "" : _c, _d = _a.defaultValue, defaultValue = _d === void 0 ? undefined : _d, _e = _a.optionalValues, optionalValues = _e === void 0 ? [] : _e;
+        var _this = _super.call(this, { data: { name: name, required: required, description: description, defaultValue: defaultValue, optionalValues: optionalValues } }) || this;
+        _this.isDefaultValueInOptionalValues();
         return _this;
     }
     /**
      * Check if the Default Value or a Given Value is in the Optional Values
      * @summary Check if the value is in the optional values
      */
-    Parameter.prototype.checkOptionalValues = function (value) {
-        value = value !== undefined ? value : this.defaultValue;
-        if (this.optionalValues !== undefined
-            && this.optionalValues.length > 0
-            && value !== undefined
-            && !this.optionalValues.includes(value)) {
-            throw new Error("Value is not in optional values: ".concat(this.name));
+    Parameter.prototype.isDefaultValueInOptionalValues = function () {
+        var defaultValue = this.getDefaultValue();
+        if (defaultValue !== undefined) {
+            return this.isValueInOptionalValues(defaultValue);
         }
         return true;
     };
-    /**
-     * Get the value from the parameter and a given value
-     * @summary Get the value of the parameter which will be the default value if the given value is undefined
-     */
-    Parameter.prototype.getValue = function (value) {
-        if ((value === undefined
-            || value === null
-            || value === "")
-            && this.defaultValue === undefined) {
-            throw new Error("Value is required: ".concat(this.name));
+    Parameter.prototype.isValueInOptionalValues = function (value) {
+        var optionalValues = this.getOptionalValues();
+        if (optionalValues !== undefined
+            && optionalValues.length > 0
+            && optionalValues.includes(value) === false) {
+            throw new Error("Value is not in optional values: ".concat(this.getName()));
         }
-        if ((value === undefined
-            || value === null
-            || value === "")
-            && this.defaultValue !== undefined) {
-            return this.defaultValue;
-        }
-        if (!this.checkOptionalValues(value)) {
-            throw new Error("Value is not in optional values: ".concat(this.name));
-        }
-        return value;
+        return true;
     };
-    /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
-     */
-    Parameter.prototype.set = function (value) {
-        throw new Error("Method not implemented. Unable to set value: " + value);
+    Parameter.prototype.getName = function () {
+        return this.getData().name;
+    };
+    Parameter.prototype.getRequired = function () {
+        return this.getData().required;
+    };
+    Parameter.prototype.getDescription = function () {
+        return this.getData().description;
+    };
+    Parameter.prototype.getDefaultValue = function () {
+        return this.getData().defaultValue;
+    };
+    Parameter.prototype.getOptionalValues = function () {
+        return this.getData().optionalValues;
+    };
+    Parameter.prototype.getValue = function (value) {
+        if (value !== undefined) {
+            this.isValueInOptionalValues(value);
+            return value;
+        }
+        var defaultValue = this.getDefaultValue();
+        if (defaultValue !== undefined) {
+            return defaultValue;
+        }
+        throw new Error("Value is required: " + this.getName());
     };
     /**
      * Convert the Parameter to a JSON object
      * @summary Convert the parameter to a JSON object
      */
     Parameter.prototype.toJSON = function () {
+        var _a = this.getData(), name = _a.name, required = _a.required, description = _a.description, defaultValue = _a.defaultValue, optionalValues = _a.optionalValues;
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name: name,
+            required: required,
+            description: description,
+            defaultValue: defaultValue,
+            optionalValues: optionalValues
         };
     };
     /**
@@ -115,22 +114,23 @@ var Parameter = /** @class */ (function (_super) {
      *  required: true
      *  default: 123
      *  options: 123, 456
-     *  hash: <insert sha256 hash here>`
      */
     Parameter.prototype.toString = function () {
-        return "name: ".concat(this.name, "\ndescription: ").concat(this.description, "\nrequired: ").concat(this.required, " ").concat(this.defaultValue ? "\ndefault: ".concat(this.defaultValue) : "", " ").concat(this.optionalValues !== undefined && this.optionalValues.length > 0 ? "\noptions: ".concat(this.optionalValues.join(", ")) : "", " ").concat(this.hash ? "\nhash: ".concat(this.hash) : "");
+        var _a = this.getData(), name = _a.name, required = _a.required, description = _a.description, defaultValue = _a.defaultValue, optionalValues = _a.optionalValues;
+        return "name: ".concat(name, "\ndescription: ").concat(description, "\nrequired: ").concat(required, " ").concat(defaultValue ? "\ndefault: ".concat(defaultValue) : "", " ").concat(optionalValues !== undefined && optionalValues.length > 0 ? "\noptions: ".concat(optionalValues.join(", ")) : "");
     };
     /**
      * Export the Parameter as a Record
      * @summary Convert the parameter to a record and return it
      */
     Parameter.prototype.toRecord = function () {
+        var _a = this.getData(), name = _a.name, required = _a.required, description = _a.description, defaultValue = _a.defaultValue, optionalValues = _a.optionalValues;
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name: name,
+            required: required,
+            description: description,
+            defaultValue: defaultValue,
+            optionalValues: optionalValues
         };
     };
     return Parameter;

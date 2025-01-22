@@ -20,7 +20,7 @@ describe('Configurable', () => {
     });
 
     it('should initialize with given parameters and arguments', () => {
-        console.log(`Configurable:constructor:args:`, configurable.getParameters());
+        console.log(`Configurable:constructor:args:`, configurable.getArguments());
         expect(configurable.getParameters().getEntries().length).toBe(2);
         expect(configurable.getArguments().getEntries().length).toBe(0);
     });

@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Hashable = void 0;
-const checks_1 = require("@utils/checks");
-const decorators_1 = require("@utils/decorators");
-const crypto_1 = require("@utils/crypto");
+const checks_1 = require("../utils/checks");
+const decorators_1 = require("../utils/decorators");
+const crypto_1 = require("../utils/crypto");
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes

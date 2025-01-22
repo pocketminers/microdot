@@ -58,31 +58,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import { checkHasEmpties } from "../utils/checks";
-import { Hashable } from "./hashable";
+import { CryptoUtils } from "../utils";
 import { IsNotEmpty } from "../utils/decorators";
+import { Hashable } from "./hashable";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name
  */
 var Argument = /** @class */ (function (_super) {
     __extends(Argument, _super);
+    // public readonly name: string;
+    // public readonly value: T;
     /**
      * Argument Constructor
      * @summary Create a new Argument instance
@@ -90,47 +77,36 @@ var Argument = /** @class */ (function (_super) {
      * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
-     *  name: "arg1",
-     *  value: 123
+     *      name: "arg1",
+     *      value: 123
      * }`
      */
     function Argument(_a) {
-        var id = _a.id, name = _a.name, value = _a.value;
-        var _this = this;
+        var name = _a.name, value = _a.value;
         if (checkHasEmpties([name, value])) {
             throw new Error("Argument:constructor:name or value cannot be empty.");
         }
-        _this = _super.call(this, { id: id, data: { name: name, value: value } }) || this;
-        _this.name = name;
-        _this.value = value;
-        return _this;
+        return _super.call(this, { data: { name: name, value: value } }) || this;
     }
     /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
+     * returns the name of the argument
+     * @summary Get the name of the argument
      */
-    Argument.prototype.set = function (value) {
-        throw new Error("Method not implemented. Unable to set value: ".concat(value));
+    Argument.prototype.getName = function () {
+        return this.getData().name;
     };
     /**
-     * Get Method
+     * returns the value of the argument
      * @summary Get the value of the argument
      */
-    Argument.prototype.get = function () {
-        return this.value;
+    Argument.prototype.getValue = function () {
+        return this.getData().value;
     };
-    /**
-     * Check Hash Method
-     * @summary Check if the original hash matches the current hash
-     * @override Hashable.checkHash
-     */
-    Argument.prototype.checkHash = function () {
+    Argument.prototype.getHash = function () {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, _super.prototype.checkHash.call(this, { name: this.name, value: this.value })];
+                    case 0: return [4 /*yield*/, CryptoUtils.hashData(this.toJSON())];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
@@ -142,9 +118,8 @@ var Argument = /** @class */ (function (_super) {
      */
     Argument.prototype.toJSON = function () {
         return {
-            id: this.id,
-            name: this.name,
-            value: this.value
+            name: this.getName(),
+            value: this.getValue()
         };
     };
     /**
@@ -152,7 +127,7 @@ var Argument = /** @class */ (function (_super) {
      * @summary Convert the argument to a pre-formatted string and return it
      */
     Argument.prototype.toString = function () {
-        return "".concat(this.name, ": ").concat(this.value);
+        return "".concat(this.getName(), ": ").concat(this.getValue());
     };
     /**
      * Export the Argument as a Record
@@ -161,36 +136,38 @@ var Argument = /** @class */ (function (_super) {
     Argument.prototype.toRecord = function () {
         var _a;
         return _a = {},
-            _a[this.name] = this.value,
+            _a[this.getName()] = this.getValue(),
             _a;
     };
     /**
      * Create an Argument from a Record
      * @summary Create an argument from a record object
      */
-    Argument.fromRecord = function (record_1) {
-        return __awaiter(this, arguments, void 0, function (record, id) {
-            var _a, name, value, arg;
-            if (id === void 0) { id = undefined; }
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = __read(Object.entries(record)[0], 2), name = _a[0], value = _a[1];
-                        arg = new Argument({ id: id, name: name, value: value });
-                        return [4 /*yield*/, arg.initialize()];
-                    case 1:
-                        _b.sent();
-                        return [2 /*return*/, arg];
-                }
-            });
-        });
+    Argument.fromRecord = function (record) {
+        var name = Object.keys(record)[0];
+        var value = record[name];
+        return new Argument({ name: name, value: value });
+    };
+    /**
+     * Create an Argument from a string
+     * @summary Create an argument from a string
+     */
+    Argument.fromString = function (str) {
+        var record = JSON.parse(str);
+        return Argument.fromRecord(record);
     };
     __decorate([
         IsNotEmpty,
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", [Object, Object]),
-        __metadata("design:returntype", Promise)
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Argument)
     ], Argument, "fromRecord", null);
+    __decorate([
+        IsNotEmpty,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [String]),
+        __metadata("design:returntype", Argument)
+    ], Argument, "fromString", null);
     return Argument;
 }(Hashable));
 export { Argument };

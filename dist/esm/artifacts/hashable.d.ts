@@ -1,11 +1,14 @@
-interface HashableEntry<T = any> extends Record<"data", T>, Partial<Record<"id", string>>, Partial<Record<"hash", string>> {
+/**
+ * HashableEntry Interface
+ * @summary Hashable entry interface that is used to create a hashable instance
+ */
+interface HashableEntry<T> extends Record<"data", T>, Partial<Record<"hash", string>> {
 }
 /**
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
  */
-declare class Hashable<T> implements Record<'id', string>, Record<'data', T>, Partial<Record<"hash", string | undefined>> {
-    readonly id: string;
+declare class Hashable<T> {
     readonly data: T;
     hash?: string;
     /**
@@ -13,7 +16,17 @@ declare class Hashable<T> implements Record<'id', string>, Record<'data', T>, Pa
      * @param data
      * @summary Create a new Hashable instance
      */
-    constructor({ id, hash, data }: HashableEntry<T>);
+    constructor({ hash, data }: HashableEntry<T>);
+    getData(): T;
+    getHash(): Promise<string>;
+    /**
+     * hashData static Method - Hash the given data using the default hashing algorithm and digest
+     */
+    static hashData<T>(data: T): Promise<string>;
+    /**
+     * initialize Method
+     * @summary Initialize the hashable instance
+     */
     initialize(): Promise<void>;
     /**
      * checkHash Method
@@ -24,28 +37,20 @@ declare class Hashable<T> implements Record<'id', string>, Record<'data', T>, Pa
      * checkFromValue Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    hasEqualValue<T>(data: T): Promise<boolean>;
+    hasEqualData<T>(data: T): Promise<boolean>;
     /**
-     * isEquivalent Method
-     * @summary Check if the given values are equivalent to the current
+     * checkFromHashOrData Method - Check if the original hash matches the current hash or a given data
      */
-    private isEquivalent;
+    private checkFromHashOrData;
     /**
-     * checkFromHashOrValue Method
+     * checkHash Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    private checkFromHashOrValue;
+    checkHash(hashOrData: T | string): Promise<boolean>;
     /**
-     * checkHash Method
-     * @summary Check if the original hash matches the current hash
+     * hashString static Method - Hash the given string using the default hashing algorithm and digest
      */
-    checkHash(hashOrValues: T | string): Promise<boolean>;
-    /**
-     * hashString static Method - Hash the given string using sha256
-     * @summary Hash the given string using sha256
-     */
-    static hashString(data: string): Promise<string>;
-    static create<T>(values: T): Promise<Hashable<T>>;
+    static hashString(value: string): Promise<string>;
 }
 export { type HashableEntry, Hashable };
 //# sourceMappingURL=hashable.d.ts.map

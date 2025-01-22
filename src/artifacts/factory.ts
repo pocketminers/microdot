@@ -3,11 +3,12 @@ import { Hashable, HashableEntry } from "./hashable";
 import { Argument, ArgumentEntry } from "./argument";
 import { Identifiable, IdentifiableEntry } from "./identifiable";
 import { Parameter, ParameterEntry } from "./parameter";
+import { Configurable, ConfigurableEntry } from "./configurable";
 
 
 
 
-class ArtifactsFactory {
+class ArtifactFactory {
 
     public static async createHashable<T>(entry: HashableEntry<T>): Promise<Hashable<T>> {
         const hashable = new Hashable<T>(entry);
@@ -41,9 +42,19 @@ class ArtifactsFactory {
         return param;
     }
 
+    public static createConfigurable(entry: ConfigurableEntry): Configurable {
+        return new Configurable(entry);
+    }
+
+    public static async createHashedConfigurable(entry: ConfigurableEntry): Promise<Configurable> {
+        const configurable = new Configurable(entry);
+        await configurable.initialize();
+        return configurable;
+    }
+
 }
 
 
 export {
-    ArtifactsFactory
+    ArtifactFactory
 };

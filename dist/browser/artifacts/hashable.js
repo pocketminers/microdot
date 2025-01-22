@@ -43,7 +43,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { checkHasEmpties, checkIsEmpty, checkIsString, createIdentifier } from "../utils";
+import { checkIsEmpty, checkIsString } from "../utils/checks";
 import { IsNotEmpty } from "../utils/decorators";
 import { CryptoUtils } from "../utils/crypto";
 /**
@@ -57,14 +57,50 @@ var Hashable = /** @class */ (function () {
      * @summary Create a new Hashable instance
      */
     function Hashable(_a) {
-        var _b = _a.id, id = _b === void 0 ? createIdentifier("UUID", { prefix: "Hashable-" }) : _b, _c = _a.hash, hash = _c === void 0 ? undefined : _c, data = _a.data;
-        this.id = id;
-        this.hash = hash;
-        if (checkHasEmpties(data) === true) {
-            throw new Error("Data cannot be empty");
+        var _b = _a.hash, hash = _b === void 0 ? undefined : _b, data = _a.data;
+        if (checkIsEmpty(data)) {
+            throw new Error("Hashable:constructor:data cannot be empty.");
         }
         this.data = data;
+        this.hash = hash;
     }
+    Hashable.prototype.getData = function () {
+        return this.data;
+    };
+    Hashable.prototype.getHash = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        if (!(checkIsEmpty(this.hash) === true)) return [3 /*break*/, 2];
+                        _a = this;
+                        return [4 /*yield*/, Hashable.hashData(this.data)];
+                    case 1:
+                        _a.hash = _b.sent();
+                        _b.label = 2;
+                    case 2: return [2 /*return*/, this.hash];
+                }
+            });
+        });
+    };
+    /**
+     * hashData static Method - Hash the given data using the default hashing algorithm and digest
+     */
+    Hashable.hashData = function (data) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, CryptoUtils.hashData(data)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    /**
+     * initialize Method
+     * @summary Initialize the hashable instance
+     */
     Hashable.prototype.initialize = function () {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
@@ -73,15 +109,15 @@ var Hashable = /** @class */ (function () {
                     case 0:
                         if (!(this.hash === undefined)) return [3 /*break*/, 2];
                         _a = this;
-                        return [4 /*yield*/, CryptoUtils.hashValue(this.data)];
+                        return [4 /*yield*/, Hashable.hashData(this.data)];
                     case 1:
                         _a.hash = _b.sent();
-                        return [3 /*break*/, 4];
-                    case 2: return [4 /*yield*/, this.checkHash(this.hash)];
-                    case 3:
-                        _b.sent();
-                        _b.label = 4;
-                    case 4: return [2 /*return*/];
+                        _b.label = 2;
+                    case 2:
+                        if (this.hasEqualHash(this.hash) === false) {
+                            throw new Error("Hash mismatch");
+                        }
+                        return [2 /*return*/];
                 }
             });
         });
@@ -91,104 +127,75 @@ var Hashable = /** @class */ (function () {
      * @summary Check if the original hash matches the current hash
      */
     Hashable.prototype.hasEqualHash = function (hash) {
-        if (this.hash !== hash) {
-            // throw new Error("Hash mismatch");
-            return false;
-        }
-        return true;
+        return this.hash === hash;
     };
     /**
      * checkFromValue Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    Hashable.prototype.hasEqualValue = function (data) {
+    Hashable.prototype.hasEqualData = function (data) {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         _a = this.hash;
-                        return [4 /*yield*/, CryptoUtils.hashValue(data)];
-                    case 1:
-                        if (_a !== (_b.sent())) {
-                            // throw new Error("Hash mismatch");
-                            return [2 /*return*/, false];
-                        }
-                        return [2 /*return*/, true];
-                }
-            });
-        });
-    };
-    /**
-     * isEquivalent Method
-     * @summary Check if the given values are equivalent to the current
-     */
-    Hashable.prototype.isEquivalent = function (data) {
-        return __awaiter(this, void 0, void 0, function () {
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
-                    case 0:
-                        _a = this.hash;
-                        return [4 /*yield*/, CryptoUtils.hashValue(data)];
+                        return [4 /*yield*/, Hashable.hashData(data)];
                     case 1: return [2 /*return*/, _a === (_b.sent())];
                 }
             });
         });
     };
     /**
-     * checkFromHashOrValue Method
-     * @summary Check if the original hash matches the current hash
+     * checkFromHashOrData Method - Check if the original hash matches the current hash or a given data
      */
-    Hashable.prototype.checkFromHashOrValue = function (hashOrValues) {
+    Hashable.prototype.checkFromHashOrData = function (hashOrData) {
         return __awaiter(this, void 0, void 0, function () {
             var _a;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        if (!(CryptoUtils.isValueHash(hashOrValues) === true
-                            && this.hasEqualHash(hashOrValues) === false)) return [3 /*break*/, 1];
-                        throw new Error("Hash mismatch");
+                        if (!(checkIsString(hashOrData) === true
+                            && CryptoUtils.isHash(hashOrData) === true
+                            && this.hasEqualHash(hashOrData) === false)) return [3 /*break*/, 1];
+                        throw new Error("Input hash does not match the current hash of the data");
                     case 1:
-                        _a = checkIsString(hashOrValues) === true
-                            && CryptoUtils.isValueHash(hashOrValues) === false;
+                        _a = CryptoUtils.isHash(hashOrData) === false;
                         if (!_a) return [3 /*break*/, 3];
-                        return [4 /*yield*/, this.isEquivalent(hashOrValues)];
+                        return [4 /*yield*/, this.hasEqualData(hashOrData)];
                     case 2:
                         _a = (_b.sent()) === false;
                         _b.label = 3;
                     case 3:
-                        if (!_a) return [3 /*break*/, 4];
-                        throw new Error("Hash mismatch");
-                    case 4:
-                        if (!(Array.isArray(hashOrValues)
-                            && hashOrValues[0].length > 0)) return [3 /*break*/, 6];
-                        return [4 /*yield*/, this.isEquivalent(hashOrValues)];
-                    case 5:
-                        if ((_b.sent()) === false) {
-                            throw new Error("Hash mismatch");
+                        if (_a) {
+                            throw new Error("When hashing the input data, the hash does not match the current hash of the data");
                         }
-                        _b.label = 6;
-                    case 6: return [2 /*return*/, true];
+                        else if (CryptoUtils.isHash(hashOrData) === false
+                            && CryptoUtils.isHash(hashOrData) === false) {
+                            throw new Error("Input is not a hash or matcheable data");
+                        }
+                        _b.label = 4;
+                    case 4: return [2 /*return*/, true];
                 }
             });
         });
     };
     /**
-     * checkHash Method
+     * checkHash Method - Check if the original hash matches the current hash
      * @summary Check if the original hash matches the current hash
      */
-    Hashable.prototype.checkHash = function (hashOrValues) {
+    // @IsNotEmpty
+    Hashable.prototype.checkHash = function (hashOrData) {
         return __awaiter(this, void 0, void 0, function () {
             var error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        if (checkIsEmpty(hashOrValues) === true) {
+                        if (checkIsEmpty(hashOrData) === true) {
                             throw new Error("Hash or data cannot be empty");
                         }
-                        return [4 /*yield*/, this.checkFromHashOrValue(hashOrValues)];
+                        return [4 /*yield*/, this.checkFromHashOrData(hashOrData)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
                         error_1 = _a.sent();
@@ -199,17 +206,16 @@ var Hashable = /** @class */ (function () {
         });
     };
     /**
-     * hashString static Method - Hash the given string using sha256
-     * @summary Hash the given string using sha256
+     * hashString static Method - Hash the given string using the default hashing algorithm and digest
      */
-    Hashable.hashString = function (data) {
+    Hashable.hashString = function (value) {
         return __awaiter(this, void 0, void 0, function () {
             var error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 2, , 3]);
-                        return [4 /*yield*/, CryptoUtils.hashValue(data)];
+                        return [4 /*yield*/, CryptoUtils.hashData(value)];
                     case 1: return [2 /*return*/, _a.sent()];
                     case 2:
                         error_2 = _a.sent();
@@ -219,27 +225,6 @@ var Hashable = /** @class */ (function () {
             });
         });
     };
-    Hashable.create = function (values) {
-        return __awaiter(this, void 0, void 0, function () {
-            var id, hash;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        id = createIdentifier("UUID", { prefix: "Hashable-" });
-                        return [4 /*yield*/, this.hashString(JSON.stringify(values))];
-                    case 1:
-                        hash = _a.sent();
-                        return [2 /*return*/, new Hashable({ id: id, hash: hash, data: values })];
-                }
-            });
-        });
-    };
-    __decorate([
-        IsNotEmpty,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", [Object]),
-        __metadata("design:returntype", Promise)
-    ], Hashable.prototype, "checkHash", null);
     __decorate([
         IsNotEmpty,
         __metadata("design:type", Function),

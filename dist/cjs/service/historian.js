@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Historian = exports.HistorianConfig = void 0;
-const artifacts_1 = require("@/artifacts");
+const artifacts_1 = require("../artifacts");
 const HistorianConfig = new artifacts_1.Configuration({
     name: 'HistorianConfiguration',
     description: 'Historian configuration',

@@ -1,21 +1,29 @@
 
 import { Argument, ArgumentEntry } from "@artifacts/argument";
-import { ArtifactStore } from "@artifacts/store";
+import { PropertyStore } from "@artifacts/store";
 import { Parameter, ParameterEntry } from "@artifacts/parameter";
 import { Identifiable, IdentifiableEntry } from "@artifacts/identifiable";
 
 
-
+/**
+ * Configuration entry interface that is used to create a configurable instance
+ * @summary Configuration entry interface that is used to create a configurable instance
+ */
 interface ConfigurableEntry
     extends
-        Pick<IdentifiableEntry<any>, 'id' | 'name' | 'description'>,
+        Pick<IdentifiableEntry<any>, 'id' | 'name'>,
+        Partial<Pick<IdentifiableEntry<any>, 'description'>>,
         Partial<Record<'parameters', (ParameterEntry<any> | Parameter<any>)[]>>,
         Partial<Record<'args', (ArgumentEntry<any> | Argument<any>)[]>> {}
 
 
+/**
+ * Configurable Class that extends Identifiable and adds parameters and arguments as data
+ * @summary Configurable class that extends Identifiable
+ */
 class Configurable
     extends
-        Identifiable<{ args: ArtifactStore<Argument<any>>, parameters: ArtifactStore<Parameter<any>> }>
+        Identifiable<{ args: PropertyStore<Argument<any>>, parameters: PropertyStore<Parameter<any>> }>
 {
     constructor(
         {
@@ -26,22 +34,20 @@ class Configurable
             parameters = []
         }: ConfigurableEntry
     ) {
-        console.log(`Configurable:constructor:args:`, args);
-
-        const argumentStore = new ArtifactStore<Argument<any>>();
+        const argumentStore = new PropertyStore<Argument<any>>();
         argumentStore.add(args);
 
-        const paramStore = new ArtifactStore<Parameter<any>>();
+        const paramStore = new PropertyStore<Parameter<any>>();
         paramStore.add(parameters);
 
         super({id, name, description, data: { args: argumentStore, parameters: paramStore }});
     }
 
-    public getArguments(): ArtifactStore<Argument<any>> {
+    public getArguments(): PropertyStore<Argument<any>> {
         return this.getData().args;
     }
 
-    public getParameters(): ArtifactStore<Parameter<any>> {
+    public getParameters(): PropertyStore<Parameter<any>> {
         return this.getData().parameters;
     }
 
@@ -91,8 +97,6 @@ class Configurable
         const arg = this.getArguments().getEntry(name);
         return param.getValue(arg?.getValue());
     }
-
-
 }
 
 

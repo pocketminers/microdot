@@ -61,12 +61,9 @@ var IdentifierTypes;
 /**
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
- * @param type The type of identifier to create.
- * @returns The new identifier.
  */
-var createIdentifier = function (type, _a) {
-    if (type === void 0) { type = "UUID"; }
-    var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
+var createIdentifier = function (_a) {
+    var _b = _a === void 0 ? {} : _a, type = _b.type, prefix = _b.prefix, suffix = _b.suffix;
     var id = "";
     switch (type) {
         case "UUID":
@@ -82,7 +79,7 @@ var createIdentifier = function (type, _a) {
             id = Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4);
             break;
         default:
-            id = createIdentifier("UUID");
+            id = createIdentifier({ type: IdentifierTypes.UUID });
             break;
     }
     return "".concat(prefix ? prefix : "").concat(id).concat(suffix ? suffix : "");
@@ -385,7 +382,7 @@ var IdentifierStore = /** @class */ (function (_super) {
     };
     IdentifierStore.prototype.create = function (type, _a) {
         var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
-        var id = createIdentifier(type, { prefix: prefix, suffix: suffix });
+        var id = createIdentifier({ type: type, prefix: prefix, suffix: suffix });
         this.add(id);
         return id;
     };

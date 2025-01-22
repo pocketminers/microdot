@@ -10,9 +10,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Argument = void 0;
-const checks_1 = require("@utils/checks");
-const utils_1 = require("@/utils");
-const decorators_1 = require("@/utils/decorators");
+const checks_1 = require("../utils/checks");
+const utils_1 = require("../utils");
+const decorators_1 = require("../utils/decorators");
 const hashable_1 = require("./hashable");
 /**
  * Argument Class

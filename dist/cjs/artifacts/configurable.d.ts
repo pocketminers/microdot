@@ -1,18 +1,28 @@
 import { Argument, ArgumentEntry } from "./argument";
-import { ArtifactStore } from "./store";
+import { PropertyStore } from "./store";
 import { Parameter, ParameterEntry } from "./parameter";
 import { Identifiable, IdentifiableEntry } from "./identifiable";
-interface ConfigurableEntry extends Pick<IdentifiableEntry<any>, 'id' | 'name' | 'description'>, Partial<Record<'parameters', ParameterEntry<any>[] | Parameter<any>[]>>, Partial<Record<'args', ArgumentEntry<any>[] | Argument<any>[]>> {
+/**
+ * Configuration entry interface that is used to create a configurable instance
+ * @summary Configuration entry interface that is used to create a configurable instance
+ */
+interface ConfigurableEntry extends Pick<IdentifiableEntry<any>, 'id' | 'name'>, Partial<Pick<IdentifiableEntry<any>, 'description'>>, Partial<Record<'parameters', (ParameterEntry<any> | Parameter<any>)[]>>, Partial<Record<'args', (ArgumentEntry<any> | Argument<any>)[]>> {
 }
+/**
+ * Configurable Class that extends Identifiable and adds parameters and arguments as data
+ * @summary Configurable class that extends Identifiable
+ */
 declare class Configurable extends Identifiable<{
-    args: ArtifactStore<Argument<any>>;
-    parameters: ArtifactStore<Parameter<any>>;
+    args: PropertyStore<Argument<any>>;
+    parameters: PropertyStore<Parameter<any>>;
 }> {
     constructor({ id, name, description, args, parameters }: ConfigurableEntry);
-    getArguments(): ArtifactStore<Argument<any>>;
-    getParameters(): ArtifactStore<Parameter<any>>;
-    static isValidArgumentName(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean;
-    static isValidArgumentValue(params: ArtifactStore<Parameter<any>>, arg: Argument<any>): boolean;
+    getArguments(): PropertyStore<Argument<any>>;
+    getParameters(): PropertyStore<Parameter<any>>;
+    isValidArgumentName(arg: Argument<any>): boolean;
+    isValidArgumentValue(arg: Argument<any>): boolean;
+    setArgument<T>(arg: Argument<T>): void;
+    setArgumentFromEntry(entry: ArgumentEntry<any>): void;
     getValue<T = any>(name: string): T;
 }
 export { type ConfigurableEntry, Configurable };

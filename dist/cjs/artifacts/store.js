@@ -1,20 +1,31 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ArtifactStore = void 0;
+exports.PropertyStore = void 0;
 const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
-class ArtifactStore extends Array {
+class PropertyStore extends Array {
     constructor(items = []) {
-        if (!ArtifactStore.hasUniqueNames(items)) {
+        if (!Array.isArray(items)) {
+            throw new TypeError("Items must be an array");
+        }
+        if (!PropertyStore.hasUniqueNames({ items })) {
             throw new Error("Items must have unique names");
         }
-        const artifacts = items.map((item) => ArtifactStore.fromEntry(item));
+        const artifacts = [];
+        for (const item of items) {
+            artifacts.push(PropertyStore.fromEntry(item));
+        }
         super(...artifacts);
     }
-    static hasUniqueNames(items) {
-        const names = items.map((item) => item.getName());
-        const uniqueNames = new Set(names);
-        return names.length === uniqueNames.size;
+    static hasUniqueNames({ items }) {
+        const names = new Set();
+        for (const item of items) {
+            if (names.has(item.name)) {
+                return false;
+            }
+            names.add(item.name);
+        }
+        return true;
     }
     static fromEntry(entry) {
         if (Object.prototype.hasOwnProperty.call(entry, 'value')) {
@@ -28,12 +39,12 @@ class ArtifactStore extends Array {
         }
     }
     addEntry(entry) {
-        const artifact = ArtifactStore.fromEntry(entry);
+        const artifact = PropertyStore.fromEntry(entry);
         this.addArtifact(artifact);
     }
     addArtifact(artifact) {
-        if (ArtifactStore.hasUniqueNames([artifact, ...this]) === false) {
-            throw new Error(`Artifact already exists: ${artifact.getName()}`);
+        if (this.getEntry(artifact.getName())) {
+            throw new Error(`Entry already exists: ${artifact.getName()}`);
         }
         this.push(artifact);
     }
@@ -54,7 +65,11 @@ class ArtifactStore extends Array {
         return this;
     }
     getNames() {
-        return this.map((entry) => entry.getName());
+        const names = [];
+        for (const entry of this) {
+            names.push(entry.getName());
+        }
+        return names;
     }
     removeEntryByName(name) {
         const index = this.findIndex((entry) => entry.getName() === name);
@@ -70,6 +85,13 @@ class ArtifactStore extends Array {
     removeEntry(entry) {
         this.removeEntryByName(entry.getName());
     }
+    updateEntry(entry) {
+        const index = this.findIndex((item) => item.getName() === entry.getName());
+        if (index === -1) {
+            throw new Error(`Entry not found: ${entry.getName()}`);
+        }
+        this[index] = entry;
+    }
 }
-exports.ArtifactStore = ArtifactStore;
+exports.PropertyStore = PropertyStore;
 //# sourceMappingURL=store.js.map

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultTaskRunner = exports.Command = void 0;
-const checks_1 = require("@utils/checks");
-const configurable_1 = require("@/artifacts/configurable");
-const utils_1 = require("@/utils");
+const checks_1 = require("../utils/checks");
+const configurable_1 = require("../artifacts/configurable");
+const utils_1 = require("../utils");
 /**
  * Command result class.
  * A class that contains the result of a command that has completed execution.

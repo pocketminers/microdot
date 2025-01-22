@@ -178,7 +178,7 @@ var CryptoUtils = /** @class */ (function () {
                     case 4: return [2 /*return*/, _b.sent()];
                     case 5: return [4 /*yield*/, CryptoUtils.md5(value, digest)];
                     case 6: return [2 /*return*/, _b.sent()];
-                    case 7: return [4 /*yield*/, CryptoUtils.hashValue(value, undefined, digest)];
+                    case 7: return [4 /*yield*/, CryptoUtils.hashString(value, undefined, digest)];
                     case 8: return [2 /*return*/, _b.sent()];
                 }
             });
@@ -240,7 +240,7 @@ var CryptoUtils = /** @class */ (function () {
         }
         return str;
     };
-    CryptoUtils.prepareValueForHash = function (value) {
+    CryptoUtils.prepareDataForHash = function (value) {
         var e_1, _a;
         var str = '';
         if (checkIsEmpty(value) === false
@@ -249,7 +249,7 @@ var CryptoUtils = /** @class */ (function () {
             try {
                 for (var _b = __values(value), _c = _b.next(); !_c.done; _c = _b.next()) {
                     var val = _c.value;
-                    str += this.appendValueToString(val, str);
+                    str += CryptoUtils.appendValueToString(val, str);
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
@@ -261,29 +261,29 @@ var CryptoUtils = /** @class */ (function () {
             }
         }
         else {
-            str += this.appendValueToString(value, str);
+            str += CryptoUtils.appendValueToString(value, str);
         }
         return str;
     };
-    CryptoUtils.hashValue = function (value_1) {
-        return __awaiter(this, arguments, void 0, function (value, algorithm, digest) {
+    CryptoUtils.hashData = function (data_1) {
+        return __awaiter(this, arguments, void 0, function (data, algorithm, digest) {
             var str;
             if (algorithm === void 0) { algorithm = DEFUALT_ALGORITHM; }
             if (digest === void 0) { digest = DEFUALT_DIGEST; }
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        str = CryptoUtils.prepareValueForHash(value);
+                        str = CryptoUtils.prepareDataForHash(data);
                         return [4 /*yield*/, CryptoUtils.hashString(str, algorithm, digest)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
         });
     };
-    CryptoUtils.isValueHash = function (value, algorithm, digest) {
+    CryptoUtils.isHash = function (value, algorithm, digest) {
         if (algorithm === void 0) { algorithm = DEFUALT_ALGORITHM; }
         if (digest === void 0) { digest = DEFUALT_DIGEST; }
-        var valueStr = CryptoUtils.prepareValueForHash(value);
+        var valueStr = CryptoUtils.prepareDataForHash(value);
         return CryptoUtils.checkStringForHash(valueStr, algorithm, digest);
     };
     return CryptoUtils;

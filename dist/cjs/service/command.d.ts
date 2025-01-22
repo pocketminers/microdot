@@ -1,6 +1,6 @@
-import { Arguments } from '@artifacts/arguments';
-import { ArgumentEntry, Argument } from '@artifacts/argument';
-import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
+import { Arguments } from '../artifacts/arguments';
+import { ArgumentEntry, Argument } from '../artifacts/argument';
+import { Configurable, ConfigurableEntry } from '../artifacts/configurable';
 /**
  * Command execution metrics interface.
  * An object that contains the execution metrics of a command that has completed execution.

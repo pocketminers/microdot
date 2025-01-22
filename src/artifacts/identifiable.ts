@@ -11,7 +11,9 @@ interface IdentifiableEntry<T>
 
 
 /**
- * Identifiable Class that extends Hashable and adds an id property,  The id property is a string that is used to identify the object and it is not included in the hash. Additionally, the Identifiable class has a name and description property - both of which are strings and are not included in the hash.
+ * Identifiable Class that extends Hashable and adds an id property.
+ * - The id property is a string that is used to identify the object and it is not included in the hash.
+ * - Additionally, the Identifiable class has a name and description property - both of which are strings and are not included in the hash.
  * @summary Identifiable class that extends Hashable
  */
 class Identifiable<T>
@@ -29,11 +31,11 @@ class Identifiable<T>
         data,
         hash = undefined
     }: IdentifiableEntry<T>) {
-        if (checkHasEmpties([id, name, data]) === true) {
+        if (checkHasEmpties(id, name) === true) {
             throw new Error("Identifiable:constructor:id, name or data cannot be empty.");
         }
 
-        super({ hash, data});
+        super({ hash, data });
         this.id = id;
         this.name = name;
         this.description = description;
@@ -56,4 +58,4 @@ class Identifiable<T>
     }
 }
 
-export { Identifiable, IdentifiableEntry };
+export { Identifiable, type IdentifiableEntry };

@@ -1,7 +1,7 @@
 import { Argument, ArgumentEntry } from "@artifacts/argument";
 import { Parameter, ParameterEntry } from "@artifacts/parameter";
 
-class ArtifactStore
+class PropertyStore
 <
     T extends Argument<any> | Parameter<any> = Argument<any> | Parameter<any>
 > 
@@ -13,13 +13,13 @@ class ArtifactStore
             throw new TypeError("Items must be an array");
         }
 
-        if (!ArtifactStore.hasUniqueNames({ items })) {
+        if (!PropertyStore.hasUniqueNames({ items })) {
             throw new Error("Items must have unique names");
         }
 
         const artifacts = []
         for (const item of items) {
-            artifacts.push(ArtifactStore.fromEntry(item));
+            artifacts.push(PropertyStore.fromEntry(item));
         }
 
         super(...artifacts as T[]);
@@ -53,7 +53,7 @@ class ArtifactStore
     }
 
     public addEntry(entry: ArgumentEntry<any> | ParameterEntry<any>): void {
-        const artifact = ArtifactStore.fromEntry(entry);
+        const artifact = PropertyStore.fromEntry(entry);
 
         this.addArtifact(artifact as T);
     }
@@ -122,5 +122,5 @@ class ArtifactStore
 }
 
 export {
-    ArtifactStore
+    PropertyStore
 }

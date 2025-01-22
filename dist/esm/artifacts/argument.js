@@ -8,24 +8,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { checkHasEmpties } from "../utils/checks";
-import { Hashable } from "./hashable";
+import { CryptoUtils } from "../utils";
 import { IsNotEmpty } from "../utils/decorators";
+import { Hashable } from "./hashable";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name
  */
 class Argument extends Hashable {
-    /**
-     * Argument Name
-     * @summary The name of the argument
-     */
-    name;
-    /**
-     * Argument Value
-     * @summary The value of the argument
-     * @type T
-     */
-    value;
+    // public readonly name: string;
+    // public readonly value: T;
     /**
      * Argument Constructor
      * @summary Create a new Argument instance
@@ -33,41 +25,32 @@ class Argument extends Hashable {
      * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
-     *  name: "arg1",
-     *  value: 123
+     *      name: "arg1",
+     *      value: 123
      * }`
      */
-    constructor({ id, name, value }) {
+    constructor({ name, value }) {
         if (checkHasEmpties([name, value])) {
             throw new Error("Argument:constructor:name or value cannot be empty.");
         }
-        super({ id, data: { name, value } });
-        this.name = name;
-        this.value = value;
+        super({ data: { name, value } });
     }
     /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
+     * returns the name of the argument
+     * @summary Get the name of the argument
      */
-    set(value) {
-        throw new Error(`Method not implemented. Unable to set value: ${value}`);
+    getName() {
+        return this.getData().name;
     }
     /**
-     * Get Method
+     * returns the value of the argument
      * @summary Get the value of the argument
      */
-    get() {
-        return this.value;
+    getValue() {
+        return this.getData().value;
     }
-    /**
-     * Check Hash Method
-     * @summary Check if the original hash matches the current hash
-     * @override Hashable.checkHash
-     */
-    async checkHash() {
-        return await super.checkHash({ name: this.name, value: this.value });
+    async getHash() {
+        return await CryptoUtils.hashData(this.toJSON());
     }
     /**
      * Export the Argument as a JSON object
@@ -75,9 +58,8 @@ class Argument extends Hashable {
      */
     toJSON() {
         return {
-            id: this.id,
-            name: this.name,
-            value: this.value
+            name: this.getName(),
+            value: this.getValue()
         };
     }
     /**
@@ -85,7 +67,7 @@ class Argument extends Hashable {
      * @summary Convert the argument to a pre-formatted string and return it
      */
     toString() {
-        return `${this.name}: ${this.value}`;
+        return `${this.getName()}: ${this.getValue()}`;
     }
     /**
      * Export the Argument as a Record
@@ -93,25 +75,38 @@ class Argument extends Hashable {
      */
     toRecord() {
         return {
-            [this.name]: this.value
+            [this.getName()]: this.getValue()
         };
     }
     /**
      * Create an Argument from a Record
      * @summary Create an argument from a record object
      */
-    static async fromRecord(record, id = undefined) {
-        const [name, value] = Object.entries(record)[0];
-        const arg = new Argument({ id, name, value });
-        await arg.initialize();
-        return arg;
+    static fromRecord(record) {
+        const name = Object.keys(record)[0];
+        const value = record[name];
+        return new Argument({ name, value });
+    }
+    /**
+     * Create an Argument from a string
+     * @summary Create an argument from a string
+     */
+    static fromString(str) {
+        const record = JSON.parse(str);
+        return Argument.fromRecord(record);
     }
 }
 __decorate([
     IsNotEmpty,
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Argument)
 ], Argument, "fromRecord", null);
+__decorate([
+    IsNotEmpty,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Argument)
+], Argument, "fromString", null);
 export { Argument };
 //# sourceMappingURL=argument.js.map

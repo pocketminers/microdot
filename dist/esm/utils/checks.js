@@ -15,6 +15,9 @@ const checkIsArray = (value) => {
     }
     return false;
 };
+/**
+ * Check if a value is a boolean. Empty values will return false.
+ */
 const checkIsBoolean = (value) => {
     try {
         if (value !== undefined
@@ -114,6 +117,9 @@ const checkIsEmpty = (value) => {
     }
     return false;
 };
+/**
+ * Check if an item has empties.
+ */
 const checkHasEmpties = (...values) => {
     const itemChecks = [];
     try {

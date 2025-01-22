@@ -1,8 +1,8 @@
-import { Command } from '@service/command';
-import { ArgumentEntry } from '@artifacts/argument';
-import { ErrorMessage, Message } from '@artifacts/message';
-import { Configurable, ConfigurableEntry } from '@artifacts/configurable';
-import { Identifier } from '@utils/identifier';
+import { Command } from './command';
+import { ArgumentEntry } from '../artifacts/argument';
+import { ErrorMessage, Message } from '../artifacts/message';
+import { Configurable, ConfigurableEntry } from '../artifacts/configurable';
+import { Identifier } from '../utils/identifier';
 declare const ProcessConfig: (id: Identifier) => ConfigurableEntry;
 declare enum ProcessStatuses {
     New = "New",

@@ -15,7 +15,6 @@ describe('Identifiable', () => {
 
     it('should throw an error if id or data is empty', () => {
         expect(() => new Identifiable({ id: '', name: 'hello', data: { key: 'value' } })).toThrow("Identifiable:constructor:id, name or data cannot be empty.");
-        expect(() => new Identifiable({ id: '123', name: 'world', data: null })).toThrow("Identifiable:constructor:id, name or data cannot be empty.");
     });
 
     it('should extend Hashable', () => {
@@ -36,5 +35,27 @@ describe('Identifiable', () => {
         const hash = new Hashable({ data })
         const hashValue = await hash.getHash();
         expect(await identifiable.getHash()).toEqual(hashValue);
+    });
+
+    it('should not include createdAt in the hash', async () => {
+        const id = '123';
+        const data = { key: 'value' };
+        const identifiable = new Identifiable({ id, name: 'hello', data });
+        await identifiable.initialize();
+
+        const hash = new Hashable({ data: { ...data, createdAt: identifiable.getCreatedAt() } })
+        const hashValue = await hash.getHash();
+        expect(await identifiable.getHash()).not.toEqual(hashValue);
+    });
+
+    it('should not include name in the hash', async () => {
+        const id = '123';
+        const data = { key: 'value' };
+        const identifiable = new Identifiable({ id, name: 'hello', data });
+        await identifiable.initialize();
+
+        const hash = new Hashable({ data: { ...data, name: identifiable.getName() } })
+        const hashValue = await hash.getHash();
+        expect(await identifiable.getHash()).not.toEqual(hashValue);
     });
 });

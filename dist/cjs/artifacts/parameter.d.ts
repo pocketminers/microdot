@@ -1,5 +1,5 @@
-import { Hashable } from "@artifacts/hashable";
-import { ArgumentEntry } from "@artifacts/argument";
+import { Hashable } from "./hashable";
+import { ArgumentEntry } from "./argument";
 /**
  * An entry interface for a parameter
  * @summary Parameter entry interface that is used to create a parameter

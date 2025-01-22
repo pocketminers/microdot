@@ -25,7 +25,7 @@
         "tsx"
     ],    
     "navigation": {
-        "excludeReferences": true,
+        "excludeReferences": false,
         "includeFolders": true,
         "compactFolders": false,
         "includeGroups": true
