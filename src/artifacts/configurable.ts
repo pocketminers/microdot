@@ -56,6 +56,12 @@ class Configurable
         return param.isValueInOptionalValues(arg.getValue());
     }
 
+    public getValue(name: string): any {
+        const param = this.getParameters().getEntry(name);
+        const arg = this.getArguments().getEntry(name);
+        return param?.getValue(arg?.getValue());
+    }
+
 
 }
 

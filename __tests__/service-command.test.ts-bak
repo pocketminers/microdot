@@ -1,6 +1,6 @@
 import { Command, TaskRunner } from '../src/service/command';
-import { Configuration } from '../src/artifacts/configuration';
-import { Arguments } from '../src/artifacts/arguments';
+// import { Configuration } from '../src/artifacts/configuration';
+// import { Arguments } from '../src/artifacts/arguments';
 
 
 describe('Command', () => {
