@@ -63,10 +63,10 @@ class CommandResult<R, T>
 
     public toJSON(): {command: string, args: Argument<any>[], output: R | Error | null, metrics: ExecutionMetrics} {
         return {
-            command: this.command,
-            args: this.args,
-            output: this.output,
-            metrics: this.metrics
+            command: this.data.command,
+            args: this.data.args,
+            output: this.data.output,
+            metrics: this.data.metrics
         }
     }
 
@@ -129,7 +129,7 @@ class Command
         Promise<R> =>
     {
         this.setArguments(args || []);
-        return await this.taskRunner(instance, this.config.toRecord());
+        return await this.taskRunner(instance, this.getAllValueRecords());
     }
 
     public run = async ({
@@ -197,7 +197,7 @@ class Command
 
         return new CommandResult<R, T>({
                 command: this.name,
-                args: this.config.toArguments(),
+                args: [ ...this.getAllValueRecords().entries() ],
                 output: output as R || null,
                 metrics: {
                     startTime,

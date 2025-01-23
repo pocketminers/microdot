@@ -372,7 +372,7 @@
 // }
 
 
-// export * from "./command";
+export * from "./command";
 // export * from "./historian";
 // export * from "./job";
 // export * from "./messenger";

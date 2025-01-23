@@ -126,6 +126,16 @@ class Configurable
         return records;
     }
 
+    public getAllValueRecords(): Record<string, any> {
+        const records: Record<string, any> = {};
+
+        for (const param of this.parameters.getEntries()) {
+            records[param.name] = this.getValue(param.name);
+        }
+
+        return records;
+    }
+
 }
 
 
