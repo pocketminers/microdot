@@ -20,14 +20,14 @@ describe('Configurable', () => {
     });
 
     it('should initialize with given parameters and arguments', () => {
-        expect(configurable.getParameters().getEntries().length).toBe(2);
-        expect(configurable.getArguments().getEntries().length).toBe(0);
+        expect(configurable.parameters.getEntries().length).toBe(2);
+        expect(configurable.arguments.getEntries().length).toBe(0);
     });
 
     it('should set and get arguments correctly', () => {
         const arg = new Argument({ name: 'param1', value: 'value1' });
         configurable.setArgument<string>(arg);
-        expect(configurable.getArguments().getEntry('param1')?.getValue()).toBe('value1');
+        expect(configurable.arguments.getEntry('param1')?.value).toBe('value1');
     });
 
     it('should throw error for invalid argument name', () => {
@@ -45,7 +45,7 @@ describe('Configurable', () => {
         configurable.setArgument(arg1);
         const arg2 = new Argument({ name: 'param1', value: 'value2' });
         configurable.setArgument(arg2);
-        expect(configurable.getArguments().getEntry('param1')?.getValue()).toBe('value2');
+        expect(configurable.arguments.getEntry('param1')?.value).toBe('value2');
     });
 
     it('should get parameter value correctly', () => {
@@ -59,7 +59,7 @@ describe('Configurable', () => {
             { name: 'param1', value: 'value1' },
             { name: 'param2', value: 'value3' }
         ]);
-        expect(configurable.getArguments().getEntries().length).toBe(2);
+        expect(configurable.arguments.getEntries().length).toBe(2);
     });
 
     it('should setArguments with both Argument and ArgumentEntry', () => {
@@ -67,7 +67,7 @@ describe('Configurable', () => {
             new Argument({ name: 'param1', value: 'value1' }),
             { name: 'param2', value: 'value3' }
         ]);
-        expect(configurable.getArguments().getEntries().length).toBe(2);
+        expect(configurable.arguments.getEntries().length).toBe(2);
     });
 
     it('should throw error if parameter not found', () => {
@@ -84,7 +84,7 @@ describe('Configurable', () => {
             { name: 'param1', value: 'value1' },
             { name: 'param2', value: 'value3' }
         ]);
-        console.log(configurable.getArguments().getEntries());
+        console.log(configurable.arguments.getEntries());
         const records = configurable.getRequiredValueRecords();
         expect(records).toEqual({ param1: 'value1', param2: 'value3' });
     });

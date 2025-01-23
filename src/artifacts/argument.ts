@@ -1,7 +1,6 @@
 import { checkHasEmpties} from "@utils/checks";
-import { CryptoUtils } from "@/utils";
-import { IsNotEmpty } from "@/utils/decorators";
-import { Hashable } from "./hashable";
+import { IsNotEmpty } from "@utils/decorators";
+import { Hashable } from "@artifacts/hashable";
 
 
 /**
@@ -19,8 +18,7 @@ interface ArgumentEntry<T>
  * @summary An argument specifies the value of a Parameter by name
  */
 class Argument<T>
-    extends
-        Hashable<{ name: string, value: T }>
+    extends Hashable<{ name: string, value: T }>
 {
 
     // public readonly name: string;
@@ -52,20 +50,16 @@ class Argument<T>
      * returns the name of the argument
      * @summary Get the name of the argument
      */
-    public getName(): string {
-        return this.getData().name;
+    public get name(): string {
+        return this.data.name;
     }
 
     /**
      * returns the value of the argument
      * @summary Get the value of the argument
      */
-    public getValue(): T {
-        return this.getData().value;
-    }
-
-    public async getHash(): Promise<string> {
-        return await CryptoUtils.hashData(this.toJSON());
+    public get value (): T {
+        return this.data.value;
     }
 
     /**
@@ -74,8 +68,8 @@ class Argument<T>
      */
     public toJSON(): { name: string, value: T } {
         return {
-            name: this.getName(),
-            value: this.getValue()
+            name: this.name,
+            value: this.value
         };
     }
 
@@ -84,7 +78,7 @@ class Argument<T>
      * @summary Convert the argument to a pre-formatted string and return it
      */
     public toString(): string {
-        return `${this.getName()}: ${this.getValue()}`;
+        return `${this.name}: ${this.value}`;
     }
 
     /**
@@ -93,7 +87,7 @@ class Argument<T>
      */
     public toRecord(): Record<string, T> {
         return {
-            [this.getName()]: this.getValue()
+            [this.name]: this.value
         };
     }
 

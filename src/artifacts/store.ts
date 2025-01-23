@@ -28,11 +28,11 @@ class PropertyStore
     //     const names = new Set<string>();
     //     for (const item of items) {
     //         if (
-    //             names.has(item.getName())) {
+    //             names.has(item.name)) {
     //             return false;
     //         }
     //         else {
-    //             names.add(item.getName());
+    //             names.add(item.name);
     //         }
     //         names.add(item.name);
     //     }
@@ -62,8 +62,8 @@ class PropertyStore
     }
 
     public addArtifact(artifact: T): void {
-        if (this.getEntry(artifact.getName())) {
-            throw new Error(`Entry already exists: ${artifact.getName()}`);
+        if (this.getEntry(artifact.name)) {
+            throw new Error(`Entry already exists: ${artifact.name}`);
         }
 
         this.push(artifact);
@@ -81,7 +81,7 @@ class PropertyStore
     }
 
     public getEntry(name: string): T | undefined {
-        return this.find((entry) => entry.getName() === name);
+        return this.find((entry) => entry.name === name);
     }
 
     public getEntries(): T[] {
@@ -91,13 +91,13 @@ class PropertyStore
     public getNames(): string[] {
         const names: string[] = [];
         for (const entry of this) {
-            names.push(entry.getName());
+            names.push(entry.name);
         }
         return names;
     }
 
     public removeEntryByName(name: string): void {
-        const index = this.findIndex((entry) => entry.getName() === name);
+        const index = this.findIndex((entry) => entry.name === name);
         try {
             if (index !== -1) {
                 this.splice(index, 1);
@@ -109,14 +109,14 @@ class PropertyStore
     }
 
     public removeEntry(entry: T): void {
-        this.removeEntryByName(entry.getName());
+        this.removeEntryByName(entry.name);
     }
 
     public updateEntry(entry: T): void {
-        const index = this.findIndex((item) => item.getName() === entry.getName());
+        const index = this.findIndex((item) => item.name === entry.name);
 
         if (index === -1) {
-            throw new Error(`Entry not found: ${entry.getName()}`);
+            throw new Error(`Entry not found: ${entry.name}`);
         }
 
         this[index] = entry;
@@ -126,8 +126,8 @@ class PropertyStore
         const defaults: Record<string, any> = {};
         for (const entry of this) {
             if (entry instanceof Parameter) {
-                if (entry.getDefaultValue() !== undefined && entry.getRequired() === true) {
-                    defaults[entry.getName()] = entry.getDefaultValue();
+                if (entry.defaultValue !== undefined && entry.required === true) {
+                    defaults[entry.name] = entry.defaultValue;
                 }
             }
         }

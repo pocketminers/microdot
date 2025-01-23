@@ -6,8 +6,8 @@ describe('Argument', () => {
         const entry: ArgumentEntry<string> = { name: 'testName', value: 'testValue' };
         const arg = new Argument<string>(entry);
 
-        expect(arg.getName()).toBe('testName');
-        expect(arg.getValue()).toBe('testValue');
+        expect(arg.name).toBe('testName');
+        expect(arg.value).toBe('testValue');
     });
 
     it('should convert an Argument instance to JSON', () => {
@@ -38,8 +38,8 @@ describe('Argument', () => {
 
         console.log(`args: ${args}`);
 
-        expect(args.getName()).toBe('testName');
-        expect(args.getValue()).toBe('testValue');
+        expect(args.name).toBe('testName');
+        expect(args.value).toBe('testValue');
     });
 
     it('should not create an Argument instance from an empty Record', () => {
@@ -91,7 +91,7 @@ describe('Argument', () => {
         const entry: ArgumentEntry<number> = { name: 'testName', value: 123 };
         const arg = new Argument<number>(entry);
 
-        expect(arg.getValue()).toBe(123);
+        expect(arg.value).toBe(123);
     });
 
     it('should check the hash of an Argument instance', async () => {

@@ -38,10 +38,6 @@ class Hashable<T> {
         this.hash = hash;
     }
 
-    public getData(): T {
-        return this.data;
-    }
-
     public async getHash(): Promise<string> {
         if (checkIsEmpty(this.hash) === true) {
             this.hash = await Hashable.hashData(this.data);

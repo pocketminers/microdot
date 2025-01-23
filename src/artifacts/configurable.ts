@@ -44,43 +44,43 @@ class Configurable
         super({id, name, description, data: { args: argumentStore, parameters: paramStore }});
     }
 
-    public getArguments(): PropertyStore<Argument<any>> {
-        return this.getData().args;
+    public get arguments(): PropertyStore<Argument<any>> {
+        return this.data.args;
     }
 
-    public getParameters(): PropertyStore<Parameter<any>> {
-        return this.getData().parameters;
+    public get parameters(): PropertyStore<Parameter<any>> {
+        return this.data.parameters;
     }
 
     public isValidArgumentName(arg: Argument<any>): boolean {
-        const paramNames = this.getParameters().getNames();
-        return paramNames.includes(arg.getName());
+        const paramNames = this.parameters.getNames();
+        return paramNames.includes(arg.name);
     }
 
     public isValidArgumentValue(arg: Argument<any>): boolean {
-        const param = this.getParameters().getEntry(arg.getName());
+        const param = this.parameters.getEntry(arg.name);
 
         if (!param) {
             return false;
         }
 
-        return param.isValueInOptionalValues(arg.getValue());
+        return param.isValueInOptionalValues(arg.value);
     }
 
     public setArgument<T>(arg: Argument<T>): void {
         if (!this.isValidArgumentName(arg)) {
-            throw new Error(`Invalid argument name: ${arg.getName()}`);
+            throw new Error(`Invalid argument name: ${arg.name}`);
         }
 
         if (!this.isValidArgumentValue(arg)) {
-            throw new Error(`Invalid argument value: ${arg.getValue()}`);
+            throw new Error(`Invalid argument value: ${arg.value}`);
         }
 
-        if (this.getArguments().getEntry(arg.getName())) {
-            this.getArguments().updateEntry(arg);
+        if (this.arguments.getEntry(arg.name)) {
+            this.arguments.updateEntry(arg);
         }
         else {
-            this.getArguments().addArtifact(arg);
+            this.arguments.addArtifact(arg);
         }
     }
 
@@ -100,26 +100,26 @@ class Configurable
     }
 
     public getValue<T = any>(name: string): T {
-        const param = this.getParameters().getEntry(name);
+        const param = this.parameters.getEntry(name);
 
         if (
             param === undefined
             || checkIsEmpty(param) === true
         ) {
-            throw new Error(`Parameter ${name} not found in ${this.getName()}(${this.getId()})`);
+            throw new Error(`Parameter ${name} not found in ${this.name}(${this.id})`);
         }
 
-        const arg = this.getArguments().getEntry(name);
+        const arg = this.arguments.getEntry(name);
 
-        return param.getValue(arg?.getValue());
+        return param.getValue(arg?.value);
     }
 
     public getRequiredValueRecords(): Record<string, any> {
         const records: Record<string, any> = {};
 
-        for (const param of this.getParameters().getEntries()) {
-            if (param.getRequired() === true) {
-                records[param.getName()] = this.getValue(param.getName());
+        for (const param of this.parameters.getEntries()) {
+            if (param.required === true) {
+                records[param.name] = this.getValue(param.name);
             }
         }
 

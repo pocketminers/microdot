@@ -9,8 +9,8 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name, data });
 
         expect(identifiable).toBeInstanceOf(Identifiable);
-        expect(identifiable.getId()).toBe(id);
-        expect(identifiable.getData()).toEqual(data);
+        expect(identifiable.id).toBe(id);
+        expect(identifiable.data).toEqual(data);
     });
 
     it('should throw an error if id or data is empty', () => {
@@ -43,7 +43,7 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name: 'hello', data });
         await identifiable.initialize();
 
-        const hash = new Hashable({ data: { ...data, createdAt: identifiable.getCreatedAt() } })
+        const hash = new Hashable({ data: { ...data, createdAt: identifiable.createdAt } })
         const hashValue = await hash.getHash();
         expect(await identifiable.getHash()).not.toEqual(hashValue);
     });
@@ -54,7 +54,7 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name: 'hello', data });
         await identifiable.initialize();
 
-        const hash = new Hashable({ data: { ...data, name: identifiable.getName() } })
+        const hash = new Hashable({ data: { ...data, name: identifiable.name } })
         const hashValue = await hash.getHash();
         expect(await identifiable.getHash()).not.toEqual(hashValue);
     });

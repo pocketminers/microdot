@@ -26,29 +26,29 @@ describe('ArtifactFactory', () => {
         const entry: ArgumentEntry<any> = { name: 'arg', value: 'value' };
         const argument = ArtifactFactory.createArgument(entry);
         expect(argument).toBeDefined();
-        expect(argument.getName()).toBe('arg');
+        expect(argument.name).toBe('arg');
     });
 
     it('should create a Parameter instance', () => {
         const entry: ParameterEntry<any> = { name: 'param', defaultValue: 'default' };
         const parameter = ArtifactFactory.createParameter(entry);
         expect(parameter).toBeDefined();
-        expect(parameter.getName()).toBe('param');
+        expect(parameter.name).toBe('param');
     });
 
     it('should create a Configurable instance', () => {
         const entry: ConfigurableEntry = { id: '3', name: 'configurable' };
         const configurable = ArtifactFactory.createConfigurable(entry);
         expect(configurable).toBeDefined();
-        expect(configurable.getId()).toBe('3');
+        expect(configurable.id).toBe('3');
     });
 
     it('should create a HashedArgument instance', async () => {
         const entry: ArgumentEntry<any> = { name: 'hashedArg', value: 'value' };
         const hashedArgument = await ArtifactFactory.createHashedArgument(entry);
         expect(hashedArgument).toBeDefined();
-        expect(hashedArgument.getName()).toBe('hashedArg');
-        expect(hashedArgument.getValue()).toBe('value');
+        expect(hashedArgument.name).toBe('hashedArg');
+        expect(hashedArgument.value).toBe('value');
         expect(hashedArgument.getHash()).toBeDefined();
     });
 
@@ -56,13 +56,13 @@ describe('ArtifactFactory', () => {
         const entry: ParameterEntry<any> = { name: 'hashedParam', defaultValue: 'default' };
         const hashedParameter = await ArtifactFactory.createHashedParameter(entry);
         expect(hashedParameter).toBeDefined();
-        expect(hashedParameter.getName()).toBe('hashedParam');
+        expect(hashedParameter.name).toBe('hashedParam');
     });
 
     it('should create a HashedConfigurable instance', async () => {
         const entry: ConfigurableEntry = { id: '4', name: 'hashedConfigurable' };
         const hashedConfigurable = await ArtifactFactory.createHashedConfigurable(entry);
         expect(hashedConfigurable).toBeDefined();
-        expect(hashedConfigurable.getId()).toBe('4');
+        expect(hashedConfigurable.id).toBe('4');
     });
 });

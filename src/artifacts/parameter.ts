@@ -64,7 +64,7 @@ class Parameter<T>
      * @summary Check if the value is in the optional values
      */
     public isDefaultValueInOptionalValues(): boolean {
-        const defaultValue = this.getDefaultValue();
+        const defaultValue = this.defaultValue;
 
         if ( defaultValue !== undefined ) {
             return this.isValueInOptionalValues(defaultValue);
@@ -74,37 +74,37 @@ class Parameter<T>
     }
 
     public isValueInOptionalValues(value: T): boolean {
-        const optionalValues = this.getOptionalValues();
+        const optionalValues = this.optionalValues;
 
         if (
             optionalValues !== undefined
             && optionalValues.length > 0
             && optionalValues.includes(value) === false
         ) {
-            throw new Error(`Value is not in optional values: ${this.getName()}`);
+            throw new Error(`Value is not in optional values: ${this.name}`);
         }
 
         return true;
     }
 
-    public getName = (): string => {
-        return this.getData().name;
+    public get name(): string {
+        return this.data.name;
     }
 
-    public getRequired = (): boolean => {
-        return this.getData().required;
+    public get required(): boolean {
+        return this.data.required;
     }
 
-    public getDescription = (): string => {
-        return this.getData().description;
+    public get description(): string {
+        return this.data.description;
     }
 
-    public getDefaultValue = (): T | undefined => {
-        return this.getData().defaultValue;
+    public get defaultValue(): T | undefined {
+        return this.data.defaultValue;
     }
 
-    public getOptionalValues = (): T[] => {
-        return this.getData().optionalValues;
+    public get optionalValues(): T[] {
+        return this.data.optionalValues;
     }
 
     public getValue(value?: T): T {
@@ -113,16 +113,16 @@ class Parameter<T>
             return value;
         }
 
-        const defaultValue = this.getDefaultValue();
+        const defaultValue = this.defaultValue;
         if (defaultValue !== undefined) {
             return defaultValue;
         }
 
-        throw new Error("Value is required: " + this.getName());
+        throw new Error("Value is required: " + this.name);
     }
 
     public getRequiredDefault(): T | undefined {
-        if (this.getRequired() === true) {
+        if (this.required === true) {
             return this.getValue();
         }
     }
@@ -132,7 +132,7 @@ class Parameter<T>
      * @summary Convert the parameter to a JSON object
      */
     public toJSON(): { name: string, required: boolean, description: string, defaultValue: T | undefined, optionalValues: T[] | undefined } {
-        const { name, required, description, defaultValue, optionalValues } = this.getData();
+        const { name, required, description, defaultValue, optionalValues } = this.data;
         
         return {
             name,
@@ -156,7 +156,7 @@ class Parameter<T>
      *  options: 123, 456
      */
     public toString(): string {
-        const { name, required, description, defaultValue, optionalValues } = this.getData();
+        const { name, required, description, defaultValue, optionalValues } = this.data;
 
         return `name: ${name}\ndescription: ${description}\nrequired: ${required} ${defaultValue ? `\ndefault: ${defaultValue}` : ""} ${optionalValues !== undefined && optionalValues.length > 0 ? `\noptions: ${optionalValues.join(", ")}` : ""}`;
     }
@@ -172,7 +172,7 @@ class Parameter<T>
         | Record<"defaultValue", T | undefined>
         | Record<"optionalValues", T[] | undefined>
      {
-        const { name, required, description, defaultValue, optionalValues } = this.getData();
+        const { name, required, description, defaultValue, optionalValues } = this.data;
 
         return {
             name,
