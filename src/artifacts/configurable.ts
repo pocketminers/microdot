@@ -113,6 +113,19 @@ class Configurable
 
         return param.getValue(arg?.getValue());
     }
+
+    public getRequiredValueRecords(): Record<string, any> {
+        const records: Record<string, any> = {};
+
+        for (const param of this.getParameters().getEntries()) {
+            if (param.getRequired() === true) {
+                records[param.getName()] = this.getValue(param.getName());
+            }
+        }
+
+        return records;
+    }
+
 }
 
 

@@ -122,6 +122,18 @@ class PropertyStore
         this[index] = entry;
     }
 
+    public getRequiredDefaults(): Record<string, any> {
+        const defaults: Record<string, any> = {};
+        for (const entry of this) {
+            if (entry instanceof Parameter) {
+                if (entry.getDefaultValue() !== undefined && entry.getRequired() === true) {
+                    defaults[entry.getName()] = entry.getDefaultValue();
+                }
+            }
+        }
+        return defaults;
+    }
+
 }
 
 export {

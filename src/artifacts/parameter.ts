@@ -48,7 +48,7 @@ class Parameter<T>
         {
             // id = createIdentifier("Name", { prefix: "Parameter-" }),
             name,
-            required = false,
+            required = true,
             description = "",
             defaultValue = undefined,
             optionalValues = []
@@ -87,23 +87,23 @@ class Parameter<T>
         return true;
     }
 
-    public getName(): string {
+    public getName = (): string => {
         return this.getData().name;
     }
 
-    public getRequired(): boolean {
+    public getRequired = (): boolean => {
         return this.getData().required;
     }
 
-    public getDescription(): string {
+    public getDescription = (): string => {
         return this.getData().description;
     }
 
-    public getDefaultValue(): T | undefined {
+    public getDefaultValue = (): T | undefined => {
         return this.getData().defaultValue;
     }
 
-    public getOptionalValues(): T[] {
+    public getOptionalValues = (): T[] => {
         return this.getData().optionalValues;
     }
 
@@ -119,6 +119,12 @@ class Parameter<T>
         }
 
         throw new Error("Value is required: " + this.getName());
+    }
+
+    public getRequiredDefault(): T | undefined {
+        if (this.getRequired() === true) {
+            return this.getValue();
+        }
     }
 
     /**

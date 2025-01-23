@@ -24,7 +24,7 @@ interface ExecutionMetrics
  */
 interface CommandResultEntry<R, T>
     extends
-        Partial<Record<'jobId', string>>,
+        Partial<Record<'jobId', Identifier>>,
         Record<'command', Command<R, T>['name']>,
         Record<'args', (Argument<any> | ArgumentEntry<any>)[]>,
         Record<'output', R | Error | null>,

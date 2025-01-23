@@ -1,8 +1,8 @@
 import { ArtifactFactory } from "../src/artifacts/factory";
-import { Argument, ArgumentEntry } from "../src/artifacts/argument";
-import { Configurable, ConfigurableEntry } from "../src/artifacts/configurable";
+import { ArgumentEntry } from "../src/artifacts/argument";
+import { ConfigurableEntry } from "../src/artifacts/configurable";
 import { IdentifiableEntry } from "../src/artifacts/identifiable";
-import { Parameter, ParameterEntry } from "../src/artifacts/parameter";
+import { ParameterEntry } from "../src/artifacts/parameter";
 import { HashableEntry } from "../src/artifacts/hashable";
 
 describe('ArtifactFactory', () => {
@@ -48,6 +48,8 @@ describe('ArtifactFactory', () => {
         const hashedArgument = await ArtifactFactory.createHashedArgument(entry);
         expect(hashedArgument).toBeDefined();
         expect(hashedArgument.getName()).toBe('hashedArg');
+        expect(hashedArgument.getValue()).toBe('value');
+        expect(hashedArgument.getHash()).toBeDefined();
     });
 
     it('should create a HashedParameter instance', async () => {

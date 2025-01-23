@@ -78,4 +78,14 @@ describe('Configurable', () => {
         const arg = new Argument({ name: 'param1', value: 'invalidValue' });
         expect(() => configurable.setArgument(arg)).toThrow('Value is not in optional values: param1');
     });
+
+    it('should get required value records correctly', () => {
+        configurable.setArguments([
+            { name: 'param1', value: 'value1' },
+            { name: 'param2', value: 'value3' }
+        ]);
+        console.log(configurable.getArguments().getEntries());
+        const records = configurable.getRequiredValueRecords();
+        expect(records).toEqual({ param1: 'value1', param2: 'value3' });
+    });
 });

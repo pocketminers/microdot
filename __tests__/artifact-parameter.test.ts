@@ -6,7 +6,7 @@ describe("Parameter", () => {
         const { name, required, description, defaultValue, optionalValues } = param.toJSON();
 
         expect(name).toBe("param1");
-        expect(required).toBe(false);
+        expect(required).toBe(true);
         expect(description).toBe("");
         expect(defaultValue).toBeUndefined();
         expect(optionalValues).toEqual([]);
@@ -64,6 +64,16 @@ describe("Parameter", () => {
             optionalValues: [123, 456]
         });
         expect(() => param.getValue(789)).toThrow("Value is not in optional values: param1");
+    });
+
+    it("should return the default value if no value is provided and the parameter is required", () => {
+        const param = new Parameter<number>({
+            name: "param1",
+            required: true,
+            defaultValue: 123,
+            optionalValues: [123, 456]
+        });
+        expect(param.getValue()).toBe(123);
     });
 
     it("should throw an error if value is required but not provided", () => {
