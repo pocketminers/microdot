@@ -1,8 +1,10 @@
-import { Metadata, MetadataEntry } from "./metadata";
+import { CryptoUtils } from "@/utils";
+import { Metadata, MetadataEntry } from "@artifacts/metadata";
+
 
 class Property<T> {
-    public data: T;
-    public meta: Metadata;
+    public readonly data: T;
+    public readonly meta: Metadata;
 
     constructor({
         data,
@@ -11,8 +13,7 @@ class Property<T> {
         data: T,
         meta?: MetadataEntry | Metadata
     }) {
-        this.data = data;
-        
+        this.data = data
         if (meta instanceof Metadata) {
             this.meta = meta;
         }
@@ -28,7 +29,34 @@ class Property<T> {
             this.meta = new Metadata();
         }
     }
+
+    public get metadata(): Metadata {
+        return this.meta;
+    }
+
+    public async hashData(): Promise<string> {
+        const hashedData = await CryptoUtils.hashData(this.data);
+        const storedHash = this.meta.annotations.hash;
+
+        if (storedHash === 'not-set'
+            || storedHash === undefined
+            || storedHash === hashedData
+        ) {
+            this.meta.annotations.set('hash',  hashedData);
+        }
+        
+        else if (
+            storedHash !== 'not-set'
+            && storedHash !== undefined
+            && storedHash !== hashedData
+        ) {
+            throw new Error(`Hash mismatch: ${storedHash} !== ${hashedData}`);
+        }
+
+        return hashedData;
+    }
 }
+
 
 
 export {

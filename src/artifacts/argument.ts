@@ -1,7 +1,7 @@
 import { checkHasEmpties} from "@utils/checks";
 import { IsNotEmpty } from "@utils/decorators";
 import { Hashable } from "@artifacts/hashable";
-import { ArgumentSpec } from "@service/templates/manifest";
+import { ArgumentSpec } from "@service/templates/arg";
 
 
 /**

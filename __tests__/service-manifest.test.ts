@@ -1,4 +1,4 @@
-import { ArgumentSpec } from '../src/service/templates/manifest';
+import { ArgumentSpec } from '../src/service/templates/arg';
 
 describe('ArgumentSpec', () => {
     it('should create an argument spec instance with the given data', () => {

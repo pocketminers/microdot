@@ -183,6 +183,17 @@ const checkHasEmpties = (...values: any[]): boolean => {
     return true
 }
 
+const checkType = (value?: any, type?: string): boolean => {
+    if (
+        ( type === undefined || type === null )
+        && ( value === undefined || value === null )
+    ) {
+        return true;
+    }
+
+    return typeof value === type;
+}
+
 
 // const checkIsEmpty = (value: any): boolean => {
 //     console.log('value: ', value);
@@ -232,4 +243,6 @@ export {
     checkIsEmpty,
     checkHasEmpties,
     checkIsString,
+    checkIsNumber,
+    checkType
 };

@@ -9,7 +9,7 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name, data });
 
         expect(identifiable).toBeInstanceOf(Identifiable);
-        expect(identifiable.id).toBe(id);
+        expect(identifiable.meta.labels.get('id')).toBe(id);
         expect(identifiable.data).toEqual(data);
     });
 

@@ -68,7 +68,6 @@ class Annotations
 
     public set hash(value: string) {
         const hash = this.get('hash');
-        console.log(`Annotations:hash:hash: ${hash}`);
         if (
             hash !== 'not-set'
         ) {

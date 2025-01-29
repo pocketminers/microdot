@@ -2,6 +2,10 @@ import {
     Property
 } from "../src/artifacts/property";
 
+import {
+    CryptoUtils
+} from "../src/utils/crypto";
+
 describe('Property', () => {
     it('should create a Property instance with valid data', () => {
         const data = { key: 'value' };
@@ -85,6 +89,25 @@ describe('Property', () => {
         const data = { key: 'value' };
         const property = new Property({ data });
         expect(property.meta.annotations.createdAt).toEqual(expect.any(String));
+    });
+
+    it('should create a hashed Property instance', async () => {
+        const data = { key: 'value' };
+        const property = new Property({ data });
+        const hash = await property.hashData();
+
+        expect(property.meta.annotations.hash).toEqual(hash);
+    })
+
+    it('should create a hashed Property instance with a stored hash', async () => {
+        const data = { key: 'value' };
+        const hashCheck = await CryptoUtils.hashData(data);
+        console.log(`Property:hashData:hashCheck: ${hashCheck}`);
+        const property = new Property({ data, meta: { hash: hashCheck } });
+
+        await property.hashData();
+
+        expect(property.meta.annotations.hash).toEqual(hashCheck);
     });
 
 });
