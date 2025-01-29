@@ -1,5 +1,5 @@
-import { Configurable, Configuration, Parameter } from '@/artifacts';
-import { Message, ErrorMessage, MessageEntry, MessageLevel, MessageLevels, ErrorMessageEntry } from '@artifacts/message';
+import { Configurable, Parameter } from '@/artifacts';
+import { Message, ErrorMessage, MessageLevel,  ErrorMessageEntry } from '@service/message';
 import { IdentifierStore } from '@/utils';
 import { Historian } from './historian';
 import { Codes } from './status';

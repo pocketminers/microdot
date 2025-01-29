@@ -30,6 +30,7 @@ describe('Hashable', () => {
     it('should not throw an error if hash matches', async () => {
         const data = 'test';
         const hashable = new Hashable({data});
+        console.log(`hashable.hash: ${hashable.hash}`);
         await hashable.initialize();
         const hashString = hashable.hash as string;
 

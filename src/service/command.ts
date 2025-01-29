@@ -1,7 +1,7 @@
 import { ArgumentEntry, Argument } from '@artifacts/argument';
 import { checkIsEmpty } from '@utils/checks';
-import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
-import { createIdentifier, Identifier } from '@/utils';
+import { Configurable, ConfigurableEntry } from '@artifacts/configurable';
+import { createIdentifier, Identifier } from '@utils/identifier';
 import { Hashable, PropertyStore } from '@/artifacts';
 
 
@@ -42,7 +42,7 @@ class CommandResult<R, T>
 
 
     constructor({
-        jobId,
+        jobId = createIdentifier(),
         command,
         args,
         output,
@@ -52,13 +52,33 @@ class CommandResult<R, T>
 
         super({
             data: {
-                jobId: jobId || createIdentifier(),
+                jobId: jobId,
                 command,
                 args: new PropertyStore<Argument<any>>(args),
                 output,
                 metrics
             }
         })
+    }
+
+    public get jobId(): Identifier {
+        return this.data.jobId;
+    }
+
+    public get command(): string {
+        return this.data.command;
+    }
+
+    public get args(): PropertyStore<Argument<any>> {
+        return this.data.args;
+    }
+
+    public get output(): R | Error | null {
+        return this.data.output;
+    }
+
+    public get metrics(): ExecutionMetrics {
+        return this.data.metrics;
     }
 
     public toJSON(): {command: string, args: Argument<any>[], output: R | Error | null, metrics: ExecutionMetrics} {
@@ -98,13 +118,13 @@ class Command
     extends
         Configurable
 {
-    public taskRunner: TaskRunner<R, T>;
+    public readonly taskRunner: TaskRunner<R, T>;
 
     /**
      * The Command class is a configurable class that can be executed.
      */
     constructor({
-        id = createIdentifier(),
+        id,
         name = 'Base Command',
         description = 'The Base Command Class',
         taskRunner = defaultTaskRunner,
@@ -114,6 +134,14 @@ class Command
         super({id, name, description, parameters, args});
 
         this.taskRunner = taskRunner;
+    }
+
+    public get name(): string {
+        return this.meta.annotations.get('name') as string;
+    }
+
+    public get description(): string {
+        return this.meta.annotations.get('description') as string;
     }
 
     /**
@@ -129,7 +157,7 @@ class Command
         Promise<R> =>
     {
         this.setArguments(args || []);
-        return await this.taskRunner(instance, this.getAllValueRecords());
+        return await this.taskRunner(instance, this.config);
     }
 
     public run = async ({
@@ -150,7 +178,7 @@ class Command
         
         if (
             args !== undefined
-            && checkIsEmpty([args])
+            && checkIsEmpty(args) === false
         ) {
             bytesReceived = JSON.stringify(args).length;
         }
@@ -165,7 +193,7 @@ class Command
         if (
             output === undefined
             || output === null
-            || checkIsEmpty([output])
+            || checkIsEmpty(output) === true
         ) {
             bytesReturned = 0;
         }
@@ -197,7 +225,7 @@ class Command
 
         return new CommandResult<R, T>({
                 command: this.name,
-                args: [ ...this.getAllValueRecords().entries() ],
+                args: this.arguments,
                 output: output as R || null,
                 metrics: {
                     startTime,
@@ -210,7 +238,8 @@ class Command
     }
 }
 
-interface QueuedCommand {
+interface QueuedCommandEntry {
+    jobId: Identifier;
     processName?: string;
     commandName: string;
     args?: Argument<any>[];
@@ -223,6 +252,6 @@ export {
     type CommandResult,
     type ExecutionMetrics,
     type TaskRunner,
-    type QueuedCommand,
+    type QueuedCommandEntry,
     defaultTaskRunner
 }

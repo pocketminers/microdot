@@ -43,7 +43,7 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name: 'hello', data });
         await identifiable.initialize();
 
-        const hash = new Hashable({ data: { ...data, createdAt: identifiable.createdAt } })
+        const hash = new Hashable({ data: { ...data, createdAt: identifiable.meta.annotations.createdAt } })
         const hashValue = await hash.getHash();
         expect(await identifiable.getHash()).not.toEqual(hashValue);
     });
@@ -54,7 +54,7 @@ describe('Identifiable', () => {
         const identifiable = new Identifiable({ id, name: 'hello', data });
         await identifiable.initialize();
 
-        const hash = new Hashable({ data: { ...data, name: identifiable.name } })
+        const hash = new Hashable({ data: { ...data, name: identifiable.data.name } })
         const hashValue = await hash.getHash();
         expect(await identifiable.getHash()).not.toEqual(hashValue);
     });

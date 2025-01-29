@@ -1,0 +1,34 @@
+{
+    "apiVersion": "pocket/v1",
+    "kind": "peer",
+    "metadata": {
+        "name": "SamplePeer",
+        "description": "This is a sample public peer.  This peer holds a sample service, which is a simple echo service."
+    },
+    "spec": {
+        "properties": {
+            "arguments": [{ 
+                "name":"port",
+                "value": 4343
+            }]
+
+        },
+        "services": [
+            {
+                "name": "echo",
+                "description": "This service echoes the input string.",
+                "type": "service",
+                "properties": {
+                    "parameters": [
+                        {
+                            "name": "input",
+                            "type": "string",
+                            "description": "The string to echo.",
+                            "defaultValue": "Hello, world!"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}

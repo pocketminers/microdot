@@ -68,11 +68,11 @@ interface ProcessEntry<T>
         Partial<Record<'commands', Array<Command<any, T>>>>
 {}
 
-class Process<T>
+abstract class Process<T>
     extends
         Configurable
 {
-    public instance?: T;
+    public abstract instance?: T;
     public status: ProcessStatus = 'New';
     public commands: Array<Command<any, T>> = [];
 
@@ -80,11 +80,11 @@ class Process<T>
         id,
         name = 'Process',
         description = '',
-        parameters = ProcessConfig(id).parameters,
         args = ProcessConfig(id).args,
         instance,
         commands = []
     }: ProcessEntry<T>) {
+        const parameters = ProcessConfig(id).parameters;
         super({id, name, description, parameters, args});
         
         this.commands = commands;
@@ -92,7 +92,7 @@ class Process<T>
         if (
             instance !== undefined
         ) {
-            this.instance = instance;
+            // this.instance = instance;
             this.status = 'Ready';
         }
         else {
@@ -157,10 +157,9 @@ class Process<T>
                 let args: Record<string, any> = {};
 
                 if (
-                    config &&
-                    config.size > 0
+                    config !== undefined
                 ) {
-                    args = config.toArguments();
+                    args = config.getAllValues();
                     console.log('Initializer Config:', args);
                 }
 

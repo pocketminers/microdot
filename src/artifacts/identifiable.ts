@@ -6,7 +6,7 @@ interface IdentifiableEntry<T>
         Record<"id", string>,
         Record<"name", string>,
         Partial<Record<"description", string>>,
-        HashableEntry<T> {}
+        Partial<HashableEntry<T>> {}
 
 
 
@@ -17,12 +17,8 @@ interface IdentifiableEntry<T>
  * @summary Identifiable class that extends Hashable
  */
 class Identifiable<T>
-    extends Hashable<T>
+    extends Hashable<IdentifiableEntry<T>>
 {
-    public readonly id: string;
-    public readonly name: string;
-    public readonly description: string;
-    public readonly createdAt: Date = new Date();
 
     constructor({
         id,
@@ -35,10 +31,7 @@ class Identifiable<T>
             throw new Error("Identifiable:constructor:id, name or data cannot be empty.");
         }
 
-        super({ hash, data });
-        this.id = id;
-        this.name = name;
-        this.description = description;
+        super({ hash, data: {id, name, description, ...data} });
     }
 }
 

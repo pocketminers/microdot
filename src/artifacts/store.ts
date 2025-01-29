@@ -24,20 +24,6 @@ class PropertyStore
         this.add(items)
     }
 
-    // private static hasUniqueNames({ items }: { items: PropertyStoreItems }): boolean {
-    //     const names = new Set<string>();
-    //     for (const item of items) {
-    //         if (
-    //             names.has(item.name)) {
-    //             return false;
-    //         }
-    //         else {
-    //             names.add(item.name);
-    //         }
-    //         names.add(item.name);
-    //     }
-    //     return true;
-    // }
 
     public static fromEntry(entry: ArgumentEntry<any> | ParameterEntry<any>): PropertyStoreItem {
         if( 
@@ -120,18 +106,6 @@ class PropertyStore
         }
 
         this[index] = entry;
-    }
-
-    public getRequiredDefaults(): Record<string, any> {
-        const defaults: Record<string, any> = {};
-        for (const entry of this) {
-            if (entry instanceof Parameter) {
-                if (entry.defaultValue !== undefined && entry.required === true) {
-                    defaults[entry.name] = entry.defaultValue;
-                }
-            }
-        }
-        return defaults;
     }
 
 }

@@ -85,7 +85,7 @@ describe('Configurable', () => {
             { name: 'param2', value: 'value3' }
         ]);
         console.log(configurable.arguments.getEntries());
-        const records = configurable.getRequiredValueRecords();
-        expect(records).toEqual({ param1: 'value1', param2: 'value3' });
+        const records = configurable.getRequiredValues();
+        expect(records).toEqual([{ param1: 'value1' }, { param2: 'value3' }]);
     });
 });

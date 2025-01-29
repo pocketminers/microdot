@@ -40,7 +40,7 @@ describe('ArtifactFactory', () => {
         const entry: ConfigurableEntry = { id: '3', name: 'configurable' };
         const configurable = ArtifactFactory.createConfigurable(entry);
         expect(configurable).toBeDefined();
-        expect(configurable.id).toBe('3');
+        expect(configurable.meta.labels.id).toBe('3');
     });
 
     it('should create a HashedArgument instance', async () => {

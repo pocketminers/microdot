@@ -1,6 +1,7 @@
 import { checkHasEmpties} from "@utils/checks";
 import { IsNotEmpty } from "@utils/decorators";
 import { Hashable } from "@artifacts/hashable";
+import { ArgumentSpec } from "@service/templates/manifest";
 
 
 /**
@@ -18,7 +19,7 @@ interface ArgumentEntry<T>
  * @summary An argument specifies the value of a Parameter by name
  */
 class Argument<T>
-    extends Hashable<{ name: string, value: T }>
+    extends Hashable<ArgumentEntry<T>>
 {
 
     // public readonly name: string;
@@ -78,7 +79,7 @@ class Argument<T>
      * @summary Convert the argument to a pre-formatted string and return it
      */
     public toString(): string {
-        return `${this.name}: ${this.value}`;
+        return `{${this.name}: ${this.value}}`;
     }
 
     /**
@@ -89,6 +90,13 @@ class Argument<T>
         return {
             [this.name]: this.value
         };
+    }
+
+    public toManifestSpec(): ArgumentSpec<T> {
+        return new ArgumentSpec<T>({
+            name: this.name,
+            value: this.value
+        });
     }
 
     /**

@@ -6,6 +6,17 @@ import { checkIsEmpty } from "./checks";
  */
 type Identifier = string;
 
+
+// class Identifiers extends String {
+//     public constructor(id: string) {
+//         super(id);
+//     }
+
+//     public static create(id: string): Identifier {
+//         return new Identifier(id);
+//     }
+// }
+
 enum IdentifierTypes {
     UUID = "UUID",
     Random = "Random",

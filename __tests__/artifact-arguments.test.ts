@@ -21,7 +21,7 @@ describe('Argument', () => {
         const entry: ArgumentEntry<boolean> = { name: 'testName', value: true };
         const arg = new Argument<boolean>(entry);
 
-        expect(arg.toString()).toBe('testName: true');
+        expect(arg.toString()).toBe('{testName: true}');
     });
     
 
@@ -35,8 +35,6 @@ describe('Argument', () => {
     it('should create an Argument instance from a Record', async () => {
         const record = { testName: 'testValue' };
         const args = Argument.fromRecord<string>(record);
-
-        console.log(`args: ${args}`);
 
         expect(args.name).toBe('testName');
         expect(args.value).toBe('testValue');

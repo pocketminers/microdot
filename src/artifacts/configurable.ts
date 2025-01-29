@@ -3,7 +3,7 @@ import { Argument, ArgumentEntry } from "@artifacts/argument";
 import { PropertyStore } from "@artifacts/store";
 import { Parameter, ParameterEntry } from "@artifacts/parameter";
 import { Identifiable, IdentifiableEntry } from "@artifacts/identifiable";
-import { checkIsEmpty } from "@/utils";
+import { checkIsEmpty } from "@utils/checks";
 
 
 /**
@@ -52,6 +52,10 @@ class Configurable
         return this.data.parameters;
     }
 
+    public get config(): { [key: string]: any }[] {
+        return this.getAllValues();
+    }
+
     public isValidArgumentName(arg: Argument<any>): boolean {
         const paramNames = this.parameters.getNames();
         return paramNames.includes(arg.name);
@@ -91,7 +95,7 @@ class Configurable
     public setArguments(args: (ArgumentEntry<any> | Argument<any>)[]): void {
         for (const arg of args) {
             if (arg instanceof Argument) {
-                this.setArgument(arg);
+                this.setArgument<typeof arg.value>(arg);
             }
             else {
                 this.setArgumentFromEntry(arg);
@@ -106,7 +110,7 @@ class Configurable
             param === undefined
             || checkIsEmpty(param) === true
         ) {
-            throw new Error(`Parameter ${name} not found in ${this.name}(${this.id})`);
+            throw new Error(`Parameter ${name} not found in ${this.meta.labels.name}(${this.id})`);
         }
 
         const arg = this.arguments.getEntry(name);
@@ -114,26 +118,30 @@ class Configurable
         return param.getValue(arg?.value);
     }
 
-    public getRequiredValueRecords(): Record<string, any> {
-        const records: Record<string, any> = {};
+    public getAllValues(): { [key: string]: any }[] {
+        const records: { [key: string]: any }[] = [];
 
         for (const param of this.parameters.getEntries()) {
-            if (param.required === true) {
-                records[param.name] = this.getValue(param.name);
-            }
+            records.push({ [param.name]: this.getValue(param.name) });
         }
 
         return records;
     }
 
-    public getAllValueRecords(): Record<string, any> {
-        const records: Record<string, any> = {};
+    public getRequiredValues(): { [key: string]: any }[] {
+        const records: ({[ key: string]: any })[] = this.getAllValues();
+        
+        return records.filter((record) => {
+            const key = Object.keys(record)[0];
+            const param = this.parameters.getEntry(key);
 
-        for (const param of this.parameters.getEntries()) {
-            records[param.name] = this.getValue(param.name);
-        }
-
-        return records;
+            if (param) {
+                return param.required;
+            }
+            else {
+                return false;
+            }
+        });
     }
 
 }

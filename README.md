@@ -69,3 +69,7 @@ yarn docs
 ```bash
 yarn build
 ```
+
+## Components
+
+- **[Artifacts](./src/artifacts/README.md)**: Type classes that define the structure of the system.

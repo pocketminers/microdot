@@ -2,8 +2,7 @@
 import { Codes } from "@service/status";
 import { createIdentifier, Identifier } from "@utils/identifier";
 import { checkForCircularReference, checkIsEmpty } from "@utils/checks";
-import { Hashable } from "@/artifacts";
-
+import { Hashable } from "@artifacts/hashable";
 
 /**
  * MessageLevels is an enum of message levels.
@@ -24,51 +23,67 @@ type MessageLevel = keyof typeof MessageLevels | keyof typeof ErrorMessageLevels
  * MessageEntry is an interface that represents the message entry.
  * The message entry contains the message properties.
  */
-interface MessageEntry<L = MessageLevel, T = any>
+interface MessageEntry<L = MessageLevel, T = any | undefined>
     extends
-        Partial<Record<'id', Identifier>>,
         Record<'body', string>,
+        Partial<Record<'id', Identifier>>,
         Partial<Record<'level', L>>,
         Partial<Record<'action', string>>,
         Partial<Record<'status', number>>,
         Partial<Record<'metadata', T>>,
         Partial<Record<'print', boolean>> {};
 
-
 class Message<L = MessageLevel, T = any>
     extends
-        Hashable<MessageEntry<L, T>>
+        Hashable<{ id: Identifier, body: string, level: L, action: string, status: number, metadata: T, print: boolean, createdAt: Date }>
 {
-    public readonly body: string;
-    public readonly level: L;
-    public readonly action?: string;
-    public readonly status: number;
-    public readonly metadata?: T;
-    public readonly print: boolean;
-    public readonly createdAt: Date = new Date();
-
 
     constructor({
-        id,
+        id = createIdentifier(),
         body,
         level = MessageLevels.Info as L,
-        action = undefined,
+        action = 'undefined',
         status = Codes.OK,
         print = true,
-        metadata
+        metadata = {} as T
     }: MessageEntry<L, T>) {
-        super({id, data: {body, level, action, status, print, metadata}});
+        super({data: {id, body, level, action, status, print, metadata, createdAt: new Date()}});
 
-        this.body = body;
-        this.level = level;
-        this.action = action;
-        this.status = status;
-        this.print = print;
-        this.metadata = checkIsEmpty([metadata]) ? undefined : metadata as T;
-
-        if (this.print) {
+        if (this.data.print) {
             this.printToConsole();
         }
+    }
+
+    get id(): Identifier {
+        return this.data.id;
+    }
+
+    get body(): string {
+        return this.data.body;
+    }
+
+    get level(): L {
+        return this.data.level;
+    }
+
+    get action(): string {
+        return this.data.action;
+    }
+
+    get status(): number {
+        return this.data.status;
+    }
+
+    get metadata(): T {
+        return this.data.metadata;
+    }
+
+    get print(): boolean {
+        return this.data.print;
+    }
+
+    get createdAt(): Date {
+        return this.data.createdAt;
     }
 
     public static createMsg<L, T = undefined>(entry: MessageEntry<L,T>): Message<L,T> {

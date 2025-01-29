@@ -60,7 +60,7 @@
 // /**
 //  * Service Class
 //  * @summary
-//  * A service is a collection of processes and commands that can be run
+//  * A service is a collection of processes and commands that can be run the processes.
 //  */
 // class Service
 // <
@@ -373,6 +373,7 @@
 
 
 export * from "./command";
+export * from "./message";
 // export * from "./historian";
 // export * from "./job";
 // export * from "./messenger";

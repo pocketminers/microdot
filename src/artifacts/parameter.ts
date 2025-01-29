@@ -107,6 +107,10 @@ class Parameter<T>
         return this.data.optionalValues;
     }
 
+    public get type(): string {
+        return typeof this.defaultValue;
+    }
+
     public getValue(value?: T): T {
         if (value !== undefined) {
             this.isValueInOptionalValues(value);

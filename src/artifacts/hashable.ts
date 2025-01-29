@@ -1,6 +1,7 @@
 import { checkIsEmpty, checkIsString } from "@utils/checks";
 import { IsNotEmpty } from "@utils/decorators";
 import { CryptoUtils } from "@utils/crypto";
+import { Property } from "./property";
 
 
 /**
@@ -16,34 +17,39 @@ interface HashableEntry<T>
  * Hashable Class
  * @summary Hashable class that can be extended by other classes
  */
-class Hashable<T> {
-    public readonly data: T;
-    public hash?: string;
-
-    /**
-     * Hashable Constructor to create a new Hashable instance from a data
-     * @param data
-     * @summary Create a new Hashable instance
-     */
+class Hashable<T>
+    extends Property<T>
+{
+    
     constructor({
         hash = undefined,
-        data
+        data,
     }: HashableEntry<T>) {
 
         if (checkIsEmpty(data)) {
             throw new Error("Hashable:constructor:data cannot be empty.");
         }
 
-        this.data = data;
-        this.hash = hash;
+        super({ data, meta: { hash } });
+    }
+
+    public get hash(): string | undefined {
+        return this.meta.annotations.hash;
+    }
+
+    public set hash(value: string) {
+        this.meta.annotations.hash = value;
     }
 
     public async getHash(): Promise<string> {
-        if (checkIsEmpty(this.hash) === true) {
-            this.hash = await Hashable.hashData(this.data);
+        if (
+            checkIsEmpty(this.hash) === true
+            || this.meta.annotations.hash === "not-set"
+        ) {
+            this.meta.annotations.hash = await Hashable.hashData<T>(this.data);
         }
 
-        return this.hash as string;
+        return this.meta.annotations.hash as string;
     }
 
     /**
@@ -58,11 +64,9 @@ class Hashable<T> {
      * @summary Initialize the hashable instance
      */
     public async initialize(): Promise<void> {
-        if(this.hash === undefined) {
-            this.hash = await Hashable.hashData(this.data);
-        }
+        await this.getHash();
         
-        if (this.hasEqualHash(this.hash) === false) {
+        if (this.hasEqualHash(this.meta.annotations.hash as string) === false) {
             throw new Error("Hash mismatch");
         }
     }
@@ -72,7 +76,7 @@ class Hashable<T> {
      * @summary Check if the original hash matches the current hash
      */
     public hasEqualHash(hash: string): boolean {
-        return this.hash === hash;
+        return this.meta.annotations.hash === hash;
     }
 
     /**
@@ -97,7 +101,7 @@ class Hashable<T> {
 
         else if (
             CryptoUtils.isHash<T>(hashOrData) === false
-            && await this.hasEqualData(hashOrData as T) === false
+            && await this.hasEqualData<T>(hashOrData as T) === false
         ) {
             throw new Error("When hashing the input data, the hash does not match the current hash of the data");
         }
@@ -136,7 +140,7 @@ class Hashable<T> {
     @IsNotEmpty
     public static async hashString(value: string): Promise<string> {
         try {
-            return await CryptoUtils.hashData(value);
+            return await CryptoUtils.hashData<string>(value);
         }
         catch (error: any) {
             throw new Error(error.message);
