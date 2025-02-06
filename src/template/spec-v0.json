@@ -1,0 +1,43 @@
+{
+    "apiVersion": "pocket/v1",
+    "kind": "Property",
+    "metadata": {
+        "name": "SampleProperties",
+        "description": "This is a declaration of the properties",
+        "annotations": {
+            "createdBy": "Johnny Quest",
+            "sampleAnnotation": "This is a sample annotation"
+        },
+        "labels": {
+            "id": "prop-1",
+            "sampleLabel": "This is a sample label"
+        }
+    },
+    "spec": {
+        "arguments": [{ 
+            "type": "number",
+            "name":"port",
+            "value": 4343
+        },
+        {
+            "name":"host",
+            "value": "localhost"
+        },
+        {
+            "type": "{pre: number, post: number}",
+            "name": "timeout",
+            "value": {
+                "pre": 1000,
+                "post": 2000
+            } 
+        }],
+        "parameters": [
+            {
+                "name": "input",
+                "type": "string",
+                "description": "The string to echo.",
+                "defaultValue": "Hello, world!"
+            }
+        ]
+    }
+}

@@ -1,4 +1,12 @@
-import { checkForCircularReference, checkIsEmpty, checkIsString, checkIsArray, checkHasEmpties, checkIsObject, checkIsBoolean } from '../src/utils/checks';
+import { Checks } from '../src/utils/checks';
+
+const checkIsArray = Checks.isArray;
+const checkIsBoolean = Checks.isBoolean;
+const checkIsObject = Checks.isObject;
+const checkIsString = Checks.isString;
+const checkForCircularReference = Checks.forCircularReference;
+const checkIsEmpty = Checks.isEmpty;
+const checkHasEmpties = Checks.hasEmpties;
 
 describe('checkIsArray', () => {
     it('should return false for empty arrays', () => {

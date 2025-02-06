@@ -1,4 +1,4 @@
-import { checkHasEmpties } from "./checks";
+import { Checks } from "./checks";
 
 /**
  * Decorator to check if the input is not empty
@@ -12,7 +12,7 @@ function IsNotEmpty(target: any, propertyKey: string, descriptor: PropertyDescri
         //     // console.log(`${target.name}:${propertyKey}:input cannot be empty.`);
         //     throw new Error(`${target.name}:${propertyKey}:input cannot be empty.`);
         // }
-        if (checkHasEmpties(...args) === true) {
+        if (Checks.hasEmpties(...args) === true) {
             // console.log(`${target.name}:${propertyKey}:input ${args.toString()} cannot be empty.`);
             throw new Error(`${target.name}:${propertyKey}:input cannot be empty.`);
         }

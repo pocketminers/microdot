@@ -1,5 +1,5 @@
 import { IsNotEmpty } from "../src/utils/decorators";
-import { checkHasEmpties } from "../src/utils/checks";
+import { Checks } from "../src/utils/checks";
 
 class TestClass {
     @IsNotEmpty
@@ -16,7 +16,7 @@ describe('IsNotEmpty Decorator - no mocks', () => {
     });
 
     it('should throw an error if input is empty', () => {
-        const hasEmpties = checkHasEmpties(' ', ' ', ' ');
+        const hasEmpties = Checks.hasEmpties(' ', ' ', ' ');
         console.log('hasEmpties: ', hasEmpties);
 
         expect(() => instance.testMethod(undefined)).toThrow('undefined:testMethod:input cannot be empty.');

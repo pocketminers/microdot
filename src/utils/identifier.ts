@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { checkIsEmpty } from "./checks";
+import { Checks } from "./checks";
 
 /**
  * The Identifier type is a string that is used to uniquely identify an object.
@@ -101,7 +101,7 @@ class IdentifierStore
                 typeof id !== "string"
                 || typeof value !== "string"
                 || typeof index !== "number"
-                || checkIsEmpty([value, index])
+                || Checks.isEmpty([value, index])
             ) {
                 throw new Error(`Invalid identifier or index type: ${value}, ${index}`);
             }
@@ -168,7 +168,7 @@ class IdentifierStore
         }
 
         for (const [key, id] of map.entries()) {
-            if (checkIsEmpty([id, key])) {
+            if (Checks.isEmpty([id, key])) {
                 throw new Error(`Identifier or key is empty: ${id}, ${key}`);
             }
 
@@ -276,7 +276,7 @@ class IdentifierStore
         if (
             Array.isArray(idsOrRecords)
             && idsOrRecords.length > 0
-            && checkIsEmpty([idsOrRecords])
+            && Checks.isEmpty([idsOrRecords])
         ) {
             for (const id of idsOrRecords) {
                 const completed = this.remove(id);

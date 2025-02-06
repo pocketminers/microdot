@@ -1,4 +1,4 @@
-import { ArgumentSpec } from '../src/service/templates/arg';
+import { ArgumentSpec } from '../src/template/spec/v0/arg';
 
 describe('ArgumentSpec', () => {
     it('should create an instance of ArgumentSpec', () => {
@@ -20,12 +20,12 @@ describe('ArgumentSpec', () => {
         }
     });
 
-    it('should throw an error if the value type does not match the expected type when calling fromJSON', () => {
-        expect(() => ArgumentSpec.fromJSON({type: "number", name: "arg1", value: "value1"})).toThrow();
+    it('should throw an error if the value type does not match the expected type new when calling', () => {
+        expect(() => new ArgumentSpec({type: "number", name: "arg1", value: "value1"})).toThrow();
     });
 
     it('should create an instance of ArgumentSpec from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: "value1"});
+        const arg = new ArgumentSpec({name: "arg1", value: "value1"});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
@@ -35,7 +35,7 @@ describe('ArgumentSpec', () => {
     });
 
     it('should create an argumentspec with an object value from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: {key: "value1"}});
+        const arg = new ArgumentSpec({name: "arg1", value: {key: "value1"}});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
@@ -45,7 +45,7 @@ describe('ArgumentSpec', () => {
     });
 
     it('should create an argumentspec with an array value from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: ["value1"]});
+        const arg = new ArgumentSpec({name: "arg1", value: ["value1"]});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
@@ -55,7 +55,7 @@ describe('ArgumentSpec', () => {
     });
 
     it('should create an argumentspec with a number value from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: 1});
+        const arg = new ArgumentSpec({name: "arg1", value: 1});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
@@ -65,7 +65,7 @@ describe('ArgumentSpec', () => {
     });
 
     it('should create an argumentspec with a boolean value from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: true});
+        const arg = new ArgumentSpec({name: "arg1", value: true});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
@@ -75,23 +75,27 @@ describe('ArgumentSpec', () => {
     });
 
     it('should create an argumentspec with a null value from JSON', () => {
-        const arg = ArgumentSpec.fromJSON({name: "arg1", value: null});
+        const arg = new ArgumentSpec({name: "arg1", value: null});
         expect(arg).toBeInstanceOf(ArgumentSpec);
     });
 
     it('should output the correct JSON', () => {
         const arg = new ArgumentSpec<string>({name: "arg1", value: "value1"});
-        expect(arg.toJSON()).toEqual({type: "string", name: "arg1", value: "value1"});
+        expect(arg).toEqual({type: "string", name: "arg1", value: "value1"});
     });
 
     it('should output the correct JSON with a type', () => {
         const arg = new ArgumentSpec<string>({type: "string", name: "arg1", value: "value1"});
-        expect(arg.toJSON()).toEqual({type: "string", name: "arg1", value: "value1"});
+        expect(arg).toEqual({type: "string", name: "arg1", value: "value1"});
     });
 
     it('should output the correct JSON with an object value', () => {
         const arg = new ArgumentSpec<{key: string}>({name: "arg1", value: {key: "value1"}});
-        console.log(arg.toJSON());
-        expect(arg.toJSON()).toEqual({type: "object", name: "arg1", value: {key: "value1"}});
+        expect(arg).toEqual({type: "object", name: "arg1", value: {key: "value1"}});
+    });
+
+    it('should output key-value pair', () => {
+        const arg = new ArgumentSpec<string>({name: "arg1", value: "value1"});
+        expect(arg.toKeyValue()).toEqual({arg1: "value1"});
     });
 });

@@ -1,6 +1,5 @@
-// import { createHash } from "crypto";
+import { Checks } from "@utils/checks";
 
-import { checkIsEmpty } from "./checks";
 
 type HashAlgorithm = "SHA256" | "SHA512" | "MD5";
 type HashDigest = "hex" | "base64";
@@ -116,7 +115,7 @@ class CryptoUtils {
         }
 
         if (
-            checkIsEmpty(str) === false
+            Checks.isEmpty(str) === false
             && str.startsWith("-") === false
         ) {
             str += "-";
@@ -154,7 +153,7 @@ class CryptoUtils {
         let str = '';
 
         if (
-            checkIsEmpty(value) === false
+            Checks.isEmpty(value) === false
             // && typeof value === 'object'
             && Array.isArray(value) === true
         ) {
