@@ -1,6 +1,11 @@
 import { Checks } from "@/utils";
 import { ArgumentSpec, ParameterSpec } from "@template/spec/v0/config";
 
+interface ArgumentEntry<T = any>
+    extends 
+        Pick<ArgumentSpec<T>, "name" | "value">,
+        Partial<Pick<ArgumentSpec<T>, "type">> {}
+
 
 /**
  * 
@@ -14,11 +19,7 @@ class Argument<T = any> {
         type,
         name,
         value
-    }: {
-        type?: string,
-        name: string,
-        value: T
-    }) {
+    }: ArgumentEntry<T>) {
         if (
             type !== undefined
             && Checks.hasType(value, type) === false
@@ -40,6 +41,12 @@ class Argument<T = any> {
     }
 }
 
+
+interface ParameterEntry<T = any>
+    extends
+        Pick<ParameterSpec<T>, "name">,
+        Partial<Pick<ParameterSpec<T>, "type" | "description" | "required" | "defaultValue" | "optionalValues">> {}
+
 class Parameter<T = any> {
     name: string;
     required: boolean;
@@ -55,14 +62,7 @@ class Parameter<T = any> {
         description = "",
         defaultValue,
         optionalValues = []
-    }: {
-        type?: string,
-        name: string,
-        required?: boolean,
-        description?: string,
-        defaultValue?: T,
-        optionalValues?: T[]
-    }) {
+    }: ParameterEntry<T>) {
         if (
             defaultValue !== undefined
             && type !== undefined
@@ -109,6 +109,12 @@ class Parameter<T = any> {
 }
 
 
+interface PropertiesEntry {
+    args?: ArgumentEntry[],
+    params?: ParameterEntry[]
+}
+
+
 class Properties {
     public args: Argument<any>[] = [];
     public params: Parameter<any>[] = [];
@@ -116,10 +122,7 @@ class Properties {
     constructor({
         args = [],
         params = []
-    }: {
-        args?: { name: string, value: any, type?: string }[],
-        params?: { name: string, id: string, defaultValue?: undefined, optionalValues?: undefined}[]
-    } = {}) {
+    }: PropertiesEntry = {}) {
         this.args = args !== undefined ? args.map(arg => new Argument(arg)) : [];
         this.params = params !== undefined ? params.map(param => new Parameter(param)) : [];
     }
@@ -162,16 +165,20 @@ class Properties {
     }
 
     private getAllNames(): string[] {
-        const names = [];
-        for (const arg of this.args) {
+        const names: string[] = [];
+        const args = this.args;
+        const params = this.params;
+            
+        for (const arg of args) {
             names.push(arg.name);
         }
-        for (const param of this.params) {
-            names.push(param.name);
+        for (const param of params) {
+            if (!names.includes(param.name)) {
+                names.push(param.name);
+            }
         }
 
         return names;
-
     }
 
     private hasUniqueNames(): string[] {
@@ -182,6 +189,19 @@ class Properties {
         }
 
         return names;
+    }
+
+    public getAllValues(): {
+        [key: string]: any
+    } {
+        const names = this.hasUniqueNames();
+
+        const values = new Map<string, any>();
+        for (const name of names) {
+            values.set(name, this.getValue(name))
+        }
+
+        return values;
     }
 
     public getValue<T = any>(name: string): T | undefined {
@@ -197,9 +217,9 @@ class Properties {
     } {
         const names = this.getNames();
 
-        const keyValue = new Map<string, any>();
+        const keyValue: { [key: string]: any } = {};
         for (const name of names) {
-            keyValue.set(name, this.getValue(name))
+            keyValue[name] = this.getValue(name)
         }
 
         return keyValue;
@@ -207,6 +227,9 @@ class Properties {
 }
 
 export {
+    type ArgumentEntry,
+    type ParameterEntry,
+    type PropertiesEntry,
     Argument,
     Parameter,
     Properties
