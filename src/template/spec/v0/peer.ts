@@ -1,4 +1,4 @@
-import { PropertiesSpec } from "./properties";
+import { PropertiesSpec } from "@template/spec/v0/config";
 
 class PeerSpec {
     public id: string;

@@ -1,6 +1,4 @@
-import { ConfigSpec, ParameterSpec } from "./config";
-import { JobResultSpec, JobRunSpec } from "./job";
-import { ProcessSpec } from "./process";
+import { ParameterSpec } from "@/template/spec";
 
 
 const ServiceConfigParameters = [
@@ -78,18 +76,6 @@ const ServiceConfigParameters = [
     } as ParameterSpec<boolean>
 ];
 
-/**
- * Service Specification Template
- * @version v0
- */
-interface ServiceSpec
-    extends
-        ConfigSpec,
-        Record<"processes", ProcessSpec[]>,
-        Record<"queue", JobRunSpec[]>,
-        Record<"log", JobResultSpec[]> {}
-
 export {
-    ServiceConfigParameters,
-    type ServiceSpec
+    ServiceConfigParameters
 };

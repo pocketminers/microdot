@@ -2,7 +2,9 @@
 // import { PropertyMap, PropertyMapJSON } from '@component/property';
 
 
-
+/**
+ * Annotation Metadata Template
+ */
 interface AnnotationEntry
     extends
         Partial<Record<"hash", string>>,
@@ -13,7 +15,7 @@ interface AnnotationEntry
 }
 
 /**
- * Annotations are used to store metadata entries not meant for selection or filtering
+ * Annotations are used to store metadata entries not meant for selection or filtering.  Generally, these are used for internal purposes.
  */
 class Annotations
     extends Map<string, string | number | boolean | undefined | string[]>

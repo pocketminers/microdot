@@ -10,25 +10,25 @@
 // // import { JobQueueConfig } from './queue';
 
 
-// /**
-//  * ServiceTypes
-//  * @summary
-//  * Describes the type of service
-//  * - Internal: Service is private and not accessible from outside of the K8s cluster
-//  * - External: Service is public and accessible from outside of the K8s cluster
-//  */
-// enum ServiceTypes {
-//     Internal = 'Internal',
-//     External = 'External'
-// }
+/**
+ * ServiceTypes
+ * @summary
+ * Describes the type of service
+ * - Internal: Service is private and not accessible from outside of the K8s cluster
+ * - External: Service is public and accessible from outside of the K8s cluster
+ */
+enum ServiceTypes {
+    Internal = 'Internal',
+    External = 'External'
+}
 
-// /**
-//  * ServiceType
-//  * @summary
-//  * Describes the type of service
-//  * - enum: ['Internal', 'External']
-//  */
-// type ServiceType = keyof typeof ServiceTypes;
+/**
+ * ServiceType
+ * @summary
+ * Describes the type of service
+ * - enum: ['Internal', 'External']
+ */
+type ServiceType = keyof typeof ServiceTypes;
 
 
 // /**

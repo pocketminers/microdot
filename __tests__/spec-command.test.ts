@@ -1,11 +1,8 @@
-import { CommandSpec, CommandResultSpec, defaultTaskRunner } from '../src/template/spec/v0/command';
-import { ArgumentSpec } from '../src/template/spec/v0/arg';
-import { ParameterSpec } from '../src/template/spec/v0/param';
+import { defaultTaskRunner } from '../src/component/runner';
+import { CommandSpec, CommandResultSpec } from '../src/template/spec/v0/command';
+import { ArgumentSpec, ParameterSpec } from '../src/template/spec/v0/config';
 
 describe('CommandSpec - taskRunner functionality', () => {
-    const defaultTaskRunner = async (instance: any, args: any) => {
-        return await instance(args);
-    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -14,34 +11,40 @@ describe('CommandSpec - taskRunner functionality', () => {
     it('should create a CommandSpec object properly', () => {
         const args: ArgumentSpec<any>[] = [];
         const params: ParameterSpec<any>[] = [];
-        const command = new CommandSpec({
+        const command: CommandSpec = {
+            id: 'testCommand',
             name: 'testCommand',
             description: 'This is a test command',
-            args,
-            params,
-            taskRunner: defaultTaskRunner
-        });
+            properties: {
+                args,
+                params
+            },
+            run: defaultTaskRunner
+        };
 
         expect(command.name).toBe('testCommand');
         expect(command.description).toBe('This is a test command');
-        expect(command.args).toBe(args);
-        expect(command.params).toBe(params);
-        expect(command.taskRunner).toBe(defaultTaskRunner);
+        expect(command.properties.args).toBe(args);
+        expect(command.properties.params).toBe(params);
+        expect(command.run).toBe(defaultTaskRunner);
     });
 
     it('should run the taskRunner properly', async () => {
         const args: ArgumentSpec<any>[] = [];
         const params: ParameterSpec<any>[] = [];
         const mockTaskRunner = jest.fn().mockResolvedValue('result');
-        const command = new CommandSpec({
+        const command: CommandSpec ={
+            id: 'testCommand',
             name: 'testCommand',
             description: 'This is a test command',
-            args,
-            params,
-            taskRunner: mockTaskRunner
-        });
+            properties: {
+                args,
+                params
+            },
+            run: mockTaskRunner
+        };
 
-        const result = await command.taskRunner(undefined, {});
+        const result = await command.run({});
 
         expect(mockTaskRunner).toHaveBeenCalled();
         expect(result).toBe('result');
@@ -53,6 +56,7 @@ describe('CommandResultSpec', () => {
         const runSpec = {
             name: 'testCommand',
             jobId: '123',
+            processId: '456',
             args: {},
             instance: {}
         };
@@ -79,13 +83,16 @@ describe('CommandResultSpec', () => {
 
 
 describe('CommandSpec w/out mocks', () => {
-    const command = new CommandSpec({
+    const command: CommandSpec = {
+        id: 'testCommand',
         name: 'testCommand',
         description: 'This is a test command',
-        args: [],
-        params: [],
-        taskRunner: defaultTaskRunner
-    });
+        properties: {
+            args: [],
+            params: []
+        },
+        run: defaultTaskRunner
+    };
 
     it('should return the name properly', () => {
         expect(command.name).toBe('testCommand');
@@ -96,34 +103,34 @@ describe('CommandSpec w/out mocks', () => {
     });
 
     it('should return the args properly', () => {
-        expect(command.args).toEqual([]);
+        expect(command.properties.args).toEqual([]);
     });
 
     it('should return the params properly', () => {
-        expect(command.params).toEqual([]);
+        expect(command.properties.params).toEqual([]);
     });
 
     it('should return the taskRunner properly', () => {
-        expect(command.taskRunner).toBe(defaultTaskRunner);
+        expect(command.run).toBe(defaultTaskRunner);
     });
 });
 
 
 describe('CommandSpec w/ mocks', () => {
-    const defaultTaskRunner = async (instance: any, args: any) => {
-        return await instance(args);
-    };
 
     const args: ArgumentSpec<any>[] = [];
     const params: ParameterSpec<any>[] = [];
     const mockTaskRunner = jest.fn().mockResolvedValue('result');
-    const command = new CommandSpec({
+    const command: CommandSpec = {
+        id: 'testCommand',
         name: 'testCommand',
         description: 'This is a test command',
-        args,
-        params,
-        taskRunner: mockTaskRunner
-    });
+        properties: {
+            args,
+            params
+        },
+        run: mockTaskRunner,
+    };
 
     beforeEach(() => {
         jest.clearAllMocks();
@@ -132,13 +139,13 @@ describe('CommandSpec w/ mocks', () => {
     it('should create a CommandSpec object properly', () => {
         expect(command.name).toBe('testCommand');
         expect(command.description).toBe('This is a test command');
-        expect(command.args).toBe(args);
-        expect(command.params).toBe(params);
-        expect(command.taskRunner).toBe(mockTaskRunner);
+        expect(command.properties.args).toBe(args);
+        expect(command.properties.params).toBe(params);
+        expect(command.run).toBe(mockTaskRunner);
     });
 
     it('should run the taskRunner properly', async () => {
-        const result = await command.taskRunner(undefined, {});
+        const result = await command.run({});
 
         expect(mockTaskRunner).toHaveBeenCalled();
         expect(result).toBe('result');

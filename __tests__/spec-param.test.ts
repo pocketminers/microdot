@@ -1,20 +1,21 @@
-import { ParameterSpec } from '../src/template/spec';
 
-describe('ParameterSpec', () => {
-    it('should create an instance of ParameterSpec', () => {
-        const param = new ParameterSpec<string>({name: "param1", required: true, description: "description1"});
-        expect(param).toBeInstanceOf(ParameterSpec);
+import { Parameter } from '../src/component/properties'
+
+describe('Parameter', () => {
+    it('should create an instance of Parameter', () => {
+        const param = new Parameter<string>({name: "param1", required: true, description: "description1"});
+        expect(param).toBeInstanceOf(Parameter);
     });
 
-    it('should create an instance of ParameterSpec with a type', () => {
-        const param = new ParameterSpec<string>({name: "param1", required: true, description: "description1", defaultValue: "value1"});
-        expect(param).toBeInstanceOf(ParameterSpec);
+    it('should create an instance of Parameter with a type', () => {
+        const param = new Parameter<string>({name: "param1", required: true, description: "description1", defaultValue: "value1"});
+        expect(param).toBeInstanceOf(Parameter);
     });
 
     it('should throw an error if the value type does not match the expected type', () => {
         try {
             // @ts-expect-error - Testing invalid input
-            new ParameterSpec<string>({name: "param1", required: true, description: "description1", defaultValue: 1});
+            new Parameter<string>({name: "param1", required: true, description: "description1", defaultValue: 1});
         }
         catch (error) {
             expect(error).toBeInstanceOf(Error);
@@ -23,26 +24,26 @@ describe('ParameterSpec', () => {
 
     it('should throw an error if the value type does not match the expected type when calling fromJSON', () => {
         try {
-            new ParameterSpec({name: "param1", required: true, description: "description1", defaultValue: 1, type: "string"});
+            new Parameter({name: "param1", required: true, description: "description1", defaultValue: 1, type: "string"});
         }
         catch (error) {
             expect(error).toBeInstanceOf(Error);
         }
     });
 
-    it('should create an instance of ParameterSpec from JSON', () => {
-        const param = new ParameterSpec({name: "param1", required: true, description: "description1"});
-        expect(param).toBeInstanceOf(ParameterSpec);
+    it('should create an instance of Parameter from JSON', () => {
+        const param = new Parameter({name: "param1", required: true, description: "description1"});
+        expect(param).toBeInstanceOf(Parameter);
     });
 
     it('should create a parameterspec with an array value', () => {
-        const param = new ParameterSpec<string[]>({name: "param1", required: true, description: "description1", defaultValue: ["value1"]});
-        expect(param).toBeInstanceOf(ParameterSpec);
+        const param = new Parameter<string[]>({name: "param1", required: true, description: "description1", defaultValue: ["value1"]});
+        expect(param).toBeInstanceOf(Parameter);
     });
 
     it('should throw an error if the value type does not match the expected type when calling fromJSON', () => {
         try {
-            new ParameterSpec({name: "param1", required: true, description: "description1", defaultValue: ["value1"], type: "number"});
+            new Parameter({name: "param1", required: true, description: "description1", defaultValue: ["value1"], type: "number"});
         }
         catch (error) {
             expect(error).toBeInstanceOf(TypeError);

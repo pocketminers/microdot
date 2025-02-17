@@ -1,58 +1,53 @@
-import { ArgumentSpec } from './arg';
-import { ParameterSpec } from './param';
-import { PropertiesSpec } from './properties';
+import { ConfigSpec } from './config';
 
 
-type TaskRunner<R = any, T = any>  = (instance: T | undefined, args?: Record<string, any>) => Promise<R>;
-
-const defaultTaskRunner: TaskRunner<any, any> = async (instance, args) => {
-    return await instance(args);
-}
-
-class CommandSpec<R = any, T = any>
-    extends PropertiesSpec
-{
-    public name: string;
-    public description: string;
-    public declare args: ArgumentSpec<any>[];
-    public declare params: ParameterSpec<any>[];
-    public taskRunner: TaskRunner<R, T>;
-
-    constructor({
-        name,
-        description,
-        args,
-        params,
-        taskRunner = defaultTaskRunner
-    }: {
-        name: string;
-        description: string;
-        args: ArgumentSpec<any>[],
-        params: ParameterSpec<any>[],
-        taskRunner: TaskRunner;
-    }) {
-        super({args, params});
-
-        this.name = name;
-        this.description = description;
-        this.taskRunner = taskRunner;
-    }
-}
+/**
+ * TaksRunner runs a command
+ * @param instance - The instance of the command
+ * @param args - The arguments to the command
+ * @returns The result of the command
+ * @version v0
+ */
+type TaskRunner<R = any, T = any>  = ({instance, args}: {instance?: T | undefined, args?: Record<string, any>}) => Promise<R>;
 
 
-interface CommandRunSpec<T = any> {
-    name: string;
-    jobId: string;
-    args: Record<string, any>;
-    instance: T;
-}
+/**
+ * Command Specification Template
+ * @version v0
+ */
+interface CommandSpec<R = any, T = any>
+    extends
+        ConfigSpec, // id, name, description, properties
+        Record<'run', TaskRunner<R, T>> {}
 
+
+/**
+ * Command Run Specification Template
+ * @version v0
+ */
+interface CommandRunSpec
+    extends
+        Record<'name', string>,
+        Record<"processId", string>,
+        Record<'args', Record<string, any>> {}
+
+
+
+/**
+ * Command Result Specification Template
+ * @version v0
+ */
 interface CommandResultSpec<R>
     extends
         Record<'run', CommandRunSpec>,
         Record<'output', R>,
         Record<'metrics', CommandResultMetricsSpec> {}
 
+
+/**
+ * Command Result Metrics Specification Template
+ * @version v0
+ */
 interface CommandResultMetricsSpec
     extends
         Record<'start', number>,
@@ -63,10 +58,9 @@ interface CommandResultMetricsSpec
 
 
 export {
-    CommandSpec,
+    type CommandSpec,
     type CommandRunSpec,
-    CommandResultSpec,
+    type CommandResultSpec,
     type CommandResultMetricsSpec,
-    type TaskRunner,
-    defaultTaskRunner
+    type TaskRunner
 };

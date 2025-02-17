@@ -27,7 +27,11 @@ type TemplateKind = keyof typeof TemplateKinds;
 type Spec<K extends TemplateKinds, T = any> = K extends TemplateKinds.Argument ? ArgumentSpec<T> : never;
 
 
-interface Template<V extends ApiVersions = ApiVersions.v1, K extends TemplateKinds = TemplateKinds.Peer, T = any> {
+interface Template<
+    V extends ApiVersions = ApiVersions.v1,
+    K extends TemplateKinds = TemplateKinds.Peer,
+    T = any
+> {
     apiVersion: V;
     kind: K;
     metadata: MetadataEntry;
@@ -40,5 +44,6 @@ export {
     ApiVersions,
     type TemplateKind,
     TemplateKinds,
-    Template
+    Template,
+    type Spec
 };

@@ -1,11 +1,42 @@
-import { Checks } from "@/utils";
-import { CommandResultSpec, CommandRunSpec, CommandSpec } from "@template/spec/v0/command";
+import { Checks } from "@utils/checks";
+import {
+    CommandResultSpec,
+    CommandRunSpec,
+    CommandSpec,
+    TaskRunner
+} from "@template/spec/v0/command";
 
 
-class CommandManager {
+/**
+ * The default task runner
+ * @param instance - The instance of the command
+ * @param args - The arguments to the command
+ * @returns The result of the command
+ * @version v0
+ */
+const defaultTaskRunner: TaskRunner<any, any> = async ({instance, args}) => {
+    return await instance(args);
+}
+
+
+class CommandRunner {
     private commands: Map<string, CommandSpec> = new Map();
 
+    public constructor(commands: CommandSpec[] = []) {
+        for (const command of commands) {
+            this.registerCommand(command);
+        }
+    }
+
+    private checkCommandIsUnique(command: CommandSpec): void {
+        if (this.commands.has(command.name)) {
+            throw new Error(`Command ${command.name} already exists`);
+        }
+    }
+
     public registerCommand(command: CommandSpec): void {
+        this.checkCommandIsUnique(command);
+
         this.commands.set(command.name, command);
     }
 
@@ -21,12 +52,24 @@ class CommandManager {
         return Array.from(this.commands.values());
     }
 
+    public listCommandNames(): string[] {
+        return Array.from(this.commands.keys());
+    }
 
-    public async executeCommand<R, T>(
+
+    public async executeCommand<R, T>({
+        commandName,
+        jobId,
+        processId = 'default',
+        instance,
+        args
+    }: {
         commandName: string,
-        instance: T,
-        args: Record<string, any>
-    ): Promise<CommandResultSpec<R>> {
+        jobId?: string,
+        processId?: string,
+        instance?: T,
+        args?: Record<string, any>
+    }): Promise<CommandResultSpec<R>> {
 
         const command = this.getCommand(commandName);
 
@@ -45,11 +88,13 @@ class CommandManager {
             args !== undefined
             && Checks.isEmpty(args) === false
         ) {
+            console.log(`args`, args);
             bytesIn = JSON.stringify(args).length;
+            console.log(`bytesIn`, bytesIn);
         }
         
         try {
-            output = await command.taskRunner({instance, args});
+            output = await command.run({instance, args});
         }
         catch (error: any) {
             output = error;
@@ -90,8 +135,9 @@ class CommandManager {
 
         return {
             run: {
+                processId: processId,
                 name: commandName,
-                jobId: `${commandName}-${Date.now()}`,
+                jobId: jobId !== undefined ? jobId : `${commandName}-${Date.now()}`,
                 args,
                 instance
             },
@@ -109,5 +155,6 @@ class CommandManager {
 
 
 export {
-    CommandManager,
+    defaultTaskRunner,
+    CommandRunner,
 }
