@@ -57,7 +57,7 @@ class Message<
     implements MessageSpec<L, T, S>
 {
     public level: L;
-    public properties: Properties;
+    public properties:Properties;
     public body: T;
     public status: S;
     public timestamp: Date = new Date();
@@ -195,4 +195,15 @@ class MessageManager
 
         return message;
     }
+}
+
+
+export {
+    CommunicatorConfigParameters,
+    MessageConfigParameters,
+    Message,
+    type MessageEntry,
+    MessageFactory,
+    MessageManager,
+    MessageStore
 }

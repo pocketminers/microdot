@@ -1,5 +1,7 @@
 import { MessageLevels, MessageLevel, MessageSpec } from '../src/template/spec/v0/comms';
-
+import { MessageConfigParameters } from '../src/service/communicator';
+import { MessageStatuses } from '../src/template/spec/v0/comms';
+import { Argument, Properties } from '../src/component';
 
 describe('MessageSpec', () => {
 
@@ -7,19 +9,21 @@ describe('MessageSpec', () => {
         const message: MessageSpec = {
             level: MessageLevels.Info,
             status: 200,
-            properties: {
-                print: true,
-                save: true,
-                throw: false
-            },
+            properties: new Properties({
+                args: [
+                    new Argument<boolean>({name: 'print', value: true}),
+                    new Argument<boolean>({name: 'save', value: true}),
+                    new Argument<boolean>({name: 'throw', value: false})
+                ]
+            }),
             body: 'This is a test message',
             timestamp: new Date()
         };
 
         expect(message.level).toBe(MessageLevels.Info);
-        expect(message.properties.print).toBe(true);
-        expect(message.properties.save).toBe(true);
-        expect(message.properties.throw).toBe(false);
+        expect(message.properties.getValue('print')).toBe(true);
+        expect(message.properties.getValue('save')).toBe(true);
+        expect(message.properties.getValue('throw')).toBe(false);
         expect(message.body).toBe('This is a test message');
     });
 });

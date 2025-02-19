@@ -1,3 +1,5 @@
+import { Properties } from "@/component";
+
 enum MessageLevels {
     Debug = "Debug",
     Info = "Info",
@@ -13,7 +15,7 @@ interface MessageSpec<L = MessageLevel, T = any | undefined, S = number>
         Record<'body', T>,
         Record<'level', L>,
         Record<"status", S>,
-        Record<"properties", Record<"print" | "save" | "throw", boolean>>,
+        Record<"properties", Properties>,
         Record<"timestamp", Date> {}
 
 
