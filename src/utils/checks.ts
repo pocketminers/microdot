@@ -1,5 +1,5 @@
 class Checks {
-    static isArray(value: any): boolean {
+    public static isArray(value: any): boolean {
         try {
             if (
                 value !== undefined
@@ -16,7 +16,7 @@ class Checks {
         return false;
     }
 
-    static isBoolean(value: any): boolean {
+    public static isBoolean(value: any): boolean {
         try {
             if (
                 value !== undefined
@@ -32,7 +32,7 @@ class Checks {
         return false;
     }
 
-    static isString(value: any): boolean {
+    public static isString(value: any): boolean {
         try {
             if (
                 value !== undefined
@@ -53,7 +53,7 @@ class Checks {
         return false;
     }
 
-    static isObject(value: any): boolean {
+    public static isObject(value: any): boolean {
         try {
             if (
                 value !== undefined
@@ -71,7 +71,7 @@ class Checks {
         return false;
     }
 
-    static isNumber(value: any): boolean {
+    public static isNumber(value: any): boolean {
         try {
             if (
                 value !== undefined
@@ -87,7 +87,7 @@ class Checks {
         return false;
     }
 
-    static forCircularReference(obj: any): boolean {
+    public static forCircularReference(obj: any): boolean {
         const seen = new WeakSet();
         const hasCircular = (obj: any): boolean => {
             if (obj !== null && typeof obj === "object") {
@@ -107,7 +107,7 @@ class Checks {
         return hasCircular(obj);
     }
 
-    static isEmpty(value: any): boolean {
+    public static isEmpty(value: any): boolean {
         try {
             if (
                 value === undefined || value === null
@@ -122,7 +122,7 @@ class Checks {
         return false;
     }
 
-    static hasEmpties(...values: any[]): boolean {
+    public static hasEmpties(...values: any[]): boolean {
         const itemChecks: boolean[] = [];
 
         try {
@@ -152,7 +152,7 @@ class Checks {
         return true;
     }
 
-    static hasType(value?: any, type?: string): boolean {
+    public static hasType(value?: any, type?: string): boolean {
         if (
             ( type === undefined || type === null )
             && ( value === undefined || value === null )

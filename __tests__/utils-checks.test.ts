@@ -5,7 +5,7 @@ const checkIsBoolean = Checks.isBoolean;
 const checkIsObject = Checks.isObject;
 const checkIsString = Checks.isString;
 const checkForCircularReference = Checks.forCircularReference;
-const checkIsEmpty = Checks.isEmpty;
+const isEmpty = Checks.isEmpty;
 const checkHasEmpties = Checks.hasEmpties;
 
 describe('checkIsArray', () => {
@@ -109,42 +109,42 @@ describe('checkForCircularReference', () => {
     });
 });
 
-describe('checkIsEmpty', () => {
+describe('Checks.isEmpty', () => {
     // it('should return true for arrays with empty values', () => {
-    //     expect(checkIsEmpty([undefined, null, ''])).toBe(true);
+    //     expect(Checks.isEmpty([undefined, null, ''])).toBe(true);
     // });
 
     it('should return false for arrays with non-empty values', () => {
-        expect(checkIsEmpty([1, 'string', true])).toBe(false);
+        expect(Checks.isEmpty([1, 'string', true])).toBe(false);
     });
 
     it('should return true for undefined or null', () => {
-        expect(checkIsEmpty(undefined)).toBe(true);
-        expect(checkIsEmpty(null)).toBe(true);
+        expect(Checks.isEmpty(undefined)).toBe(true);
+        expect(Checks.isEmpty(null)).toBe(true);
     });
 
     it('should return true for empty array', () => {
-        expect(checkIsEmpty([])).toBe(true);
+        expect(Checks.isEmpty([])).toBe(true);
     });
 
     it('should return false for non-empty array', () => {
-        expect(checkIsEmpty([1, 'string', true])).toBe(false);
+        expect(Checks.isEmpty([1, 'string', true])).toBe(false);
     });
 
     it('should return true for empty string', () => {
-        expect(checkIsEmpty('')).toBe(true);
+        expect(Checks.isEmpty('')).toBe(true);
     });
 
     it('should return false for non-empty string', () => {
-        expect(checkIsEmpty('string')).toBe(false);
+        expect(Checks.isEmpty('string')).toBe(false);
     });
 
     it('return true for an empty object', () => {
-        expect(checkIsEmpty({})).toBe(true);
+        expect(Checks.isEmpty({})).toBe(true);
     });
 
     it('return false for a non-empty object', () => {
-        expect(checkIsEmpty({ key: 'value' })).toBe(false);
+        expect(Checks.isEmpty({ key: 'value' })).toBe(false);
     });
 });
 

@@ -8,3 +8,5 @@ export {
 
 export * from './load';
 export * from './manifest';
+export * from './meta';
+export * from './spec';

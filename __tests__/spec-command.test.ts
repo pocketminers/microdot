@@ -1,4 +1,4 @@
-import { defaultTaskRunner } from '../src/component/runner';
+import { defaultTaskRunner } from '../src/service/runner';
 import { CommandSpec, CommandResultSpec } from '../src/template/spec/v0/command';
 import { ArgumentSpec, ParameterSpec } from '../src/template/spec/v0/config';
 
@@ -54,7 +54,7 @@ describe('CommandSpec - taskRunner functionality', () => {
 describe('CommandResultSpec', () => {
     it('should create a CommandResultSpec object properly', () => {
         const runSpec = {
-            name: 'testCommand',
+            commandName: 'testCommand',
             jobId: '123',
             processId: '456',
             args: {},

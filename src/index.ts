@@ -1,3 +1,4 @@
 export * from "./component";
 export * from "./utils";
-export * from "./service";
+export * from "./template";
+// export * from "./service";

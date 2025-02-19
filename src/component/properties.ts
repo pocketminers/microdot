@@ -1,6 +1,14 @@
 import { Checks } from "@/utils";
-import { ArgumentSpec, ParameterSpec } from "@template/spec/v0/config";
+import { ArgumentSpec, ParameterSpec, PropertiesSpec } from "@template/spec/v0/config";
 
+
+/**
+ * This class is used as the input for the Argument class.
+ * It is a subset of the ArgumentSpec interface.
+ * @summary used to create a new instance of the Argument class.
+ * @see {@link ArgumentSpec}
+ * @see {@link Argument}
+ */
 interface ArgumentEntry<T = any>
     extends 
         Pick<ArgumentSpec<T>, "name" | "value">,
@@ -8,15 +16,15 @@ interface ArgumentEntry<T = any>
 
 
 /**
- * 
+ * An Argument is a type checked key-value pair that is passed to a component.
  */
 class Argument<T = any> {
-    type: string;
-    name: string;
-    value: T;
+    public readonly type: string;
+    public readonly name: string;
+    public readonly value: T;
 
     constructor({
-        type,
+        type = undefined,
         name,
         value
     }: ArgumentEntry<T>) {
@@ -42,6 +50,13 @@ class Argument<T = any> {
 }
 
 
+/**
+ * This class is used as the input for the Parameter class.
+ * It is a subset of the ParameterSpec interface.
+ * @summary used to create a new instance of the Parameter class.
+ * @see {@link ParameterSpec}
+ * @see {@link Parameter}
+ */
 interface ParameterEntry<T = any>
     extends
         Pick<ParameterSpec<T>, "name">,
@@ -109,12 +124,26 @@ class Parameter<T = any> {
 }
 
 
-interface PropertiesEntry {
-    args?: ArgumentEntry[],
-    params?: ParameterEntry[]
-}
+/**
+ * This class is used as the input for the Properties class.
+ * It is a subset of the Properties interface.
+ * @summary used to create a new instance of the Properties class.
+ * @see {@link PropertiesSpec}
+ * @see {@link Properties}
+ */
+interface PropertiesEntry
+    extends
+        Partial<Record<'params', ParameterEntry[]>>,
+        Partial<Record<'args', ArgumentEntry[]>> {}
 
 
+/**
+ * Properties are the arguments and parameters that are held by the `ConfigSpec` interface.
+ * @summary Properties are the arguments and parameters that are held by the `ConfigSpec` interface.
+ * @see {@link PropertiesSpec}
+ * @see {@link PropertiesEntry}
+ * @see {@link Properties}
+ */
 class Properties {
     public args: Argument<any>[] = [];
     public params: Parameter<any>[] = [];
@@ -191,9 +220,7 @@ class Properties {
         return names;
     }
 
-    public getAllValues(): {
-        [key: string]: any
-    } {
+    public getAllValues(): Map<string, any> {
         const names = this.hasUniqueNames();
 
         const values = new Map<string, any>();

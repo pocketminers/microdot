@@ -1,5 +1,5 @@
 import { CommandResultMetricsSpec, CommandResultSpec, CommandRunSpec } from "./command";
-import { ConfigSpec, ParameterSpec } from "./config";
+import { ConfigSpec, ParameterSpec, PropertiesSpec } from "./config";
 
 
 
@@ -11,7 +11,6 @@ import { ConfigSpec, ParameterSpec } from "./config";
  * - Jobs can be delayed.
  * - Jobs can be timed out.
  * - Jobs can span multiple processes.
- * @version v0
  */
 interface JobRunSpec
     extends
@@ -22,7 +21,6 @@ interface JobRunSpec
 /**
  * Job Result Metrics Specification Template
  * @summary A job result metrics is a collection of metrics that are collected during the execution of a job.
- * @version v0
  */
 interface JobResultMetricsSpec
     extends
@@ -33,12 +31,11 @@ interface JobResultMetricsSpec
 /**
  * Job Result Specification Template
  * @summary A job result is a collection of results that are returned from the execution of a job.
- * @version v0
  */
 interface JobResultSpec
     extends
         Record<"job", JobRunSpec>,
-        Record<"output", CommandResultSpec<any>[]>[],
+        Record<"output", CommandResultSpec<any>[]>,
         Record<"metrics", JobResultMetricsSpec> {}
 
 

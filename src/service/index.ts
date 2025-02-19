@@ -9,6 +9,8 @@
 // import { MessengerConfig } from './messenger';
 // // import { JobQueueConfig } from './queue';
 
+import { IdentityManager, IdentityStore } from "@/component/identity";
+
 
 /**
  * ServiceTypes
@@ -29,6 +31,27 @@ enum ServiceTypes {
  * - enum: ['Internal', 'External']
  */
 type ServiceType = keyof typeof ServiceTypes;
+
+
+class Service< P = any, T extends ServiceType = ServiceTypes.Internal> {
+    public id: string;
+    public type: T;
+    private ids: IdentityManager;
+    private processes: P[] = [];
+
+    constructor({
+        id,
+        type = ServiceTypes.Internal as T
+    }: {
+        id: string,
+        type?: T
+    }) {
+        this.ids = new IdentityManager();
+        this.id = id !== undefined ? id : this.ids.createId();
+        this.type = type;
+    }
+}
+
 
 
 // /**

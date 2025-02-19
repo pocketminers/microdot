@@ -80,7 +80,6 @@ const ServiceConfigParameters = [
 
 /**
  * Service Specification Template
- * @version v0
  */
 interface ServiceSpec
     extends

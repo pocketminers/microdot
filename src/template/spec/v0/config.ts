@@ -3,11 +3,10 @@ import { Spec } from "@/template/manifest";
 /**
  * Argument Specification Template
  * @summary An argument is a key-value pair that is passed to a command, process, or job.
- * @version v0
  */
 interface ArgumentSpec<T = any>
     extends
-        Record<'type', string>,
+        Partial<Record<'type', string>>,
         Record<'name', string>,
         Record<'value', T> {}
 
@@ -15,7 +14,6 @@ interface ArgumentSpec<T = any>
 /**
  * Parameter Specification Template V0
  * @summary A parameter outlines the expected arguments for a command, process, or job.
- * @version v0
  */
 interface ParameterSpec<T = any>
     extends
@@ -30,7 +28,6 @@ interface ParameterSpec<T = any>
 /**
  * Properties Specification Template
  * @summary Properties are the arguments and parameters that are held by the `ConfigSpec` interface.
- * @version v0
  */
 interface PropertiesSpec 
     extends
@@ -41,7 +38,6 @@ interface PropertiesSpec
 /**
  * Config Specification Template
  * @summary A config is an identifiable, named, and described collection of properties that are passed to a component that requires configuration.
- * @version v0
  */
 interface ConfigSpec
     extends

@@ -6,14 +6,12 @@ import { ConfigSpec } from './config';
  * @param instance - The instance of the command
  * @param args - The arguments to the command
  * @returns The result of the command
- * @version v0
  */
 type TaskRunner<R = any, T = any>  = ({instance, args}: {instance?: T | undefined, args?: Record<string, any>}) => Promise<R>;
 
 
 /**
  * Command Specification Template
- * @version v0
  */
 interface CommandSpec<R = any, T = any>
     extends
@@ -23,11 +21,12 @@ interface CommandSpec<R = any, T = any>
 
 /**
  * Command Run Specification Template
- * @version v0
  */
 interface CommandRunSpec
     extends
-        Record<'name', string>,
+        Record<'commandName', string>,
+        Record<'jobId', string>,
+        Record<'instance', any>,
         Record<"processId", string>,
         Record<'args', Record<string, any>> {}
 
@@ -35,7 +34,6 @@ interface CommandRunSpec
 
 /**
  * Command Result Specification Template
- * @version v0
  */
 interface CommandResultSpec<R>
     extends
@@ -46,7 +44,6 @@ interface CommandResultSpec<R>
 
 /**
  * Command Result Metrics Specification Template
- * @version v0
  */
 interface CommandResultMetricsSpec
     extends

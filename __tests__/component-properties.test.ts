@@ -8,6 +8,47 @@ import {
 } from '../src/component/properties';
 
 
+describe('Argument', () => {
+    it('should create a new instance', () => {
+        const arg = new Argument({
+            name: 'arg1',
+            value: 'value1'
+        });
+
+        expect(arg).toBeInstanceOf(Argument);
+    });
+
+    it('should get the value', () => {
+        const arg = new Argument({
+            name: 'arg1',
+            value: 'value1'
+        });
+
+        expect(arg.value).toBe('value1');
+    });
+});
+
+describe('Parameter', () => {
+    it('should create a new instance', () => {
+        const param = new Parameter({
+            name: 'param1',
+            description: 'param1 description'
+        });
+
+        expect(param).toBeInstanceOf(Parameter);
+    });
+
+    it('should get the value', () => {
+        const param = new Parameter({
+            name: 'param1',
+            description: 'param1 description'
+        });
+
+        expect(param.getValue('value1')).toBe('value1');
+    });
+});
+
+
 describe('Properties', () => {
     it('should create a new instance', () => {
         const properties = new Properties();

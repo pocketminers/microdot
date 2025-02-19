@@ -3,6 +3,20 @@ import { CryptoUtils } from "@utils/crypto";
 import { Metadata, MetadataEntry } from "@template/meta";
 
 
+enum ComponentType {
+    QUEUE = "queue",
+    RUNNER = "runner",
+    MANAGER = "manager",
+    MESSAGE = "message",
+    CONFIGMAP = "configmap",
+    SECRET = "secret"
+}
+
+interface ComponentEntry<T = any>
+    extends
+        Record<"data", T>,
+        Partial<Record<"meta", MetadataEntry>> {}
+
 /**
  */
 class Component<T> {
@@ -69,3 +83,6 @@ class Component<T> {
 export {
     Component
 };
+
+export * from './configurable';
+export * from './properties';
