@@ -1,29 +1,6 @@
 import { ArgumentEntry, Component, Configurable, ParameterEntry, Properties } from "@/component";
 import { MessageLevel, MessageLevels, MessageSpec, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 
-const CommunicatorConfigParameters: ParameterEntry[] = [
-    {
-        name: "keepHistory",
-        description: "Whether to keep the history of the communicator.",
-        type: "boolean",
-        defaultValue: false,
-        required: false
-    },
-    {
-        name: "historySize",
-        description: "The maximum size of the history.",
-        type: "number",
-        defaultValue: 100,
-        required: false
-    },
-    {
-        name: "historyFilePath",
-        description: "The file path to save the history.",
-        type: "string",
-        defaultValue: "./history.json",
-        required: false
-    }
-];
 
 const MessageConfigParameters: ParameterEntry[] = [
     {
@@ -68,10 +45,10 @@ class Message<
         status = MessageStatuses.Success as S,
         args
     }: {
-        level: L,
+        level?: L,
         body: T,
-        status: number,
-        args: ArgumentEntry[]
+        status?: number,
+        args?: ArgumentEntry[]
     }) {
         this.level = level;
         this.properties = new Properties({ params: MessageConfigParameters, args });
@@ -161,7 +138,29 @@ class MessageStore {
 }
 
 
-
+const MessageManagerConfigParameters: ParameterEntry[] = [
+    {
+        name: "keepHistory",
+        description: "Whether to keep the history of the communicator.",
+        type: "boolean",
+        defaultValue: false,
+        required: false
+    },
+    {
+        name: "historySize",
+        description: "The maximum size of the history.",
+        type: "number",
+        defaultValue: 100,
+        required: false
+    },
+    {
+        name: "historyFilePath",
+        description: "The file path to save the history.",
+        type: "string",
+        defaultValue: "./history.json",
+        required: false
+    }
+];
 
 class MessageManager
     extends MessageStore
@@ -171,7 +170,7 @@ class MessageManager
     constructor(args: ArgumentEntry[] = []) {
         super();
 
-        this.properties = new Properties({ params: CommunicatorConfigParameters, args });
+        this.properties = new Properties({ params: MessageManagerConfigParameters, args });
     }
 
     
@@ -199,7 +198,7 @@ class MessageManager
 
 
 export {
-    CommunicatorConfigParameters,
+    MessageManagerConfigParameters,
     MessageConfigParameters,
     Message,
     type MessageEntry,

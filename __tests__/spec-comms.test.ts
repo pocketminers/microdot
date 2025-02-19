@@ -1,6 +1,4 @@
 import { MessageLevels, MessageLevel, MessageSpec } from '../src/template/spec/v0/comms';
-import { MessageConfigParameters } from '../src/service/communicator';
-import { MessageStatuses } from '../src/template/spec/v0/comms';
 import { Argument, Properties } from '../src/component';
 
 describe('MessageSpec', () => {
