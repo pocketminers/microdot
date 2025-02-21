@@ -1,12 +1,16 @@
-import { MessageLevels, MessageLevel, MessageSpec } from '../src/template/spec/v0/comms';
+import { MessageLevels, MessageLevel, MessageSpec, MessageStatus, MessageStatuses } from '../src/template/spec/v0/comms';
 import { Argument, Properties } from '../src/component';
 
 describe('MessageSpec', () => {
 
     it('should create a MessageSpec object properly with default values', () => {
-        const message: MessageSpec = {
+        const message: MessageSpec<
+            MessageLevels.Info,
+            MessageStatuses.Success,
+            string
+        > = {
             level: MessageLevels.Info,
-            status: 200,
+            status: MessageStatuses.Success,
             properties: new Properties({
                 args: [
                     new Argument<boolean>({name: 'print', value: true}),
@@ -26,9 +30,13 @@ describe('MessageSpec', () => {
     });
 
     it('should create a MessageSpec object properly with custom values', () => {
-        const message: MessageSpec = {
+        const message: MessageSpec<
+            MessageLevels.Warn,
+            MessageStatuses.NotFound,
+            string
+        > = {
             level: MessageLevels.Warn,
-            status: 404,
+            status: MessageStatuses.NotFound,
             properties: new Properties({
                 args: [
                     new Argument<boolean>({name: 'print', value: false}),
