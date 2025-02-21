@@ -27,22 +27,20 @@ const MessageConfigParameters: ParameterEntry[] = [
 ];
 
 class Message<
-    L extends MessageLevels = MessageLevels.Info,
-    S extends number = MessageStatuses.Success,
+    L extends MessageLevel = MessageLevels,
+    S extends number = MessageStatuses,
     T = any | undefined
->
-    implements MessageSpec<L, T, S>
-{
+> implements MessageSpec<L, S, T> {
     public level: L;
-    public properties:Properties;
+    public properties: Properties;
     public body: T;
     public status: S;
     public timestamp: Date = new Date();
 
     constructor({
-        level = MessageLevels.Info as L,
+        level,
         body,
-        status = MessageStatuses.Success as S,
+        status,
         args
     }: {
         level?: L,
@@ -50,12 +48,12 @@ class Message<
         status?: number,
         args?: ArgumentEntry[]
     }) {
-        this.level = level;
+        this.level = level as L;
         this.properties = new Properties({ params: MessageConfigParameters, args });
         this.body = body;
         this.status = status as S;
 
-        this.checkStatus();
+        // this.checkStatus();
 
         this.print();
         this.throw();
@@ -63,7 +61,7 @@ class Message<
 
     private checkStatus(): void {
         if (
-            this.status >= MessageStatuses.BadRequest
+            this.status !== MessageStatuses.Success
             && (
                 this.level !== MessageLevels.Error
                 && this.level !== MessageLevels.Warn
@@ -90,7 +88,11 @@ class Message<
 }
 
 
-interface MessageEntry<L = MessageLevel, S = number, T = any | undefined>
+interface MessageEntry<
+    L extends MessageLevel = MessageLevels,
+    S extends MessageStatuses = MessageStatuses,
+    T = any | undefined
+>
     extends
         Record<'body', T>,
         Record<'args', ArgumentEntry[]>,
@@ -100,14 +102,15 @@ interface MessageEntry<L = MessageLevel, S = number, T = any | undefined>
 
 
 class MessageFactory {
+
     public static createMessage<
-        L extends MessageLevel,
-        S extends number,
+        L extends MessageLevels = MessageLevels,
+        S extends MessageStatuses = MessageStatuses,
         T = any | undefined
     >({
         level,
         body,
-        status = MessageStatuses.Success as S,
+        status,
         args
     }: MessageEntry<L, S, T>): Message<L, S, T> {
         return new Message<L,S,T>({ level, body, status, args });
@@ -123,8 +126,8 @@ class MessageStore {
     }
 
     public addMessage<
-        L extends MessageLevel,
-        S extends number,
+        L extends MessageLevels,
+        S extends MessageStatuses,
         T = any | undefined
     >(
         message: Message<L, S, T>): void
@@ -134,6 +137,18 @@ class MessageStore {
 
     public clear(): void {
         this.messages = [];
+    }
+
+    public getMessages({
+        filter = MessageLevels.Info,
+        status = 'All'
+    }: {
+        filter?: MessageLevels,
+        status?: MessageStatuses | 'All'
+    }): Message<any, any>[] {
+        return this.messages.filter((message) => {
+            return message.level === filter && message.status === status;
+        });
     }
 }
 
@@ -175,7 +190,7 @@ class MessageManager
 
     
     public createMessage<
-        L extends MessageLevel = MessageLevels.Info,
+        L extends MessageLevels = MessageLevels.Info,
         S extends number = MessageStatuses.Success,
         T = any | undefined
     >({

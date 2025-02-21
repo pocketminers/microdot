@@ -10,7 +10,11 @@ enum MessageLevels {
 type MessageLevel = keyof typeof MessageLevels;
 
 
-interface MessageSpec<L = MessageLevel, T = any | undefined, S = number>
+interface MessageSpec<
+    L extends MessageLevel = MessageLevels,
+    S extends number = MessageStatuses,
+    T = any | undefined
+>
     extends
         Record<'body', T>,
         Record<'level', L>,

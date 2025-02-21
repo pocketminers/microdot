@@ -2,6 +2,7 @@ import {
     MessageManager,
     Message,
 } from '../src/service/message';
+import { MessageLevel, MessageLevels, MessageStatuses } from '../src/template/spec/v0/comms';
 
 
 describe('MessageManager', () => {
@@ -17,26 +18,26 @@ describe('MessageManager', () => {
     it('should add a message to the manager', () => {
         const manager: MessageManager = new MessageManager();
         const message: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
 
         manager.addMessage(message);
 
         expect(manager.messages.length).toBe(1);
-        expect(manager.messages[0].level).toBe('info');
+        expect(manager.messages[0].level).toBe('Info');
         expect(manager.messages[0].body).toBe('This is a test message');
     });
 
     it('should remove a message from the manager', () => {
         const manager: MessageManager = new MessageManager();
         const message: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
 
         manager.addMessage(message);
-        manager.remove(message);
+        manager.clear();
 
         expect(manager.messages.length).toBe(0);
     });
@@ -44,17 +45,17 @@ describe('MessageManager', () => {
     it('should remove all messages from the manager', () => {
         const manager: MessageManager = new MessageManager();
         const message1: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
         const message2: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
 
-        manager.add(message1);
-        manager.add(message2);
-        manager.removeAll();
+        manager.addMessage(message1);
+        manager.addMessage(message2);
+        manager.clear();
 
         expect(manager.messages.length).toBe(0);
     });
@@ -62,22 +63,82 @@ describe('MessageManager', () => {
     it('should get all messages from the manager', () => {
         const manager: MessageManager = new MessageManager();
         const message1: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
         const message2: Message = new Message({
-            level: 'info',
+            level: MessageLevels.Info,
             body: 'This is a test message'
         });
 
-        manager.add(message1);
-        manager.add(message2);
+        manager.addMessage(message1);
+        manager.addMessage(message2);
 
-        expect(manager.getAll().length).toBe(2);
+        expect(manager.messages.length).toBe(2);
     });
 
-    it('should get all messages from the manager by level', () => {
+    it("should configure the messag entry to not print to console", () => {
         const manager: MessageManager = new MessageManager();
-        const message1: Message = new Message({
-            level: 'info',
-            body: 'This is a
+        const message: Message = new Message<MessageLevels.Error, MessageStatuses.Success>({
+            level: MessageLevels.Error,
+            body: 'This is a test message - it should not print to console',
+            args: [
+                { name: 'print', value: false }
+            ]
+        });
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+    });
+
+    it('should configure the message entry to throw an error', () => {
+        const manager: MessageManager = new MessageManager();
+        try {
+            const message: Message = new Message<MessageLevels.Error, MessageStatuses.InternalServerError, string>({
+                level: MessageLevels.Error,
+                body: 'This is a test message - it should throw an error',
+                status: MessageStatuses.InternalServerError,
+                args: [
+                    { name: 'throw', value: true }
+                ]
+            });
+        }
+        catch (error: any) {
+            expect(error.message).toBe('This is a test message - it should throw an error');
+        }
+    });
+
+    it('should configure the message entry to not throw an error', () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message = new Message<MessageLevels.Error, MessageStatuses.InternalServerError, string>({
+            level: MessageLevels.Error,
+            body: 'This is a test message - it should not throw an error',
+            status: MessageStatuses.InternalServerError,
+            args: [
+                { name: 'throw', value: false }
+            ]
+        });
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+    });
+
+    it('should not print a message to console', () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message = new Message<MessageLevels.Info, MessageStatuses.Success, string>({
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should not print to console',
+            args: [
+                { name: 'print', value: false }
+            ]
+        });
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+    });
+
+});
+
