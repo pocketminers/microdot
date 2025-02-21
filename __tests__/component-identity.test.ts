@@ -1,8 +1,10 @@
 import {
     IdentityManager,
     IdentityStore,
-    IdentityFactory
+    IdentityFactory,
+    IdentifierFormats
 } from '../src/component/identity';
+
 
 
 describe('IdentityManager', () => {
@@ -93,5 +95,20 @@ describe('IdentityStore', () => {
 
         expect(identityStore.size).toBe(0);
         expect(identityStore.listIds()).toEqual([]);
+    });
+});
+
+
+describe('IdentityFactory', () => {
+    it('should create a random identifier', () => {
+        const random = IdentityFactory.createIdentifier({format: IdentifierFormats.Random});
+
+        expect(random).toMatch(/[a-z0-9]{10}/);
+    });
+
+    it('should create a timestamp identifier', () => {
+        const timestamp = IdentityFactory.createIdentifier({format: IdentifierFormats.Timestamp});
+
+        expect(timestamp).toMatch(/[0-9]{13}/);
     });
 });

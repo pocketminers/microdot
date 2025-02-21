@@ -1,29 +1,53 @@
-import { Configurable } from "@/component/configurable";
 import { ArgumentEntry, Properties } from "./properties";
+
+enum IdentifierFormats {
+    UUID = "UUID",
+    Random = "Random",
+    Name = "Name",
+    Timestamp = "Timestamp",
+    Password = "Password"
+}
+
+
+
+/**
+ * The IdentifierFormats type is a string that is used to specify the type of identifier to create.
+ */
+type IdentifierFormat = keyof typeof IdentifierFormats;
+
 
 
 class IdentityFactory {
-    public static createIdentifier(
-        format?: string,
+    public static createIdentifier({
+        format,
+        options = {
+            prefix: "",
+            suffix: ""
+        }
+    }: {
+        format?: IdentifierFormat,
         options?: {
             prefix?: string,
-            suffix?: string 
+            suffix?: string
         }
-    ): string {
+    } = {}): string {
         const prefix = options?.prefix || "";
         const suffix = options?.suffix || "";
 
         let identifier = prefix
 
         switch (format) {
-            case "uuid":
+            case "UUID":
                 identifier += IdentityFactory.createUUID();
                 break;
-            case "random":
+            case "Random":
                 identifier += IdentityFactory.createRandom();
                 break;
-            case "timestamp":
+            case "Timestamp":
                 identifier += IdentityFactory.createTimestamp();
+                break;
+            case "Name":
+                identifier += IdentityFactory.createName();
                 break;
             default:
                 throw new Error(`Invalid identifier format: ${format}`);
@@ -48,6 +72,10 @@ class IdentityFactory {
 
     private static createTimestamp(): string {
         return Date.now().toString();
+    }
+
+    private static createName(): string {
+        return Math.random().toString(36).substring(2);
     }
 
 }
@@ -109,9 +137,9 @@ class IdentityManager
         this.properties = new Properties({ params: IdentityManagerParameters, args });
     }
 
-    public createId(format?: string, options?: { prefix?: string, suffix?: string }): string {
+    public createId(format?: IdentifierFormat, options?: { prefix?: string, suffix?: string }): string {
         format = format !== undefined ? format : this.properties.getValue("defaultFormat");
-        const id = IdentityFactory.createIdentifier(format, options);
+        const id = IdentityFactory.createIdentifier({format, options});
 
         this.addId(id);
         
@@ -121,6 +149,8 @@ class IdentityManager
 
 
 export {
+    IdentifierFormats,
+    type IdentifierFormat,
     IdentityManagerParameters,
     IdentityFactory,
     IdentityStore,

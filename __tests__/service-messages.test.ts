@@ -248,5 +248,24 @@ describe('MessageManager', () => {
         expect(isInternalServerError.length).toBe(1);
     });
 
+    it('should save messages to an external json file', async () => {
+        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }]);
+        const message: Message<
+            MessageLevels.Info,
+            MessageStatuses.Success,
+            string
+        > = new Message<MessageLevels.Info, MessageStatuses.Success, string>({
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should not print to console',
+            args: [
+                { name: 'save', value: true }
+            ]
+        });
+
+        await manager.createMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+    });
+
 });
 

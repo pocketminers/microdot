@@ -21,13 +21,14 @@ enum IdentifierTypes {
     UUID = "UUID",
     Random = "Random",
     Name = "Name",
+    Timestamp = "Timestamp",
     Password = "Password"
 }
 
 
 
 /**
- * The IdentifierType type is a string that is used to specify the type of identifier to create.
+ * The IdentifierTypess type is a string that is used to specify the type of identifier to create.
  */
 type IdentifierType = keyof typeof IdentifierTypes;
 
@@ -341,8 +342,8 @@ class IdentifierStore
 export {
     type Identifier,
     createIdentifier,
-    type IdentifierType,
-    type IdentifierCreatorEntry,
     IdentifierTypes,
+    type IdentifierCreatorEntry,
+    IdentifierType,
     IdentifierStore
 };

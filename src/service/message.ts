@@ -1,3 +1,5 @@
+import { promises as fs } from "fs";
+
 import { ArgumentEntry, Component, Configurable, ParameterEntry, Properties } from "@/component";
 import { MessageLevel, MessageLevels, MessageSpec, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 
@@ -217,6 +219,7 @@ class MessageManager
 {
     private properties: Properties;
 
+
     constructor(args: ArgumentEntry[] = []) {
         super();
 
@@ -224,7 +227,7 @@ class MessageManager
     }
 
     
-    public createMessage<
+    public async createMessage<
         L extends MessageLevel = MessageLevels.Info,
         S extends MessageStatuses = MessageStatuses.Success,
         T = any | undefined
@@ -233,26 +236,75 @@ class MessageManager
         body,
         status = MessageStatuses.Success as S,
         args = [{ name: "save", value: true }]
-    }: MessageEntry<L, S, T>): Message<L, S, T> {
+    }: MessageEntry<L, S, T>): Promise<Message<L, S, T>> {
         const managerSaveProperty = this.properties.getValue("keepHistory");
         const messageSaveProperty = args?.find((arg) => arg.name === "save")?.value;
         
         const message = MessageFactory.createMessage<L,S,T>({ level, body, status, args });
 
         if (
-            (managerSaveProperty === true || messageSaveProperty === true)
+            (managerSaveProperty === true && messageSaveProperty === true)
             && this.messages.length < this.properties.getValue("historySize")
         ) {
             this.addMessage(message);
+
         }
         else if (
-            this.messages.length >= this.properties.getValue("historySize")
+            (managerSaveProperty === true && messageSaveProperty === true)
+            && this.messages.length >= this.properties.getValue("historySize")
         ) {
-            this.messages.shift();
+            const storeLength = this.messages.length;
+            this.messages = this.messages.slice(storeLength - this.properties.getValue("historySize"));
+
             this.addMessage(message);
         }
 
+        if (managerSaveProperty === true && messageSaveProperty === true) {
+            await this.writeMessageToFile(message);
+        }
+
         return message;
+    }
+
+    private async readFileAsync(filePath: string): Promise<string> {
+        try {
+            const data = await fs.readFile(filePath, 'utf-8');
+            return data;
+        }
+        catch (error: any) {
+            await fs.writeFile(filePath, "[]");
+            return "[]";
+        }
+    }
+
+    private async writeFileAsync(filePath: string, data: string): Promise<void> {
+        try {
+            await fs.writeFile(filePath, data, 'utf-8');
+        }
+        catch (error: any) {
+            throw new Error(`MessageManager:writeFileAsync: ${error.message}`);
+        }
+    }
+
+    private async writeMessageToFile(message: Partial<Message<any, any, any>>): Promise<void> {
+        const filePath: string | undefined = this.properties.getValue<string>("historyFilePath");
+
+        if (filePath === undefined) {
+            throw new Error(`MessageManager:writeMessageToFile: The file path is undefined`);
+        }
+
+        const data: string = await this.readFileAsync(filePath);
+
+        const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+
+        messages.push({
+            level: message.level,
+            status: message.status,
+            body: message.body,
+            timestamp: message.timestamp !== undefined ? message.timestamp : new Date()
+        });
+
+        await this.writeFileAsync(filePath, JSON.stringify(messages, null, 2));
     }
 }
 

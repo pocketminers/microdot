@@ -14,7 +14,7 @@ describe("createIdentifier", () => {
     });
 
     // it("should create a Random identifier", () => {
-    //     const id = createIdentifier("Random");
+    //     const id = createIdentifier({ type: IdentifierTypes.Random });
     //     expect(id).toMatch(/^[a-z0-9]{25-27}$/);
     // });
 
