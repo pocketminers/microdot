@@ -96,7 +96,7 @@ class Message<
             metadata: metadata instanceof Metadata ? metadata : new Metadata(metadata)
         });
 
-        console.log(`Message:constructor: ${JSON.stringify(this, null, 2)}`);
+        // console.log(`Message:constructor: ${JSON.stringify(this, null, 2)}`);
     }
 
     public get level(): L {

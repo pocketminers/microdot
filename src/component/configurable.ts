@@ -41,7 +41,7 @@ class Configurable<D extends Record<string, any> = any | undefined>
             meta: metadata instanceof Metadata ? metadata : new Metadata(metadata)
         });
 
-        console.log(`Configurable: ${JSON.stringify(this, null, 2)}`);
+        // console.log(`Configurable: ${JSON.stringify(this, null, 2)}`);
 
         // this.data.properties.args.forEach(arg => Object.freeze(arg));
         // this.data.properties.params.forEach(param => Object.freeze(param));

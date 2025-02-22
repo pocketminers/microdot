@@ -34,6 +34,7 @@ enum ProcessStatuses {
     Paused = 'Paused',
     Error = 'Error',
     Completed = 'Completed',
+    CommandNotFound = 'CommandNotFound',
     Unknown = 'Unknown'
 }
 

@@ -213,13 +213,13 @@ describe('MessageManager', () => {
         // manager.addMessage(message1);
         // manager.addMessage(message2);
 
-        console.log(`manager.messages`, manager.messages);
+        // console.log(`manager.messages`, manager.messages);
 
         const infoMessages = manager.getMessages({ level: MessageLevels.Info });   
-        console.log(`infoMessages`, infoMessages);
+        // console.log(`infoMessages`, infoMessages);
 
         const errorMessages = manager.getMessages({ level: MessageLevels.Error });
-        console.log(`errorMessages`, errorMessages);
+        // console.log(`errorMessages`, errorMessages);
 
         expect(infoMessages.length).toBe(1);
         expect(manager.getMessages({ level: MessageLevels.Error }).length).toBe(1);
@@ -257,10 +257,7 @@ describe('MessageManager', () => {
         manager.addMessage(message1);
         manager.addMessage(message2);
 
-        console.log(manager.messages);
-
         const isSuccess = manager.getMessages({ status: MessageStatuses.Success });
-        console.log(isSuccess);
 
         const isInternalServerError = manager.getMessages({ status: MessageStatuses.InternalServerError });
 
