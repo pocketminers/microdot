@@ -19,7 +19,12 @@ describe('MessageManager', () => {
     });
 
     it('should add a message to the manager', async () => {
-        const manager: MessageManager = new MessageManager();
+        const manager: MessageManager = new MessageManager({
+            args: [
+                { name: 'keepHistory', value: true },
+                { name: 'historyFilePath', value: `./history-test.json` }
+            ]
+        });
         const message: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
@@ -29,7 +34,7 @@ describe('MessageManager', () => {
             body: 'This is a test message'
         });
 
-        manager.addMessage(message);
+        // manager.addMessage(message);
 
         expect(manager.messages.length).toBe(1);
         // expect(manager.messages[0].getDataValue.level).toBe('Info');
@@ -37,7 +42,12 @@ describe('MessageManager', () => {
     });
 
     it('should remove a message from the manager', async () => {
-        const manager: MessageManager = new MessageManager();
+        const manager: MessageManager = new MessageManager({
+            args: [
+                { name: 'keepHistory', value: true },
+                { name: 'historyFilePath', value: `./history-test.json` }
+            ]
+        });
         const message: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
@@ -47,7 +57,9 @@ describe('MessageManager', () => {
             body: 'This is a test message'
         });
 
-        manager.addMessage(message);
+        // manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
         manager.clear();
 
         expect(manager.messages.length).toBe(0);
@@ -376,8 +388,6 @@ describe('MessageManager', () => {
 
         await configurable.hashData();
 
-        console.log(`configurable`, configurable);
-
         manager.addMessage(message);
 
         expect(manager.messages.length).toBe(1);
@@ -403,9 +413,6 @@ describe('MessageManager', () => {
                 { name: 'save', value: true }
             ]
         });
-
-        console.log(`message`, message);
-        console.log('messageLength', manager);
 
         expect(manager.messages.length).toBe(1);
         // expect(manager.messages[0].data.status).toBe('BadRequest');

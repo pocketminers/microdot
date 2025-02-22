@@ -6,7 +6,6 @@ import { ConfigSpec, ParameterSpec, PropertiesSpec } from "./config";
 /**
  * Job Specification Template
  * @summary A job is a collection of commands that are executed in a specific order.
- * @description Jobs can be run sequentially or in parallel.
  * - Jobs can be retried on failure.
  * - Jobs can be delayed.
  * - Jobs can be timed out.

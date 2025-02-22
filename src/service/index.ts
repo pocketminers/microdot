@@ -10,6 +10,10 @@
 // // import { JobQueueConfig } from './queue';
 
 import { IdentityManager, IdentityStore } from "@/component/identity";
+import { MessageManager } from "./message";
+import { ProcessStatuses } from "@/template";
+import { MessageStatuses } from "@/template/spec/v0/comms";
+import { Process } from "@/component/processes";
 
 
 /**
@@ -33,10 +37,22 @@ enum ServiceTypes {
 type ServiceType = keyof typeof ServiceTypes;
 
 
-class Service< P = any, T extends ServiceType = ServiceTypes.Internal> {
+class Service
+<
+    P extends Process<any> = any,
+    T extends ServiceType = ServiceTypes.Internal
+> {
     public id: string;
     public type: T;
-    private ids: IdentityManager;
+    private identifier: IdentityManager = new IdentityManager();
+    private messenger: MessageManager = new MessageManager({
+        args: [
+            { name: 'historyLimit', value: 100 },
+            { name: 'keepHistory', value: true },
+            { name: 'historyFilePath', value: './service-history.json' }
+        ],
+        identifier: this.identifier
+    });
     private processes: P[] = [];
 
     constructor({
@@ -46,9 +62,15 @@ class Service< P = any, T extends ServiceType = ServiceTypes.Internal> {
         id: string,
         type?: T
     }) {
-        this.ids = new IdentityManager();
-        this.id = id !== undefined ? id : this.ids.createId();
+        this.id = id !== undefined ? id : this.identifier.createId();
         this.type = type;
+    }
+
+    async initialize(): Promise<void> {
+        await this.messenger.createMessage({
+            body: `[${this.id}] Service initialized`,
+            status: MessageStatuses.Created,
+        });
     }
 }
 
@@ -385,14 +407,14 @@ class Service< P = any, T extends ServiceType = ServiceTypes.Internal> {
 // }
 
 
-// export {
-//     ServiceTypes,
-//     type ServiceEntry,
-//     type ServiceType,
-//     type ServiceResponse,
-//     ServiceConfig,
-//     Service,
-// }
+export {
+    ServiceTypes,
+    // type ServiceEntry,
+    type ServiceType,
+    // type ServiceResponse,
+    // ServiceConfig,
+    Service,
+}
 
 
 // export * from "./command";

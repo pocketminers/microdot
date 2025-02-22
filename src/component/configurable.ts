@@ -19,13 +19,10 @@ interface ConfigurableEntry<D>
         Partial<Record<"metadata", MetadataEntry>> {}
 
 
-class Configurable<T = any, D extends Record<string, any> = any | undefined>
-    extends Component<T, D>
+class Configurable<D extends Record<string, any> = any | undefined>
+    extends Component<D>
 {
     constructor({
-        // id = "",
-        // name = "",
-        // description = "",
         id,
         name,
         description,

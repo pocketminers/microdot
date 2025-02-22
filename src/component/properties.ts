@@ -231,8 +231,14 @@ class Properties {
         return values;
     }
 
-    public getValue<T = any>(name: string): T | undefined {
-        return this.getArgValue<T>(name);
+    public getValue<T = any>(name: string): T {
+        const value = this.getArgValue<T>(name);
+
+        if (value === undefined) {
+            throw new Error(`Value not found: ${name}`);
+        }
+
+        return value;
     }
 
     public getNames(): string[] {

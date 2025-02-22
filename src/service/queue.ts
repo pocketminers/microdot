@@ -78,7 +78,7 @@ class JobQueue {
 
         while (this.queue.length > 0) {
             const jobsToRun = this.queue.splice(0, this.maxConcurrency);
-            await Promise.all(jobsToRun.map(job => job.run()));
+            // await Promise.all(jobsToRun.map(job => job.run()));
         }
 
         this.running = false;

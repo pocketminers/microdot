@@ -26,6 +26,7 @@ enum ProcessStatuses {
     New = 'New',
     Ready = 'Ready',
     Initializing = 'Initializing',
+    InitializationError = 'InitializationError',
     Initialized = 'Initialized',
     Idle = 'Idle',
     Running = 'Running',

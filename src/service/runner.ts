@@ -62,7 +62,7 @@ class CommandRunner {
     }
 
 
-    public async executeCommand<R, T>({
+    public async executeCommand<R>({
         commandName,
         jobId,
         processId = 'default',
