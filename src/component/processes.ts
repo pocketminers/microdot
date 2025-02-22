@@ -283,7 +283,46 @@ class Process<T extends ProcessType>
         jobId: string,
         commandName: string,
         args: ArgumentEntry[]
-    }): Promise<CommandResultSpec<R | undefined>> {
+    }): Promise<CommandResultSpec<R | undefined | Error>> {
+        // let result: CommandResultSpec<R | undefined>;
+        let output: CommandResultSpec<R | undefined> | undefined = undefined;
+        let error: Error | undefined = undefined;
+        try {
+            output = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args});
+        }
+        catch (error: any) {
+            this.status = ProcessStatuses.Error;
+            error = error instanceof Error ? error.message : error;
+        }
+
+        if (error !== undefined) {
+            output = {
+                run: {
+                    instance: this.instance,
+                    processId: this.id,
+                    jobId,
+                    commandName,
+                    args
+                },
+                output: error,
+                metrics: {
+                    start: 0,
+                    end: 0,
+                    duration: 0,
+                    bytesIn: 0,
+                    bytesOut: 0
+                }
+            };
+        }
+
+        // const result = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args});
+
+        // if (result.output instanceof Error) {
+        //     result.output = result.output.message as unknown as R;
+        // }
+
+        // return result;
+
         return await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args});
     }
 }

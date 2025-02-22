@@ -6,6 +6,11 @@ import {
     ProcessTypes
 } from '../src/component/processes'
 
+import {
+    ProcessStatuses
+} from '../src/template/spec/v0/process'
+import { ArgumentEntry } from '../src/component/properties'
+
 import { defaultTaskRunner } from '../src/service/runner'
 
 describe('Process', () => {
@@ -424,5 +429,91 @@ describe('Process', () => {
                 bytesOut: 6
             }
         });   
+    });
+
+    it('should create a process and run it and timeout', async () => {
+        const process = new Process<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            args: [{
+                name: 'retry',
+                value: true
+            }, {
+                name: 'retryCount',
+                value: 1
+            }, {
+                name: 'retryDelay',
+                value: 0
+            }, {
+                name: 'timeout',
+                value: 10
+            }, {
+                name: 'timeoutAction',
+                value: 'fail'
+            }],
+            instance: ({args}:{ args: Record<string, any> }) => {
+                return args.test
+            },
+            commands: [{
+                id: 'test',
+                description: 'test',
+                properties: {
+                    args: [],
+                    params: [{
+                        name: 'test',
+                        description: 'test',
+                        type: 'string',
+                        required: true,
+                        defaultValue: 'test',
+                        optionalValues: []
+                    }]
+                },
+                name: 'test',
+                run: async ({instance, args}) => {
+                    await new Promise((resolve) => setTimeout(resolve, 1000));
+                    return 'test'
+                }
+            }],
+            metadata: {}
+        })
+
+        try {
+            await process.run({
+                jobId: 'test',
+                commandName: 'test',
+                args: [
+                    {
+                        name: 'test',
+                        value: 'test'
+                    }
+                ]
+            })
+        }
+        catch (error) {
+            expect(error).toEqual(new Error('Process test timed out'));
+        }
+    });
+
+    it('should create a process and run it and fail', async () => {
+        const process = new Process({
+            id: 'test-process',
+            type: 'USER',
+            args: [
+                { name: 'timeout', value: 1000 } as ArgumentEntry,
+                { name: 'timeoutAction', value: 'fail' } as ArgumentEntry
+            ],
+
+        });
+
+        await process.initialize();
+
+        await expect(process.run({
+            jobId: 'test-job',
+            commandName: 'test-command',
+            args: []
+        })).rejects.toThrow(`Command test-command not found`);
+
+        expect(process.status).toBe(ProcessStatuses.CommandNotFound);
     });
 })
