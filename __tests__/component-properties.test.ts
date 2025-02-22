@@ -183,10 +183,12 @@ describe('Properties', () => {
             ],
             params: [
                 {
-                    name: 'arg1'
+                    name: 'arg1',
+                    required: true
                 },
                 {
-                    name: 'arg2'
+                    name: 'arg2',
+                    required: false
                 }
             ]
         });

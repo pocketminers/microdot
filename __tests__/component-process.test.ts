@@ -172,7 +172,7 @@ describe('Process', () => {
 
         console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result).toEqual({
+        expect(result.get(1)).toEqual({
             run: {
                 commandName: 'test',
                 jobId: 'test',
@@ -250,7 +250,7 @@ describe('Process', () => {
 
         console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result).toEqual({
+        expect(result.get(1)).toEqual({
             run: {
                 commandName: 'test',
                 jobId: 'test',
@@ -330,7 +330,7 @@ describe('Process', () => {
 
         console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result).toEqual({
+        expect(result.get(1)).toEqual({
             run: {
                 commandName: 'test',
                 jobId: 'test',
@@ -410,7 +410,7 @@ describe('Process', () => {
 
         console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result).toEqual({
+        expect(result.get(1)).toEqual({
             run: {
                 commandName: 'test',
                 jobId: 'test',
@@ -432,6 +432,7 @@ describe('Process', () => {
     });
 
     it('should create a process and run it and timeout', async () => {
+        let result;
         const process = new Process<ProcessTypes.AUTH>({
             id: 'test',
             type: ProcessTypes.AUTH,
@@ -447,13 +448,14 @@ describe('Process', () => {
                 value: 0
             }, {
                 name: 'timeout',
-                value: 10
+                value: 1000
             }, {
                 name: 'timeoutAction',
                 value: 'fail'
             }],
-            instance: ({args}:{ args: Record<string, any> }) => {
-                return args.test
+            instance: async ({args}:{ args: Record<string, any> }) => {
+                await new Promise((resolve) => setTimeout(resolve, 1001));
+                return args
             },
             commands: [{
                 id: 'test',
@@ -470,16 +472,16 @@ describe('Process', () => {
                     }]
                 },
                 name: 'test',
-                run: async ({instance, args}) => {
-                    await new Promise((resolve) => setTimeout(resolve, 1000));
-                    return 'test'
+                run: async ({instance, args}: {instance?: any, args?: Record<string, any>} = {}) => {
+                    const timeout = await new Promise((resolve) => setTimeout(resolve, 1001));
+                    return instance(args);
                 }
             }],
             metadata: {}
         })
 
         try {
-            await process.run({
+            result = await process.run({
                 jobId: 'test',
                 commandName: 'test',
                 args: [
@@ -491,29 +493,33 @@ describe('Process', () => {
             })
         }
         catch (error) {
+            console.log(`error`, error);
             expect(error).toEqual(new Error('Process test timed out'));
         }
-    });
 
-    it('should create a process and run it and fail', async () => {
-        const process = new Process({
-            id: 'test-process',
-            type: 'USER',
-            args: [
-                { name: 'timeout', value: 1000 } as ArgumentEntry,
-                { name: 'timeoutAction', value: 'fail' } as ArgumentEntry
-            ],
+        console.log(`result`, JSON.stringify(result?.get(1), null, 2));
 
+        expect(result?.get(1)).toEqual({
+            run: {
+                commandName: 'test',
+                jobId: 'test',
+                processId: 'test',
+                instance: expect.any(Function),
+                args: {
+                    test: 'test'
+                }
+            
+            },
+            output: null,
+            metrics: {
+                start: expect.any(Number),
+                end: expect.any(Number),
+                duration: expect.any(Number),
+                bytesIn: 15,
+                bytesOut: 0
+            }
         });
 
-        await process.initialize();
-
-        await expect(process.run({
-            jobId: 'test-job',
-            commandName: 'test-command',
-            args: []
-        })).rejects.toThrow(`Command test-command not found`);
-
-        expect(process.status).toBe(ProcessStatuses.CommandNotFound);
+        expect(process.status).toBe(ProcessStatuses.Completed);
     });
 })

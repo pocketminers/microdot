@@ -297,7 +297,6 @@ class MessageManager
     private identifier: IdentityManager;
 
     constructor({
-
         args = [],
         identifier = new IdentityManager()
     }: {
@@ -334,8 +333,11 @@ class MessageManager
         status?: S,
         metadata?: MetadataEntry
     }): Promise<Message<L, S, T>> {
-        const managerSaveProperty = this.properties.getValue("keepHistory");
-        const messageSaveProperty = args?.find((arg) => arg.name === "save")?.value;
+        this.properties = new Properties({ params: MessageManagerConfigParameters, args });
+        const messageProperties = new Properties({ params: MessageConfigParameters, args });
+
+        const managerSaveProperty: boolean = this.properties.getValue<boolean>("keepHistory");
+        const messageSaveProperty: boolean = messageProperties.getValue<boolean>("save");
         
         const message = MessageFactory.createMessage<L,S,T>({ id, name, description, level, body, status, args, metadata });
 

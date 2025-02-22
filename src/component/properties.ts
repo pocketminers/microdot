@@ -109,17 +109,23 @@ class Parameter<T = any> {
     }
 
     public getValue(value?: T): T {
+        let selectedValue = undefined;
+
         if (value !== undefined) {
             this.isValueInOptionalValues(value);
-            return value;
+            selectedValue = value;
         }
 
         const defaultValue = this.defaultValue;
         if (defaultValue !== undefined) {
-            return defaultValue;
+            selectedValue = defaultValue;
         }
 
-        throw new Error("Value is required: " + this.name);
+        if (this.required && selectedValue === undefined) {
+            throw new Error("Value is required: " + this.name);
+        }
+
+        return selectedValue as T;
     }
 }
 
@@ -234,6 +240,8 @@ class Properties {
     public getValue<T = any>(name: string): T {
         const value = this.getArgValue<T>(name);
 
+        console.log("value", value);
+
         if (value === undefined) {
             throw new Error(`Value not found: ${name}`);
         }
@@ -252,7 +260,19 @@ class Properties {
 
         const keyValue: { [key: string]: any } = {};
         for (const name of names) {
-            keyValue[name] = this.getValue(name)
+            const value = this.getValue(name)
+
+            if (
+                this.params.find(param => ( param.name === name && param.required === true)) !== undefined
+                && value === undefined
+            ) {
+                throw new Error(`Value is required: ${name}`);
+            }
+
+            if (value !== undefined) {
+                keyValue[name] = value;
+            }
+
         }
 
         return keyValue;

@@ -25,11 +25,7 @@ describe('MessageManager', () => {
                 { name: 'historyFilePath', value: `./history-test.json` }
             ]
         });
-        const message: Message<
-            MessageLevels.Info,
-            MessageStatuses.Success,
-            string
-        > = await manager.createMessage({
+        await manager.createMessage({
             level: MessageLevels.Info,
             body: 'This is a test message'
         });
@@ -290,6 +286,16 @@ describe('MessageManager', () => {
 
     it('should readMessagesFromFile', async () => {
         const manager: MessageManager = new MessageManager({args: [{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]});
+
+        manager.createMessage({
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should nsave to file',
+            args: [
+                { name: 'print', value: false },
+                { name: 'throw', value: false },
+                { name: 'save', value: true }
+            ]
+        });
 
         await manager.readMessagesFromFile("./history-test.json");
 
