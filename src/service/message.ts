@@ -3,6 +3,7 @@ import { promises as fs } from "fs";
 import { ArgumentEntry, Component, Configurable, ConfigurableEntry, ParameterEntry, Properties } from "@/component";
 import { MessageLevel, MessageLevels, MessageSpec, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 import { Metadata, MetadataEntry } from "@/template";
+import { IdentityManager } from "@/component/identity";
 
 
 const MessageConfigParameters: ParameterEntry[] = [
@@ -106,6 +107,10 @@ class Message<
         return this.data.status as S;
     }
 
+    public get body(): B {
+        return this.data.body as B
+    }
+
     public get timestamp(): string{
         const timestamp =  this.meta.annotations.createdAt;
 
@@ -116,32 +121,32 @@ class Message<
         return timestamp;
     }
 
-    // private checkStatus(): void {
-    //     if (
-    //         this.status !== 'Success'
-    //         && (
-    //             this.data.level !== MessageLevels.Error
-    //             && this.level !== MessageLevels.Warn
-    //         )
-    //     ) {
-    //         throw new Error(`Message:checkStatus: The message status is not an error or warning: ${this.status}`);
-    //     }
-    // }
+    private checkStatus(): void {
+        if (
+            this.status !== 'Success'
+            && (
+                this.data.level !== MessageLevels.Error
+                && this.level !== MessageLevels.Warn
+            )
+        ) {
+            throw new Error(`Message:checkStatus: The message status is not an error or warning: ${this.status}`);
+        }
+    }
 
-    // public print(): void {
-    //     if (this.properties.getValue("print") === true) {
-    //         console.log(`${this.data.body}`);
-    //     }
-    // }
+    public print(): void {
+        if (this.properties.getValue("print") === true) {
+            console.log(`${this.body}`);
+        }
+    }
 
-    // public throw(): void {
-    //     if (
-    //         this.properties.getValue("throw") === true
-    //         && this.level === MessageLevels.Error
-    //     ) {
-    //         throw new Error(`${this.body}`);
-    //     }
-    // }
+    public throw(): void {
+        if (
+            this.properties.getValue("throw") === true
+            && this.level === MessageLevels.Error
+        ) {
+            throw new Error(`${this.body}`);
+        }
+    }
 }
 
 
@@ -289,10 +294,19 @@ class MessageManager
     extends MessageStore
 {
     private properties: Properties;
+    private identifier: IdentityManager;
 
-    constructor(args: ArgumentEntry[] = []) {
+    constructor({
+
+        args = [],
+        identifier = new IdentityManager()
+    }: {
+        args?: ArgumentEntry[],
+        identifier?: IdentityManager
+    } = {}) {
         super();
 
+        this.identifier = identifier
         this.properties = new Properties({ params: MessageManagerConfigParameters, args });
     }
 
@@ -302,7 +316,7 @@ class MessageManager
         S extends MessageStatuses = MessageStatuses.Success,
         T = any | undefined
     >({
-        id,
+        id = this.identifier.createId(),
         name,
         description,
         args,

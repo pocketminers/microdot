@@ -118,9 +118,9 @@ const IdentityManagerParameters = [
         name: "defaultFormat",
         description: "The default format of the identifier.",
         type: "string",
-        defaultValue: "uuid",
+        defaultValue: "UUID",
         required: false,
-        optionalValues: ["uuid", "random", "timestamp"]
+        optionalValues: ["UUID", "Random", "Name", "Timestamp", "Password"]
     }
 ];
 

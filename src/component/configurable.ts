@@ -1,6 +1,6 @@
 import { ConfigSpec, Metadata, MetadataEntry } from "@/template";
-import { Properties, PropertiesEntry } from "./properties";
-import { Component, ComponentEntry } from ".";
+import { Properties, PropertiesEntry } from "@component/properties";
+import { Component } from "@/component";
 
 
 interface Configuration<T = any>

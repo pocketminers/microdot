@@ -169,10 +169,10 @@ describe('MessageManager', () => {
     });
 
     it('should get messages by level', async () => {
-        const manager: MessageManager = new MessageManager([
+        const manager: MessageManager = new MessageManager({args: [
             { name: 'keepHistory', value: true },
             { name: 'historyFilePath', value: `./history-test.json` }
-        ]);
+        ]});
         const message1: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
@@ -258,7 +258,7 @@ describe('MessageManager', () => {
 
     it('should save messages to an external json file', async () => {
 
-        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+        const manager: MessageManager = new MessageManager({args: [{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]});
 
         await manager.clearHistoryFile("./history-test.json");
 
@@ -280,7 +280,7 @@ describe('MessageManager', () => {
     });
 
     it('should readMessagesFromFile', async () => {
-        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+        const manager: MessageManager = new MessageManager({args: [{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]});
 
         await manager.readMessagesFromFile("./history-test.json");
 
@@ -288,7 +288,7 @@ describe('MessageManager', () => {
     })
 
     it('should clear history file', async () => {
-        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+        const manager: MessageManager = new MessageManager({ args: [{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]});
 
         await manager.clearHistoryFile("./history-test.json");
 
@@ -409,6 +409,23 @@ describe('MessageManager', () => {
 
         expect(manager.messages.length).toBe(1);
         // expect(manager.messages[0].data.status).toBe('BadRequest');
+    });
+
+    it('should add a message to the manager with a status of NotFound', async () => {
+        const manager: MessageManager = new MessageManager();
+        await manager.createMessage<MessageLevels.Info, MessageStatuses.NotFound, string>({
+            level: MessageLevels.Info,
+            status: MessageStatuses.NotFound,
+            body: 'This is a test message',
+            args: [
+                { name: 'print', value: false },
+                { name: 'throw', value: false },
+                { name: 'save', value: true }
+            ]
+        });
+
+        expect(manager.messages.length).toBe(1);
+        // expect(manager.messages[0].data.status).toBe('NotFound');
     });
 
 });
