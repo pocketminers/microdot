@@ -345,4 +345,84 @@ describe('Process', () => {
             }
         });   
     });
+
+    it('should create a process and run it with retry and fail', async () => {
+        const process = new Process<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            args: [{
+                name: 'retry',
+                value: true
+            }, {
+                name: 'retryCount',
+                value: 1
+            }, {
+                name: 'retryDelay',
+                value: 0
+            }, {
+                name: 'timeout',
+                value: 0
+            }, {
+                name: 'timeoutAction',
+                value: 'fail'
+            }],
+            instance: ({args}:{ args: Record<string, any> }) => {
+                return args.test
+            },
+            commands: [{
+                id: 'test',
+                description: 'test',
+                properties: {
+                    args: [],
+                    params: [{
+                        name: 'test',
+                        description: 'test',
+                        type: 'string',
+                        required: true,
+                        defaultValue: 'test',
+                        optionalValues: []
+                    }]
+                },
+                name: 'test',
+                run: async ({instance, args}) => {
+                    throw new Error('test')
+                }
+            }],
+            metadata: {}
+        })
+
+        const result = await process.run({
+            jobId: 'test',
+            commandName: 'test',
+            args: [
+                {
+                    name: 'test',
+                    value: 'test'
+                }
+            ]
+        })
+
+        console.log(`result`, JSON.stringify(result, null, 2));
+
+        expect(result).toEqual({
+            run: {
+                commandName: 'test',
+                jobId: 'test',
+                instance: expect.any(Function),
+                processId: 'test',
+                args: {
+                    test: 'test'
+                }
+            },
+            output: new Error("test"),
+            metrics: {
+                start: expect.any(Number),
+                end: expect.any(Number),
+                duration: expect.any(Number),
+                bytesIn: 15,
+                bytesOut: 6
+            }
+        });   
+    });
 })
