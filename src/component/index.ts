@@ -3,33 +3,26 @@ import { CryptoUtils } from "@utils/crypto";
 import { Metadata, MetadataEntry } from "@template/meta";
 
 
-enum ComponentType {
-    QUEUE = "queue",
-    RUNNER = "runner",
-    MANAGER = "manager",
-    MESSAGE = "message",
-    CONFIGMAP = "configmap",
-    SECRET = "secret"
+enum ComponentTypes {
+    QUEUE = "QUEUE",
+
 }
 
-interface ComponentEntry<T = any>
+interface ComponentEntry<D>
     extends
-        Record<"data", T>,
+        Record<"data", D>,
         Partial<Record<"meta", MetadataEntry>> {}
 
 /**
  */
-class Component<T> {
-    public readonly data: T;
-    public readonly meta: Metadata;
+class Component<T = any, D = undefined> {
+    public readonly data: D;
+    public meta: Metadata;
 
     constructor({
         data,
         meta
-    }: {
-        data: T,
-        meta?: MetadataEntry | Metadata
-    }) {
+    }: ComponentEntry<D>) {
         this.data = data
         if (meta instanceof Metadata) {
             this.meta = meta;
@@ -47,9 +40,9 @@ class Component<T> {
         }
     }
 
-    // private setMetadata(meta: MetadataEntry): void {
-    //     this.meta = new Metadata(meta);
-    // }
+    public getDataValue<K extends keyof D>(key: K): D[K] {
+        return this.data[key];
+    }
 
     public get metadata(): Metadata {
         return this.meta;
@@ -81,6 +74,7 @@ class Component<T> {
 
 
 export {
+    type ComponentEntry,
     Component
 };
 

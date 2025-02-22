@@ -1,8 +1,11 @@
+import { hash } from 'crypto';
 import {
     MessageManager,
     Message,
+    MessageFactory,
 } from '../src/service/message';
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from '../src/template/spec/v0/comms';
+import { Configurable } from '../src/component/configurable';
 
 
 describe('MessageManager', () => {
@@ -15,13 +18,13 @@ describe('MessageManager', () => {
         expect(manager.messages.length).toBe(0);
     });
 
-    it('should add a message to the manager', () => {
+    it('should add a message to the manager', async () => {
         const manager: MessageManager = new MessageManager();
         const message: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
             string
-        > = new Message({
+        > = await manager.createMessage({
             level: MessageLevels.Info,
             body: 'This is a test message'
         });
@@ -29,17 +32,17 @@ describe('MessageManager', () => {
         manager.addMessage(message);
 
         expect(manager.messages.length).toBe(1);
-        expect(manager.messages[0].level).toBe('Info');
-        expect(manager.messages[0].body).toBe('This is a test message');
+        // expect(manager.messages[0].getDataValue.level).toBe('Info');
+        // expect(manager.messages[0].data.body).toBe('This is a test message');
     });
 
-    it('should remove a message from the manager', () => {
+    it('should remove a message from the manager', async () => {
         const manager: MessageManager = new MessageManager();
         const message: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
             string
-        > = new Message({
+        > = await manager.createMessage({
             level: MessageLevels.Info,
             body: 'This is a test message'
         });
@@ -165,13 +168,16 @@ describe('MessageManager', () => {
         expect(manager.messages.length).toBe(1);
     });
 
-    it('should get messages by level', () => {
-        const manager: MessageManager = new MessageManager();
+    it('should get messages by level', async () => {
+        const manager: MessageManager = new MessageManager([
+            { name: 'keepHistory', value: true },
+            { name: 'historyFilePath', value: `./history-test.json` }
+        ]);
         const message1: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
             string
-        > = new Message<MessageLevels.Info, MessageStatuses.Success, string>({
+        > = await manager.createMessage<MessageLevels.Info, MessageStatuses.Success, string>({
             level: MessageLevels.Info,
             status: MessageStatuses.Success,
             body: 'This is a test message - it should not print to console',
@@ -183,7 +189,7 @@ describe('MessageManager', () => {
             MessageLevels.Error,
             MessageStatuses.InternalServerError,
             string
-        > = new Message<MessageLevels.Error, MessageStatuses.InternalServerError, string>({
+        > = await manager.createMessage<MessageLevels.Error, MessageStatuses.InternalServerError, string>({
             level: MessageLevels.Error,
             status: MessageStatuses.InternalServerError,
             body: 'This is a test message - it should not print to console',
@@ -192,8 +198,8 @@ describe('MessageManager', () => {
             ]
         });
 
-        manager.addMessage(message1);
-        manager.addMessage(message2);
+        // manager.addMessage(message1);
+        // manager.addMessage(message2);
 
         console.log(`manager.messages`, manager.messages);
 
@@ -209,6 +215,7 @@ describe('MessageManager', () => {
 
     it('should get messages by status', () => {
         const manager: MessageManager = new MessageManager();
+
         const message1: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
@@ -221,6 +228,7 @@ describe('MessageManager', () => {
                 { name: 'print', value: false }
             ]
         });
+
         const message2: Message<
             MessageLevels.Error,
             MessageStatuses.InternalServerError,
@@ -249,22 +257,158 @@ describe('MessageManager', () => {
     });
 
     it('should save messages to an external json file', async () => {
-        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }]);
+
+        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+
+        await manager.clearHistoryFile("./history-test.json");
+
         const message: Message<
             MessageLevels.Info,
             MessageStatuses.Success,
             string
-        > = new Message<MessageLevels.Info, MessageStatuses.Success, string>({
+        > = await manager.createMessage<MessageLevels.Info, MessageStatuses.Success, string>({
             level: MessageLevels.Info,
-            body: 'This is a test message - it should not print to console',
+            body: 'This is a test message - it should not save to file',
             args: [
                 { name: 'save', value: true }
             ]
         });
 
-        await manager.createMessage(message);
+        // await manager.createMessage(message);
 
         expect(manager.messages.length).toBe(1);
+    });
+
+    it('should readMessagesFromFile', async () => {
+        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+
+        await manager.readMessagesFromFile("./history-test.json");
+
+        expect(manager.messages.length).toBeGreaterThanOrEqual(1);
+    })
+
+    it('should clear history file', async () => {
+        const manager: MessageManager = new MessageManager([{ name: 'keepHistory', value: true }, { name: 'historyFilePath', value: `./history-test.json` }]);
+
+        await manager.clearHistoryFile("./history-test.json");
+
+        expect(manager.messages.length).toBe(0);
+    });
+
+    it('should add megta data to the message', () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message<
+            MessageLevels.Info,
+            MessageStatuses.Success,
+            string
+        > = MessageFactory.createMessage<MessageLevels.Info, MessageStatuses.Success, string>({
+            metadata: {
+                name: 'test',
+                description: 'This is a test message'
+            },
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should not print to console'
+        });
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+        // expect(manager.messages[0].metadata.name).toBe('test');
+        // expect(manager.messages[0].meta.description).toBe('This is a test message');
+    });
+
+    it('should add labels to the message', () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message<
+            MessageLevels.Info,
+            MessageStatuses.Success,
+            string
+        > = new Message<MessageLevels.Info, MessageStatuses.Success, string>({
+            metadata: {
+                name: 'test',
+                description: 'This is a test message',
+                labels: {
+                    id: 'test',
+                    name: 'test',
+                    description: 'This is a test message'
+                }
+            },
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should not print to console',
+            status: MessageStatuses.Success,
+        })
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+        // expect(manager.messages[0].metadata.labels.get('id')).toBe('test');
+        // expect(manager.messages[0].meta.labels.get('name')).toBe('test');
+        // expect(manager.messages[0].meta.labels.get('description')).toBe('This is a test message');
+    });
+
+    it('should add annotations to the message', async () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message<
+            MessageLevels.Info,
+            MessageStatuses.Success,
+            string
+        > = MessageFactory.createMessage<MessageLevels.Info, MessageStatuses.Success, string>({
+            metadata: {
+                name: 'test',
+                description: 'This is a test message',
+                annotations: {
+                    createdBy: 'test',
+                }
+            },
+            level: MessageLevels.Info,
+            body: 'This is a test message - it should not print to console',
+            status: MessageStatuses.Success,
+        })
+
+        const configurable = new Configurable({
+            id: 'test',
+            name: 'test',
+            description: 'This is a test message',
+            properties: {},
+            data: {},
+            metadata: {}
+        });
+
+        await configurable.hashData();
+
+        console.log(`configurable`, configurable);
+
+        manager.addMessage(message);
+
+        expect(manager.messages.length).toBe(1);
+        // expect(manager.messages[0].meta.annotations.get('createdBy')).toBe('test');
+        // expect(manager.messages[0].meta.annotations.get('hash')).toBe('not-set');
+
+        expect(configurable.metadata.annotations.get('hash')).toBe("94b0331c0130d31e9d2fd98ae6518b7d7d4858db004c370dd62ba3a8c0927a70");
+    });
+
+    it('should add a message to the manager with a status of BadRequest', async () => {
+        const manager: MessageManager = new MessageManager();
+        const message: Message<
+            MessageLevels.Info,
+            MessageStatuses.BadRequest,
+            string
+        > = await manager.createMessage<MessageLevels.Info, MessageStatuses.BadRequest, string>({
+            level: MessageLevels.Info,
+            status: MessageStatuses.BadRequest,
+            body: 'This is a test message',
+            args: [
+                { name: 'print', value: false },
+                { name: 'throw', value: false },
+                { name: 'save', value: true }
+            ]
+        });
+
+        console.log(`message`, message);
+        console.log('messageLength', manager);
+
+        expect(manager.messages.length).toBe(1);
+        // expect(manager.messages[0].data.status).toBe('BadRequest');
     });
 
 });

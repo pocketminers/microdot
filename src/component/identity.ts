@@ -16,7 +16,6 @@ enum IdentifierFormats {
 type IdentifierFormat = keyof typeof IdentifierFormats;
 
 
-
 class IdentityFactory {
     public static createIdentifier({
         format,

@@ -3,10 +3,7 @@ import { Component } from "../src/component";
 
 describe('Component', () => {
     it('should create a new instance', async () => {
-        const component = new Component<{
-            id: string,
-            name: string
-        }>({
+        const component = new Component<undefined, {id: string, name: string}> ({
             data: {
                 id: 'test-component',
                 name: 'Test Component'
@@ -23,7 +20,7 @@ describe('Component', () => {
 
         console.log(component);
 
-        expect(component).toBeInstanceOf(Component);
+        expect(component).toBeInstanceOf(Component<{id: string, name: string}>);
 
     });
 

@@ -1,7 +1,8 @@
 import { promises as fs } from "fs";
 
-import { ArgumentEntry, Component, Configurable, ParameterEntry, Properties } from "@/component";
+import { ArgumentEntry, Component, Configurable, ConfigurableEntry, ParameterEntry, Properties } from "@/component";
 import { MessageLevel, MessageLevels, MessageSpec, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
+import { Metadata, MetadataEntry } from "@/template";
 
 
 const MessageConfigParameters: ParameterEntry[] = [
@@ -25,81 +26,122 @@ const MessageConfigParameters: ParameterEntry[] = [
         type: "boolean",
         defaultValue: false,
         required: false
+    },
+    {
+        name: "publish",
+        description: "Whether to publish the message.",
+        type: "boolean",
+        defaultValue: false,
+        required: false
+    },
+    {
+        name: "publishTo",
+        description: "The destination to publish the message.",
+        type: "string",
+        defaultValue: "",
+        required: false
     }
 ];
 
 interface MessageEntry<
     L extends MessageLevel = MessageLevels.Info,
     S extends MessageStatus = MessageStatuses.Success,
-    T = any | undefined
+    B = any | undefined
 >
     extends
-        Record<'body', T>,
-        Partial<Record<'args', ArgumentEntry[]>>,
-        Partial<Record<'level', L>>,
-        Partial<Record<"status", S>> {}
-
+        Record<'level', L>,
+        Record<'body', B> ,
+        Record<'status', S> {}
 
 
 class Message<
     L extends MessageLevel = MessageLevels.Info,
     S extends MessageStatus = MessageStatuses.Success,
-    T = any | undefined
-> implements MessageEntry<L, S, T> {
-    public level: L;
-    public properties: Properties;
-    public body: T;
-    public status: S;
-    public timestamp: Date = new Date();
+    B = any | undefined
+> 
+    extends
+        Configurable<MessageEntry<L,S,B>>
+{
 
     constructor({
-        level,
-        body,
-        status,
-        args
+        id,
+        name,
+        description,
+        args,
+        level = MessageLevels.Info as L,
+        body = undefined as B,
+        status = MessageStatuses.Success as S,
+        metadata = new Metadata()
     }: {
+        id?: string,
+        name?: string,
+        description?: string,
+        args?: ArgumentEntry[],
         level?: L,
-        body: T,
+        body?: B
         status?: S,
-        args?: ArgumentEntry[]
+        metadata?: MetadataEntry | Metadata
     }) {
-        this.level = level as L;
-        this.properties = new Properties({ params: MessageConfigParameters, args });
-        this.body = body;
-        this.status = status as S;
+        super({
+            id,
+            name,
+            description,
+            properties: new Properties({ params: MessageConfigParameters, args }),
+            data: {
+                level: level !== undefined ? level : MessageLevels.Info as L,
+                body,
+                status: status !== undefined ? status : MessageStatuses.Success as S
+            } as MessageEntry<L,S,B>,
+            metadata: metadata instanceof Metadata ? metadata : new Metadata(metadata)
+        });
 
-        // this.checkStatus();
-
-        this.print();
-        this.throw();
+        console.log(`Message:constructor: ${JSON.stringify(this, null, 2)}`);
     }
 
-    private checkStatus(): void {
-        if (
-            this.status !== 'Success'
-            && (
-                this.level !== MessageLevels.Error
-                && this.level !== MessageLevels.Warn
-            )
-        ) {
-            throw new Error(`Message:checkStatus: The message status is not an error or warning: ${this.status}`);
+    public get level(): L {
+        return this.data.level as L;
+    }
+
+    public get status(): S {
+        return this.data.status as S;
+    }
+
+    public get timestamp(): string{
+        const timestamp =  this.meta.annotations.createdAt;
+
+        if (timestamp === undefined) {
+            throw new Error(`Message:timestamp: The timestamp is undefined`);
         }
+
+        return timestamp;
     }
 
-    public print(): void {
-        if (this.properties.getValue("print") === true) {
-            console.log(`${this.body}`);
-        }
-    }
+    // private checkStatus(): void {
+    //     if (
+    //         this.status !== 'Success'
+    //         && (
+    //             this.data.level !== MessageLevels.Error
+    //             && this.level !== MessageLevels.Warn
+    //         )
+    //     ) {
+    //         throw new Error(`Message:checkStatus: The message status is not an error or warning: ${this.status}`);
+    //     }
+    // }
 
-    public throw(): void {
-        if (
-            this.properties.getValue("throw") === true
-            && this.level === MessageLevels.Error
-        ) {
-            throw new Error(`${this.body}`);
-        }
-    }
+    // public print(): void {
+    //     if (this.properties.getValue("print") === true) {
+    //         console.log(`${this.data.body}`);
+    //     }
+    // }
+
+    // public throw(): void {
+    //     if (
+    //         this.properties.getValue("throw") === true
+    //         && this.level === MessageLevels.Error
+    //     ) {
+    //         throw new Error(`${this.body}`);
+    //     }
+    // }
 }
 
 
@@ -110,12 +152,34 @@ class MessageFactory {
         S extends MessageStatus = 'Success',
         T = any | undefined
     >({
+        id,
+        name,
+        description,
         level,
         body,
         status,
-        args
-    }: MessageEntry<L, S, T>): Message<L, S, T> {
-        return new Message<L,S,T>({ level, body, status, args });
+        args,
+        metadata
+    }: {
+        id?: string,
+        name?: string,
+        description?: string,
+        level?: L,
+        body: T,
+        status?: S,
+        args?: ArgumentEntry[],
+        metadata?: MetadataEntry
+    }): Message<L, S, T> {
+        return new Message<L, S, T>({
+            id,
+            name,
+            description,
+            args,
+            level,
+            body,
+            status,
+            metadata
+        });
     }
 }
 
@@ -177,7 +241,7 @@ class MessageStore {
 
         // Filter the messages by date
         filteredMessages = filteredMessages.filter((message) => {
-            return message.timestamp >= date.after && message.timestamp <= date.before;
+            return new Date(message.timestamp) >= date.after && new Date(message.timestamp) <= date.before;
         });
 
         // Limit the number of messages
@@ -211,6 +275,13 @@ const MessageManagerConfigParameters: ParameterEntry[] = [
         type: "string",
         defaultValue: "./history.json",
         required: false
+    },
+    {
+        name: "publish",
+        description: "Whether to publish the messages.",
+        type: "boolean",
+        defaultValue: false,
+        required: false
     }
 ];
 
@@ -218,7 +289,6 @@ class MessageManager
     extends MessageStore
 {
     private properties: Properties;
-
 
     constructor(args: ArgumentEntry[] = []) {
         super();
@@ -232,25 +302,38 @@ class MessageManager
         S extends MessageStatuses = MessageStatuses.Success,
         T = any | undefined
     >({
+        id,
+        name,
+        description,
+        args,
         level,
         body,
-        status = MessageStatuses.Success as S,
-        args = [{ name: "save", value: true }]
-    }: MessageEntry<L, S, T>): Promise<Message<L, S, T>> {
+        status,
+        metadata
+    }: {
+        id?: string,
+        name?: string,
+        description?: string,
+        args?: ArgumentEntry[],
+        level?: L,
+        body: T,
+        status?: S,
+        metadata?: MetadataEntry
+    }): Promise<Message<L, S, T>> {
         const managerSaveProperty = this.properties.getValue("keepHistory");
         const messageSaveProperty = args?.find((arg) => arg.name === "save")?.value;
         
-        const message = MessageFactory.createMessage<L,S,T>({ level, body, status, args });
+        const message = MessageFactory.createMessage<L,S,T>({ id, name, description, level, body, status, args, metadata });
 
         if (
-            (managerSaveProperty === true && messageSaveProperty === true)
+            (managerSaveProperty === true || messageSaveProperty === true)
             && this.messages.length < this.properties.getValue("historySize")
         ) {
             this.addMessage(message);
 
         }
         else if (
-            (managerSaveProperty === true && messageSaveProperty === true)
+            (managerSaveProperty === true || messageSaveProperty === true)
             && this.messages.length >= this.properties.getValue("historySize")
         ) {
             const storeLength = this.messages.length;
@@ -300,11 +383,46 @@ class MessageManager
         messages.push({
             level: message.level,
             status: message.status,
-            body: message.body,
-            timestamp: message.timestamp !== undefined ? message.timestamp : new Date()
+            
+            timestamp: message.timestamp !== undefined ? message.timestamp : new Date().toISOString()
         });
 
         await this.writeFileAsync(filePath, JSON.stringify(messages, null, 2));
+    }
+
+    public async readMessagesFromFile(filePath?: string): Promise<void> {
+        filePath = filePath !== undefined ? filePath : this.properties.getValue<string>("historyFilePath");
+
+        if (filePath === undefined) {
+            throw new Error(`MessageManager:readMessagesFromFile: The file path is undefined`);
+        }
+
+        const data: string = await this.readFileAsync(filePath);
+
+        const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+
+        messages.forEach((message) => {
+            this.addMessage(new Message({
+                level: message.level,
+                status: message.status,
+                body: message.data,
+                metadata: message.metadata,
+                args: [
+                    { name: "save", value: true }
+                ]
+            }));
+        });
+    }
+
+
+    public async clearHistoryFile(filePath?: string): Promise<void> {
+        filePath = filePath !== undefined ? filePath : this.properties.getValue<string>("historyFilePath");
+
+        if (filePath === undefined) {
+            throw new Error(`MessageManager:clearHistoryFile: The file path is undefined`);
+        }
+
+        await this.writeFileAsync(filePath, "[]");
     }
 }
 
