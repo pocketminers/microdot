@@ -1,5 +1,5 @@
-import { CommandResultSpec, CommandRunSpec, CommandSpec, Metadata, MetadataEntry, ProcessStatus, ProcessStatuses } from "@/template";
-import { ArgumentEntry, Properties } from "./properties";
+import { CommandResultSpec, CommandRunSpec, CommandSpec, Metadata, MetadataEntry, ParameterSpec, ProcessStatus, ProcessStatuses } from "@/template";
+import { ArgumentEntry, Parameter, Properties } from "./properties";
 import { CommandRunner } from "@/service/runner";
 import { Configurable } from "./configurable";
 
@@ -11,62 +11,63 @@ enum ProcessTypes {
 
 type ProcessType = keyof typeof ProcessTypes;
 
-const ProcessParameters = [
+const ProcessParameters: ParameterSpec[] = [
     {
         name: 'initialize',
+        description: 'Initialize the process',
         type: 'boolean',
-        default: false,
+        defaultValue: false,
         required: false
-    },
+    } as ParameterSpec<boolean>,
     {
         name: 'initializeFunction',
         type: 'function',
-        default: undefined,
+        defaultValue: undefined,
         required: false
-    },
+    } as ParameterSpec<Function>,
     {
         name: 'initializeProperties',
         type: 'object',
-        default: {},
+        defaultValue: {},
         required: false
-    },
+    } as ParameterSpec<Record<string, any>>,
     {
         name: 'retry',
         type: 'boolean',
-        default: false,
+        defaultValue: false,
         required: false
-    },
+    } as ParameterSpec<boolean>,
     {
         name: 'retryCount',
         type: 'number',
-        default: 0,
+        defaultValue: 0,
         required: false
-    },
+    } as ParameterSpec<number>,
     {
         name: 'retryDelay',
         type: 'number',
-        default: 0,
+        defaultValue: 0,
         required: false
-    },
+    } as ParameterSpec<number>,
     {
         name: 'timeout',
         type: 'number',
-        default: 0,
+        defaultValue: 0,
         required: false
-    },
+    } as ParameterSpec<number>,
     {
         name: 'timeoutAction',
         type: 'string',
-        default: 'fail',
+        defaultValue: 'fail',
         required: false,
         optionalValues: ['fail', 'retry']
-    }
+    } as ParameterSpec<string>
 ]
 
 interface ProcessEntry<T extends ProcessType>
     extends
         Record<'type', T>,
-        Record<'instance', Function>,
+        Record<'instance', Function | undefined>,
         Record<'commandRunner', CommandRunner> {}
 
 class Process<T extends ProcessType> 
@@ -101,7 +102,8 @@ class Process<T extends ProcessType>
             properties: { params: ProcessParameters, args },
             data: {
                 type: type as T,
-                instance: instance !== undefined ? instance : async ({instance, args}:{ instance: Function, args: Record<string, any>}) => {return await instance(args)},
+                instance,
+                // instance: instance !== undefined ? instance : async ({instance, args}:{ instance: Function, args: Record<string, any>}) => {return await instance(args)},
                 commandRunner: new CommandRunner(commands)
             },
             metadata
@@ -111,7 +113,7 @@ class Process<T extends ProcessType>
         this.commands = this.data.commandRunner.listCommands();
     }
 
-    private get instance(): Function {
+    private get instance(): Function | undefined {
         return this.data.instance;
     }
 
@@ -156,9 +158,11 @@ class Process<T extends ProcessType>
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<CommandResultSpec<R | undefined>> {
-        const retry: boolean = this.properties.getValue('retry');
-        const retryCount: number = this.properties.getValue('retryCount');
-        const retryDelay: number = this.properties.getValue('retryDelay');
+        const properties = new Properties({params: this.properties.params, args});
+
+        const retry: boolean = properties.getValue('retry');
+        const retryCount: number = properties.getValue('retryCount');
+        const retryDelay: number = properties.getValue('retryDelay');
 
         if (retry) {
             let retries = 0;
@@ -256,12 +260,14 @@ class Process<T extends ProcessType>
             throw new Error(`Command ${commandName} not found`);
         }
 
+        const properties = new Properties({params: command?.properties.params, args});
+
         const result = await this.data.commandRunner.executeCommand({
             commandName,
             jobId,
             processId: this.id,
             instance: this.instance,
-            args
+            args: properties.toKeyValue()
         });
 
         this.status = ProcessStatuses.Completed;

@@ -20,7 +20,7 @@ interface CommandEntry
  * @returns The result of the command
  */
 const defaultTaskRunner: TaskRunner<any, any> = async ({instance, args}) => {
-    return await instance(args);
+    return await instance({args});
 }
 
 

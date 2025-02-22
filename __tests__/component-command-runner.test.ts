@@ -66,7 +66,7 @@ describe("CommandRunner", () => {
         commandManager.registerCommand(command1);
         commandManager.registerCommand(command2);
 
-        console.log(commandManager.listCommands());
+        // console.log(commandManager.listCommands());
 
         expect(commandManager.listCommands()).toEqual([command1, command2]);
     });
