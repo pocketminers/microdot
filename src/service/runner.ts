@@ -94,39 +94,42 @@ class CommandRunner {
         
         try {
             output = await command.run({instance, args});
+            console.log(`output`, output);
         }
         catch (error: any) {
             output = error;
         }
 
-        if (
+        if (output instanceof Error) {
+            bytesOut = JSON.stringify(output.message).length;
+            // output = output.message as unknown as R;
+        }
+        else if (
+            output instanceof Object
+            || output instanceof Map
+            || output instanceof Set
+            || output instanceof WeakMap
+            || output instanceof WeakSet
+            || output instanceof Function
+        ) {
+            bytesOut = JSON.stringify(output).length;
+        }
+        else if (output instanceof Array) {
+            const stringified = output.map(item => JSON.stringify(item));
+            bytesOut = stringified.join('').length
+        }
+        else if (typeof output === 'string') {
+            bytesOut = output.length;
+        }
+        else if (typeof output === 'number') {
+            bytesOut = output.toString().length;
+        }
+        else if (
             output === undefined
             || output === null
             || Checks.isEmpty(output) === true
         ) {
             bytesOut = 0;
-        }
-        else {
-            if (output instanceof Error) {
-                bytesOut = JSON.stringify(output.message).length;
-            }
-            else if (
-                output instanceof Object
-                || output instanceof Map
-                || output instanceof Set
-                || output instanceof WeakMap
-                || output instanceof WeakSet
-                || output instanceof Function
-            ) {
-                bytesOut = JSON.stringify(output).length;
-            }
-            else if (output instanceof Array) {
-                const stringified = output.map(item => JSON.stringify(item));
-                bytesOut = stringified.join('').length
-            }
-            else if (typeof output === 'string') {
-                bytesOut = output.length;
-            }
         }
 
         const endTime = Date.now();
