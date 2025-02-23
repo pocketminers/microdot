@@ -170,7 +170,7 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result, null, 2));
+        console.log(`result`, JSON.stringify(result.get(1), null, 2));
 
         expect(result.get(1)).toEqual({
             run: {
@@ -338,7 +338,7 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result, null, 2));
+        console.log(`result`, JSON.stringify(result.get(1), null, 2));
 
         expect(result.get(1)).toEqual({
             run: {

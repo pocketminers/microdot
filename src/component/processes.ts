@@ -285,12 +285,12 @@ class Process<T extends ProcessType>
         const timeoutAction: string = this.properties.getValue('timeoutAction');
 
         if (timeout > 0) {
-            return await new Promise((resolve, reject) => {
+            return new Promise((resolve, reject) => {
                 const timer = setTimeout(async () => {
                     console.log(`Process ${this.id} running ${commandName} w/ timeout ${timeout}ms`);
 
                     if (timeoutAction === 'retry') {
-                        resolve(await this.runCommand<R>({jobId, commandName, args}));
+                        resolve(this.runCommand<R>({jobId, commandName, args}));
                     }
                     else {
                         this.status = ProcessStatuses.Error;
@@ -307,6 +307,7 @@ class Process<T extends ProcessType>
                     .catch((error: any) => {
 
                         clearTimeout(timer);
+                        timer.unref();
                         this.status = ProcessStatuses.Error;
                         reject(error);
                     });

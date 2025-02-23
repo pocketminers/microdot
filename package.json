@@ -55,7 +55,7 @@
   "scripts": {
     "docs": "typedoc",
     "lint": "eslint src",
-    "test": "jest -c jest.config.js",
+    "test": "jest -c jest.config.js --detectOpenHandles --forceExit",
     "clean": "rm -rf dist",
     "build:cjs": "tsc --project tsconfig.cjs.json && tsc-alias -p tsconfig.cjs.json",
     "build:esm": "tsc --project tsconfig.esm.json && tsc-alias -p tsconfig.esm.json",
