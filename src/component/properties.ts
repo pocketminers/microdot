@@ -111,8 +111,10 @@ class Parameter<T = any> {
     public getValue(value?: T): T {
         let selectedValue = undefined;
 
-        if (value !== undefined) {
-            this.isValueInOptionalValues(value);
+        if (
+            value !== undefined
+            && this.isValueInOptionalValues(value)
+        ) {
             selectedValue = value;
         }
 
@@ -239,9 +241,7 @@ class Properties {
 
     public getValue<T = any>(name: string): T {
         const value = this.getArgValue<T>(name);
-
-        console.log("value", value);
-
+        
         if (value === undefined) {
             throw new Error(`Value not found: ${name}`);
         }

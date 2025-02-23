@@ -1,5 +1,5 @@
-import { CommandResultSpec, CommandRunSpec, CommandSpec, Metadata, MetadataEntry, ParameterSpec, ProcessStatus, ProcessStatuses } from "@/template";
-import { ArgumentEntry, Parameter, Properties } from "./properties";
+import { CommandResultSpec, CommandRunSpec, CommandSpec, Metadata, MetadataEntry, ParameterSpec, ProcessStatus, ProcessStatuses, PropertiesSpec } from "@/template";
+import { ArgumentEntry, Parameter, ParameterEntry, Properties, PropertiesEntry } from "./properties";
 import { CommandRunner } from "@/service/runner";
 import { Configurable } from "./configurable";
 
@@ -11,7 +11,7 @@ enum ProcessTypes {
 
 type ProcessType = keyof typeof ProcessTypes;
 
-const ProcessParameters: ParameterSpec[] = [
+const ProcessParameters: ParameterEntry[] = [
     {
         name: 'initialize',
         description: 'Initialize the process',
@@ -60,7 +60,7 @@ const ProcessParameters: ParameterSpec[] = [
         defaultValue: 'fail',
         required: false,
         optionalValues: ['fail', 'retry']
-    } as ParameterSpec<string>
+    } as ParameterSpec<string>,
 ]
 
 interface ProcessEntry<T extends ProcessType>
@@ -90,7 +90,7 @@ class Process<T extends ProcessType>
         name?: string,
         description?: string,
         args?: ArgumentEntry[],
-        instance?: Function,
+        instance?: Function | (() => Promise<any>),
         commands?: CommandSpec[],
         metadata?: MetadataEntry | Metadata
     }) {
@@ -116,15 +116,23 @@ class Process<T extends ProcessType>
         return this.data.instance;
     }
 
+    private set instance(instance: Function | undefined) {
+        this.data.instance = instance;
+    }
+
     private async createInstance(): Promise<void> {
         this.status = ProcessStatuses.Initializing;
 
-        const initializeFunction = this.properties.getValue('initializeFunction');
-        const initializeProperties = this.properties.getValue('initializeProperties');
+        const initializeFunction: (args?: Record<string, any>) => Promise<Function> = this.properties.getValue('initializeFunction');
+        const initializeProperties: Properties = new Properties(this.properties.getValue<PropertiesEntry>('initializeProperties'));
+
+        console.log(`Process ${this.id} initializing...`);
 
         try {
-            if (initializeFunction) {
-                this.data.instance = await initializeFunction(initializeProperties);
+            if (initializeFunction !== null
+                && typeof initializeFunction === 'function'
+            ) {
+                this.instance = await initializeFunction(initializeProperties.toKeyValue());
                 this.status = ProcessStatuses.Initialized
             }
             else {
@@ -141,7 +149,9 @@ class Process<T extends ProcessType>
     public async initialize(): Promise<void> {
         const initialize: boolean = this.properties.getValue('initialize');
 
-        if (initialize) {
+        console.log(`Process ${this.id} initialize ${initialize}`);
+
+        if (initialize === true) {
             await this.createInstance();
         }
 
@@ -213,8 +223,6 @@ class Process<T extends ProcessType>
                 }
             }
             while (retries < retryCount);
-
-            results.set(retries + 1, result);
         }
         else {
             let result: CommandResultSpec<R | undefined | Error> = {
@@ -276,10 +284,12 @@ class Process<T extends ProcessType>
         const timeoutAction: string = this.properties.getValue('timeoutAction');
 
         if (timeout > 0) {
-            return new Promise((resolve, reject) => {
-                const timer = setTimeout(() => {
+            return await new Promise((resolve, reject) => {
+                const timer = setTimeout(async () => {
+                    console.log(`Process ${this.id} running ${commandName} w/ timeout ${timeout}ms`);
+
                     if (timeoutAction === 'retry') {
-                        resolve(this.runCommand<R>({jobId, commandName, args}));
+                        resolve(await this.runCommand<R>({jobId, commandName, args}));
                     }
                     else {
                         reject(new Error(`Process ${this.id} timed out`));
@@ -298,7 +308,7 @@ class Process<T extends ProcessType>
             });
         }
         else {
-            return this.runCommand<R>({jobId, commandName, args});
+            return await this.runCommand<R>({jobId, commandName, args});
         }
     }
 
@@ -347,21 +357,21 @@ class Process<T extends ProcessType>
         const properties = new Properties({params: this.properties.params, args: [...args, ...this.properties.args]});
 
 
-        let argKeyPairs: Record<string, any> = properties.toKeyValue();
+        // let argKeyPairs: Record<string, any> = properties.toKeyValue();
         // let result: CommandResultSpec<R | undefined>;
         let output: Map<number, CommandResultSpec<R | undefined | Error>> = new Map<number, CommandResultSpec<R | undefined | Error>>();
         let error: Error | undefined = undefined;
         try {
-            output = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args});
+            output = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args: properties.args});
         }
         catch (error: any) {
             this.status = ProcessStatuses.Error;
             error = error instanceof Error ? error.message : error;
         }
 
-        if (error !== undefined) {
-            
-        }
+        // if (error !== undefined) {
+        //     console.log(`Error: ${error}`);
+        // }
 
         return output;
 

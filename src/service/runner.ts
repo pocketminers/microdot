@@ -87,14 +87,14 @@ class CommandRunner {
             args !== undefined
             && Checks.isEmpty(args) === false
         ) {
-            console.log(`args`, args);
+            // console.log(`args`, args);
             bytesIn = JSON.stringify(args).length;
-            console.log(`bytesIn`, bytesIn);
+            // console.log(`bytesIn`, bytesIn);
         }
         
         try {
             output = await command.run({instance, args});
-            console.log(`output`, output);
+            // console.log(`output`, output);
         }
         catch (error: any) {
             output = error;

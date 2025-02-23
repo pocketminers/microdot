@@ -16,7 +16,7 @@ interface ComponentEntry<D>
 /**
  */
 class Component<D = undefined> {
-    public readonly data: D;
+    public data: D;
     public meta: Metadata;
 
     constructor({

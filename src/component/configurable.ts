@@ -14,7 +14,7 @@ interface Configuration<T = any>
 interface ConfigurableEntry<D>
     extends
         Partial<Pick<ConfigSpec, "id" | "name" | "description">>,
-        Partial<Record<"properties", PropertiesEntry>>,
+        Partial<Record<"properties", PropertiesEntry | Properties>>,
         Partial<Record<"data", D>>,
         Partial<Record<"metadata", MetadataEntry>> {}
 
