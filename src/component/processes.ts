@@ -167,7 +167,8 @@ class Process<T extends ProcessType>
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<Map<number, CommandResultSpec<R | undefined | Error>>> {
-        const properties = new Properties({params: this.properties.params, args: [...args, ...this.properties.args]});
+        const properties = new Properties({params: ProcessParameters, args});
+        const argValues = new Properties({args}).toKeyValue();
 
         const retry: boolean = properties.getValue('retry');
         const retryCount: number = properties.getValue('retryCount');
@@ -183,7 +184,7 @@ class Process<T extends ProcessType>
                     processId: this.id,
                     jobId,
                     commandName,
-                    args
+                    args: argValues
                 },
                 output: undefined,
                 metrics: {
@@ -207,7 +208,7 @@ class Process<T extends ProcessType>
                             processId: this.id,
                             jobId,
                             commandName,
-                            args
+                            args: argValues
                         },
                         output: error,
                         metrics: {
@@ -231,7 +232,7 @@ class Process<T extends ProcessType>
                     processId: this.id,
                     jobId,
                     commandName,
-                    args
+                    args: argValues
                 },
                 output: undefined,
                 metrics: {
@@ -252,7 +253,7 @@ class Process<T extends ProcessType>
                         processId: this.id,
                         jobId,
                         commandName,
-                        args
+                        args: argValues
                     },
                     output: error,
                     metrics: {
@@ -292,6 +293,7 @@ class Process<T extends ProcessType>
                         resolve(await this.runCommand<R>({jobId, commandName, args}));
                     }
                     else {
+                        this.status = ProcessStatuses.Error;
                         reject(new Error(`Process ${this.id} timed out`));
                     }
                 }, timeout);
@@ -299,10 +301,13 @@ class Process<T extends ProcessType>
                 this.runCommand<R>({jobId, commandName, args})
                     .then((result: CommandResultSpec<R>) => {
                         clearTimeout(timer);
+                        this.status = ProcessStatuses.Completed;
                         resolve(result);
                     })
                     .catch((error: any) => {
+
                         clearTimeout(timer);
+                        this.status = ProcessStatuses.Error;
                         reject(error);
                     });
             });
@@ -354,19 +359,19 @@ class Process<T extends ProcessType>
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<Map<number, CommandResultSpec<R | undefined | Error>>> {
-        const properties = new Properties({params: this.properties.params, args: [...args, ...this.properties.args]});
+        // const properties = new Properties({params: this.properties.params, args: [...args, ...this.properties.args]});
 
 
         // let argKeyPairs: Record<string, any> = properties.toKeyValue();
         // let result: CommandResultSpec<R | undefined>;
         let output: Map<number, CommandResultSpec<R | undefined | Error>> = new Map<number, CommandResultSpec<R | undefined | Error>>();
-        let error: Error | undefined = undefined;
         try {
-            output = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args: properties.args});
+            output = await this.runWithRetryAndTimeout<R | undefined>({jobId, commandName, args});
         }
         catch (error: any) {
             this.status = ProcessStatuses.Error;
             error = error instanceof Error ? error.message : error;
+            console.log(`Error: ${error}`);
         }
 
         // if (error !== undefined) {

@@ -180,11 +180,11 @@ describe('Process', () => {
             processId: 'test',
             args: {
                 test: 'test',
-                retry: true,
-                retryCount: 0,
-                retryDelay: 0,
-                timeout: 0,
-                timeoutAction: 'fail',
+                // retry: true,
+                // retryCount: 0,
+                // retryDelay: 0,
+                // timeout: 0,
+                // timeoutAction: 'fail',
                 }
             },
             output: 'test',
@@ -192,7 +192,7 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 93,
+                bytesIn: 15,
                 bytesOut: 4
             }
         });   
@@ -263,11 +263,11 @@ describe('Process', () => {
                 processId: 'test',
                 args: {
                     test: 'test',
-                    retry: true,
-                    retryCount: 1,
-                    retryDelay: 0,
-                    timeout: 0,
-                    timeoutAction: 'fail',
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail',
                 }
             },
             output: 'test',
@@ -275,7 +275,7 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 93,
+                bytesIn: 15,
                 bytesOut: 4
             }
         });   
@@ -348,11 +348,11 @@ describe('Process', () => {
                 processId: 'test',
                 args: {
                     test: 'test',
-                    retry: true,
-                    retryCount: 1,
-                    retryDelay: 0,
-                    timeout: 0,
-                    timeoutAction: 'fail'
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail'
                 }
             },
             output: new Error("test"),
@@ -360,7 +360,7 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 93,
+                bytesIn: 15,
                 bytesOut: 6
             }
         });   
@@ -433,11 +433,11 @@ describe('Process', () => {
                 processId: 'test',
                 args: {
                     test: 'test',
-                    retry: true,
-                    retryCount: 1,
-                    retryDelay: 0,
-                    timeout: 0,
-                    timeoutAction: 'fail'
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail'
                 }
             },
             output: new Error("test"),
@@ -445,7 +445,7 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 93,
+                bytesIn: 15,
                 bytesOut: 6
             }
         });   
@@ -527,28 +527,28 @@ describe('Process', () => {
                 instance: expect.any(Function),
                 args: {
                     test: 'test',
-                    retry: true,
-                    retryCount: 1,
-                    retryDelay: 0,
-                    timeout: 1000,
-                    timeoutAction: 'fail'
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 1000,
+                    // timeoutAction: 'fail'
                 }
             
             },
-            output: null,
+            output: new Error('Process test timed out'),
             metrics: {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 96,
+                bytesIn: 0,
                 bytesOut: 0
             }
         });
 
-        expect(process.status).toBe(ProcessStatuses.Completed);
+        expect(process.status).toBe(ProcessStatuses.Error);
     });
 
-    it('should create a process that requires an intialization', async () => {
+    it('should create a process that does not require an initialization', async () => {
         const process = new Process<ProcessTypes.AUTH>({
             id: 'test',
             type: ProcessTypes.AUTH,
@@ -622,14 +622,14 @@ describe('Process', () => {
                 instance: console.log,   
                 processId: 'test',
                 args: {
-                    initialize: false,
-                    initializeFunction: null,
+                    // initialize: false,
+                    // initializeFunction: null,
                     message: 'test',
-                    retry: true,
-                    retryCount: 1,
-                    retryDelay: 0,
-                    timeout: 0,
-                    timeoutAction: 'fail'
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail'
                 }
             },
             output: null,
@@ -637,7 +637,102 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 141,
+                bytesIn: 18,
+                bytesOut: 0
+            }
+        });   
+    });
+
+    it('should create a process that requires an initialization', async () => {
+        const process = new Process<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            args: [{
+                name: 'retry',
+                value: true
+            }, {
+                name: 'retryCount',
+                value: 1
+            }, {
+                name: 'retryDelay',
+                value: 0
+            }, {
+                name: 'timeout',
+                value: 0
+            }, {
+                name: 'timeoutAction',
+                value: 'fail'
+            }, {
+                name: 'initialize',
+                value: true
+            }, {
+                name: 'initializeFunction',
+                value: () => console.log
+            }],
+            instance: undefined,
+            commands: [{
+                id: 'test',
+                description: 'test',
+                properties: {
+                    args: [],
+                    params: [{
+                        name: 'message',
+                        description: 'message to write using console.log',
+                        type: 'string',
+                        required: true,
+                        defaultValue: 'test',
+                        optionalValues: []
+                    }]
+                },
+                name: 'test',
+                run: ({instance, args}) => {
+                    return instance(args?.message)
+                }
+            }],
+            metadata: {}
+        })
+
+        console.log(`process`, JSON.stringify(process, null, 2));
+
+        await process.initialize();
+
+        const result = await process.run({
+            jobId: 'test',
+            commandName: 'test',
+            args: [
+                {
+                    name: 'message',
+                    value: 'test'
+                }
+            ]
+        })
+
+        console.log(`result`, JSON.stringify(result, null, 2));
+
+        expect(result.get(result.size)).toEqual({
+            run: {
+                commandName: 'test',
+                jobId: 'test',
+                instance: console.log,   
+                processId: 'test',
+                args: {
+                    // initialize: true,
+                    // initializeFunction: expect.any(Function),
+                    message: 'test',
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail'
+                }
+            },
+            output: null,
+            metrics: {
+                start: expect.any(Number),
+                end: expect.any(Number),
+                duration: expect.any(Number),
+                bytesIn: 18,
                 bytesOut: 0
             }
         });   

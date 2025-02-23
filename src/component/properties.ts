@@ -109,21 +109,25 @@ class Parameter<T = any> {
     }
 
     public getValue(value?: T): T {
-        let selectedValue = undefined;
+        let selectedValue = value;
 
+        // Check if the value is in the optional values, if any optional values are defined
         if (
-            value !== undefined
-            && this.isValueInOptionalValues(value)
+            selectedValue !== undefined
+            && this.isValueInOptionalValues(selectedValue) === false
         ) {
-            selectedValue = value;
+            throw new Error(`Value is not in optional values: ${this.name}`);
         }
 
         const defaultValue = this.defaultValue;
-        if (defaultValue !== undefined) {
+        if (
+            defaultValue !== undefined
+            && ( selectedValue === undefined || selectedValue === null )
+        ) {
             selectedValue = defaultValue;
         }
 
-        if (this.required && selectedValue === undefined) {
+        if (this.required === true && selectedValue === undefined) {
             throw new Error("Value is required: " + this.name);
         }
 
@@ -175,24 +179,34 @@ class Properties {
     private getArgValue<T = any>(name: string): T | undefined {
         const arg = this.findArg(name);
         const param = this.findParam(name);
+
+        // console.log(`getArgValue: ${name} ${arg?.value} ${param?.defaultValue}`);
+
+        // The argument is not found and the parameter is not found
         if (
             arg === undefined
             && param === undefined
         ) {
             throw new Error(`Argument not found: ${name}`);
         }
+
+        // The argument is found and the parameter is found
         else if (
             arg !== undefined
             && param !== undefined
         ) {
             return param.getValue(arg.value);
         }
+
+        // The argument is found and the parameter is not found
         else if (
             arg !== undefined
             && param === undefined
         ) {
             return arg.value;
         }
+
+        // The argument is not found and the parameter is found
         else if (
             arg === undefined
             && param !== undefined
@@ -241,7 +255,7 @@ class Properties {
 
     public getValue<T = any>(name: string): T {
         const value = this.getArgValue<T>(name);
-        
+
         if (value === undefined) {
             throw new Error(`Value not found: ${name}`);
         }
