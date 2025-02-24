@@ -170,7 +170,7 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
 
         expect(result.get(1)).toEqual({
             run: {
@@ -338,7 +338,8 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result.get(1), null, 2));
+        console.log(`result`, JSON.stringify(result?.get(1), null, 2));
+
 
         expect(result.get(1)).toEqual({
             run: {
@@ -423,7 +424,7 @@ describe('Process', () => {
             ]
         })
 
-        // console.log(`result`, JSON.stringify(result, null, 2));
+        console.log(`result`, JSON.stringify(result, null, 2));
 
         expect(result.get(1)).toEqual({
             run: {
@@ -513,11 +514,11 @@ describe('Process', () => {
             })
         }
         catch (error) {
-            console.log(`error`, error);
+          // console.log(`error`, error);
             expect(error).toEqual(new Error('Process test timed out'));
         }
 
-        console.log(`result`, JSON.stringify(result?.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result?.get(1), null, 2));
 
         expect(result?.get(1)).toEqual({
             run: {
@@ -598,7 +599,7 @@ describe('Process', () => {
             metadata: {}
         })
 
-        console.log(`process`, JSON.stringify(process, null, 2));
+      // console.log(`process`, JSON.stringify(process, null, 2));
 
         await process.initialize();
 
@@ -613,7 +614,7 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result, null, 2));
+      // console.log(`result`, JSON.stringify(result, null, 2));
 
         expect(result.get(result.size)).toEqual({
             run: {
@@ -632,7 +633,7 @@ describe('Process', () => {
                     // timeoutAction: 'fail'
                 }
             },
-            output: null,
+            output: undefined,
             metrics: {
                 start: expect.any(Number),
                 end: expect.any(Number),
@@ -693,7 +694,7 @@ describe('Process', () => {
             metadata: {}
         })
 
-        console.log(`process`, JSON.stringify(process, null, 2));
+      // console.log(`process`, JSON.stringify(process, null, 2));
 
         await process.initialize();
 
@@ -708,7 +709,7 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result, null, 2));
+      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
 
         expect(result.get(result.size)).toEqual({
             run: {
@@ -727,7 +728,7 @@ describe('Process', () => {
                     // timeoutAction: 'fail'
                 }
             },
-            output: null,
+            output: undefined,
             metrics: {
                 start: expect.any(Number),
                 end: expect.any(Number),
@@ -736,5 +737,107 @@ describe('Process', () => {
                 bytesOut: 0
             }
         });   
+    });
+
+    it('should create a process that requires an initialization and fail', async () => {
+        const process = new Process<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            args: [{
+                name: 'retry',
+                value: true
+            }, {
+                name: 'retryCount',
+                value: 1
+            }, {
+                name: 'retryDelay',
+                value: 0
+            }, {
+                name: 'timeout',
+                value: 0
+            }, {
+                name: 'timeoutAction',
+                value: 'fail'
+            }, {
+                name: 'initialize',
+                value: true
+            }, {
+                name: 'initializeFunction',
+                value: () => { throw new Error('test') }
+            }],
+            instance: undefined,
+            commands: [{
+                id: 'test',
+                description: 'test',
+                properties: {
+                    args: [],
+                    params: [{
+                        name: 'message',
+                        description: 'message to write using console.log',
+                        type: 'string',
+                        required: true,
+                        defaultValue: 'test',
+                        optionalValues: []
+                    }]
+                },
+                name: 'test',
+                run: ({instance, args}) => {
+                    return instance(args?.message)
+                }
+            }],
+            metadata: {}
+        })
+
+      // console.log(`process`, JSON.stringify(process, null, 2));
+
+        try {
+            await process.initialize();
+        }
+        catch (error) {
+          // console.log(`error`, error);
+            expect(error).toEqual(new Error('Failed to create instance: Error: test'));
+        }
+
+        const result = await process.run({
+            jobId: 'test',
+            commandName: 'test',
+            args: [
+                {
+                    name: 'message',
+                    value: 'test'
+                }
+            ]
+        })
+
+      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
+
+        expect(result.get(result.size)).toEqual({
+            run: {
+                commandName: 'test',
+                jobId: 'test',
+                instance: undefined,   
+                processId: 'test',
+                args: {
+                    // initialize: true,
+                    // initializeFunction: expect.any(Function),
+                    message: 'test',
+                    // retry: true,
+                    // retryCount: 1,
+                    // retryDelay: 0,
+                    // timeout: 0,
+                    // timeoutAction: 'fail'
+                }
+            },
+            output: new TypeError('instance is not a function'),
+            metrics: {
+                start: expect.any(Number),
+                end: expect.any(Number),
+                duration: expect.any(Number),
+                bytesIn: 18,
+                bytesOut: 28
+            }
+
+        });
     });
 });

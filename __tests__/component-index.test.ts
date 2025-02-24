@@ -14,11 +14,11 @@ describe('Component', () => {
             }
         });
 
-        console.log(component);
+      // console.log(component);
 
         await component.hashData();
 
-        console.log(component);
+      // console.log(component);
 
         expect(component).toBeInstanceOf(Component<{id: string, name: string}>);
 

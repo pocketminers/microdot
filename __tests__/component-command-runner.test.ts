@@ -38,7 +38,12 @@ describe("CommandRunner", () => {
         commandManager.registerCommand(command);
         commandManager.unregisterCommand("test");
 
-        expect(commandManager.getCommand("test")).toBeUndefined();
+        try {
+            commandManager.getCommand("test");
+        }
+        catch (error: any) {
+            expect(error.message).toEqual("Command test not found");
+        }
     });
 
     it("should list commands", () => {
@@ -129,7 +134,7 @@ describe("CommandRunner", () => {
                 jobId: expect.any(String),
                 instance: undefined
             },
-            output: null,
+            output: undefined,
             metrics: {
                 start: expect.any(Number),
                 end: expect.any(Number),
@@ -162,7 +167,7 @@ describe("CommandRunner", () => {
             args: { test: "test" }
         });
 
-        console.log(`result`, result);
+      // console.log(`result`, result);
 
         expect(result).toEqual({
             run: {

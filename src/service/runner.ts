@@ -49,8 +49,12 @@ class CommandRunner {
         this.commands.delete(commandName);
     }
 
-    public getCommand(commandName: string): CommandSpec | undefined {
-        return this.commands.get(commandName);
+    public getCommand(commandName: string): CommandSpec {
+        const command = this.commands.get(commandName);
+        if (command === undefined) {
+            throw new Error(`Command ${commandName} not found`);
+        }
+        return command;
     }
 
     public listCommands(): CommandSpec[] {
@@ -68,72 +72,20 @@ class CommandRunner {
         processId = 'default',
         instance,
         args
-    }: CommandRunSpec): Promise<CommandResultSpec<R>> {
-
-        const command = this.getCommand(commandName);
-
-        if (command === undefined) {
-            throw new Error(`Command ${commandName} not found`);
-        }
-
-
-        const startTime = Date.now();
-        let duration: number = 0;
-        let output: R | undefined;
-        let bytesIn: number = 0;
-        let bytesOut: number = 0;
-        
-        if (
-            args !== undefined
-            && Checks.isEmpty(args) === false
-        ) {
-            // console.log(`args`, args);
-            bytesIn = JSON.stringify(args).length;
-            // console.log(`bytesIn`, bytesIn);
-        }
+    }: CommandRunSpec): Promise<CommandResultSpec<R | Error | undefined>> {
+        const { startTime, bytesIn } = this.getInputMetrics(args);
+        let output: R | Error |undefined;
         
         try {
+            const command = this.getCommand(commandName);
             output = await command.run({instance, args});
-            // console.log(`output`, output);
         }
         catch (error: any) {
             output = error;
+            console.log(`error`, error);
         }
 
-        if (output instanceof Error) {
-            bytesOut = JSON.stringify(output.message).length;
-            // output = output.message as unknown as R;
-        }
-        else if (
-            output instanceof Object
-            || output instanceof Map
-            || output instanceof Set
-            || output instanceof WeakMap
-            || output instanceof WeakSet
-            || output instanceof Function
-        ) {
-            bytesOut = JSON.stringify(output).length;
-        }
-        else if (output instanceof Array) {
-            const stringified = output.map(item => JSON.stringify(item));
-            bytesOut = stringified.join('').length
-        }
-        else if (typeof output === 'string') {
-            bytesOut = output.length;
-        }
-        else if (typeof output === 'number') {
-            bytesOut = output.toString().length;
-        }
-        else if (
-            output === undefined
-            || output === null
-            || Checks.isEmpty(output) === true
-        ) {
-            bytesOut = 0;
-        }
-
-        const endTime = Date.now();
-        duration = endTime - startTime;
+        const { bytesOut, duration, endTime } = this.getOutputMetrics<R | Error | undefined>(output, startTime);        
 
         return {
             run: {
@@ -143,7 +95,7 @@ class CommandRunner {
                 args,
                 instance
             },
-            output: output as R || null,
+            output: output as R | Error | undefined,
             metrics: {
                 start: startTime,
                 end: endTime,
@@ -151,7 +103,87 @@ class CommandRunner {
                 bytesIn,
                 bytesOut
             }
-        } as CommandResultSpec<R>;
+        } as CommandResultSpec<R | Error | undefined>;
+    }
+
+    private getByteCount(value: any): number {
+        let count: number = 0;
+
+        if (
+            value instanceof Error
+            && value.message !== undefined
+        ) {
+            const errorObject = value.message
+            count = JSON.stringify(errorObject).length;
+        }
+        else if (
+            value instanceof Object
+            || value instanceof Map
+            || value instanceof Set
+            || value instanceof WeakMap
+            || value instanceof WeakSet
+            || value instanceof Function
+        ) {
+            count = JSON.stringify(value).length;
+        }
+        else if (value instanceof Array) {
+            const stringified = value.map(item => JSON.stringify(item));
+            count = stringified.join('').length
+        }
+        else if (typeof value === 'string') {
+            count = value.length;
+        }
+        else if (typeof value === 'number') {
+            count = value.toString().length;
+        }
+        else if (
+            value === undefined
+            || value === null
+            || Checks.isEmpty(value) === true
+        ) {
+            count = 0;
+        }
+
+        return count;
+    }
+
+    public getInputMetrics(args: Record<string,any>): { bytesIn: number, startTime: number} {
+        let bytesIn: number = 0;
+
+        if (
+            args !== undefined
+            && Checks.isEmpty(args) === false
+        ) {
+            bytesIn = this.getByteCount(args);
+        }
+
+        return {
+            bytesIn,
+            startTime: Date.now()
+        }
+    }
+
+    public getOutputMetrics<R>(output: R, startTime: number): { bytesOut: number, duration: number, endTime: number } {
+        let bytesOut: number = 0;
+
+        console.log(`output`, output);
+
+        if (
+            output !== undefined
+            // && Checks.isEmpty(output) === false
+        ) {
+            console.log(`output is not empty`);
+            bytesOut = this.getByteCount(output);
+        }
+
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+
+        return {
+            bytesOut,
+            duration,
+            endTime
+        }
     }
 }
 

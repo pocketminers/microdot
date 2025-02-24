@@ -17,7 +17,7 @@ describe('IsNotEmpty Decorator - no mocks', () => {
 
     it('should throw an error if input is empty', () => {
         const hasEmpties = Checks.hasEmpties(' ', ' ', ' ');
-        console.log('hasEmpties: ', hasEmpties);
+      // console.log('hasEmpties: ', hasEmpties);
 
         expect(() => instance.testMethod(undefined)).toThrow('undefined:testMethod:input cannot be empty.');
     });
