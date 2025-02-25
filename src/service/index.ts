@@ -13,7 +13,7 @@ import { IdentityManager, IdentityStore } from "@/component/identity";
 import { MessageManager } from "./message";
 import { ProcessStatuses } from "@/template";
 import { MessageStatuses } from "@/template/spec/v0/comms";
-import { Process } from "@/component/processes";
+import { Process } from "@/component/process";
 
 
 /**

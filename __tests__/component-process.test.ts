@@ -4,7 +4,7 @@ import {
     ProcessParameters,
     ProcessType,
     ProcessTypes
-} from '../src/component/processes'
+} from '../src/component/process'
 
 import {
     ProcessStatuses

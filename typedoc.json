@@ -1,7 +1,10 @@
 {
     "$schema": "https://typedoc.org/schema.json",
     "entryPoints": [
-        "./src/index.ts"
+        "./src/component/index.ts",
+        "./src/service/index.ts",
+        "./src/template/index.ts",
+        "./src/utils/index.ts",
     ],
     "entryPointStrategy": "expand",
     "sort": ["alphabetical"],
@@ -28,7 +31,7 @@
         "excludeReferences": false,
         "includeFolders": true,
         "compactFolders": false,
-        "includeGroups": true
+        "includeGroups": false
     },
     "readme": "./README.md",
     "out": "./docs",
