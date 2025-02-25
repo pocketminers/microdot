@@ -160,7 +160,7 @@ describe('Process', () => {
         })
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -170,12 +170,12 @@ describe('Process', () => {
             ]
         })
 
-      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(1)).toEqual({
+        expect(result).toEqual({
             run: {
             commandName: 'test',
-            jobId: 'test',
+            // jobId: 'test',
             instance: expect.any(Function),
             processId: 'test',
             args: {
@@ -243,7 +243,7 @@ describe('Process', () => {
         })
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -255,10 +255,10 @@ describe('Process', () => {
 
         // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(1)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: expect.any(Function),
                 processId: 'test',
                 args: {
@@ -328,7 +328,7 @@ describe('Process', () => {
         })
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -338,13 +338,13 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result?.get(1), null, 2));
+        // console.log(`result`, JSON.stringify(result?, null, 2));
 
 
-        expect(result.get(1)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: expect.any(Function),
                 processId: 'test',
                 args: {
@@ -414,7 +414,7 @@ describe('Process', () => {
         })
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -424,12 +424,12 @@ describe('Process', () => {
             ]
         })
 
-        console.log(`result`, JSON.stringify(result, null, 2));
+        // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(1)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: expect.any(Function),
                 processId: 'test',
                 args: {
@@ -503,7 +503,7 @@ describe('Process', () => {
 
         try {
             result = await process.run({
-                jobId: 'test',
+                // jobId: 'test',
                 commandName: 'test',
                 args: [
                     {
@@ -518,12 +518,12 @@ describe('Process', () => {
             expect(error).toEqual(new Error('Process test timed out'));
         }
 
-      // console.log(`result`, JSON.stringify(result?.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result?, null, 2));
 
-        expect(result?.get(1)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 processId: 'test',
                 instance: expect.any(Function),
                 args: {
@@ -541,8 +541,8 @@ describe('Process', () => {
                 start: expect.any(Number),
                 end: expect.any(Number),
                 duration: expect.any(Number),
-                bytesIn: 0,
-                bytesOut: 0
+                bytesIn: 15,
+                bytesOut: 24
             }
         });
 
@@ -604,7 +604,7 @@ describe('Process', () => {
         await process.initialize();
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -616,10 +616,10 @@ describe('Process', () => {
 
       // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(result.size)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: console.log,   
                 processId: 'test',
                 args: {
@@ -699,7 +699,7 @@ describe('Process', () => {
         await process.initialize();
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -709,12 +709,12 @@ describe('Process', () => {
             ]
         })
 
-      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(result.size)).toEqual({
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: console.log,   
                 processId: 'test',
                 args: {
@@ -800,7 +800,7 @@ describe('Process', () => {
         }
 
         const result = await process.run({
-            jobId: 'test',
+            // jobId: 'test',
             commandName: 'test',
             args: [
                 {
@@ -810,12 +810,14 @@ describe('Process', () => {
             ]
         })
 
-      // console.log(`result`, JSON.stringify(result.get(1), null, 2));
+      // console.log(`result`, JSON.stringify(result, null, 2));
 
-        expect(result.get(result.size)).toEqual({
+        // expect(result).toEqual(new TypeError('instance is not a function'));
+
+        expect(result).toEqual({
             run: {
                 commandName: 'test',
-                jobId: 'test',
+                // jobId: 'test',
                 instance: undefined,   
                 processId: 'test',
                 args: {
@@ -829,6 +831,7 @@ describe('Process', () => {
                     // timeoutAction: 'fail'
                 }
             },
+            // output: new Map<number, any>([[1, new TypeError('instance is not a function')]]),
             output: new TypeError('instance is not a function'),
             metrics: {
                 start: expect.any(Number),

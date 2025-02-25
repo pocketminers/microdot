@@ -1,7 +1,3 @@
-
-// import { PropertyMap, PropertyMapJSON } from '@component/property';
-
-
 /**
  * Annotation Metadata Template
  */

@@ -68,12 +68,12 @@ class CommandRunner {
 
     public async executeCommand<R>({
         commandName,
-        jobId,
-        processId = 'default',
+        // jobId,
+        // processId = 'default',
         instance,
         args
-    }: CommandRunSpec): Promise<CommandResultSpec<R | Error | undefined>> {
-        const { startTime, bytesIn } = this.getInputMetrics(args);
+    }: CommandRunSpec): Promise<R | Error | undefined> {
+        // const { startTime, bytesIn } = CommandRunner.getInputMetrics(args);
         let output: R | Error |undefined;
         
         try {
@@ -82,31 +82,33 @@ class CommandRunner {
         }
         catch (error: any) {
             output = error;
-            console.log(`error`, error);
+            // console.log(`error`, error);
         }
 
-        const { bytesOut, duration, endTime } = this.getOutputMetrics<R | Error | undefined>(output, startTime);        
+        return output;
 
-        return {
-            run: {
-                processId,
-                commandName,
-                jobId: jobId !== undefined ? jobId : `${commandName}-${Date.now()}`,
-                args,
-                instance
-            },
-            output: output as R | Error | undefined,
-            metrics: {
-                start: startTime,
-                end: endTime,
-                duration,
-                bytesIn,
-                bytesOut
-            }
-        } as CommandResultSpec<R | Error | undefined>;
+        // const { bytesOut, duration, endTime } = CommandRunner.getOutputMetrics<R | Error | undefined>(output, startTime);        
+
+        // return {
+            // run: {
+            //     // processId,
+            //     commandName,
+            //     // jobId: jobId !== undefined ? jobId : `${commandName}-${Date.now()}`,
+            //     args,
+            //     instance
+            // },
+            // output: output as R | Error | undefined,
+            // metrics: {
+            //     start: startTime,
+            //     end: endTime,
+            //     duration,
+            //     bytesIn,
+            //     bytesOut
+            // }
+        // } as CommandResultSpec<R>;
     }
 
-    private getByteCount(value: any): number {
+    public static getByteCount(value: any): number {
         let count: number = 0;
 
         if (
@@ -147,14 +149,14 @@ class CommandRunner {
         return count;
     }
 
-    public getInputMetrics(args: Record<string,any>): { bytesIn: number, startTime: number} {
+    public static getInputMetrics(args: Record<string,any>): { bytesIn: number, startTime: number} {
         let bytesIn: number = 0;
 
         if (
             args !== undefined
             && Checks.isEmpty(args) === false
         ) {
-            bytesIn = this.getByteCount(args);
+            bytesIn = CommandRunner.getByteCount(args);
         }
 
         return {
@@ -163,17 +165,17 @@ class CommandRunner {
         }
     }
 
-    public getOutputMetrics<R>(output: R, startTime: number): { bytesOut: number, duration: number, endTime: number } {
+    public static getOutputMetrics<R>(output: R, startTime: number): { bytesOut: number, duration: number, endTime: number } {
         let bytesOut: number = 0;
 
-        console.log(`output`, output);
+        // console.log(`output`, output);
 
         if (
             output !== undefined
             // && Checks.isEmpty(output) === false
         ) {
-            console.log(`output is not empty`);
-            bytesOut = this.getByteCount(output);
+            // console.log(`output is not empty`);
+            bytesOut = CommandRunner.getByteCount(output);
         }
 
         const endTime = Date.now();

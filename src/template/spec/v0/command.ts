@@ -25,9 +25,9 @@ interface CommandSpec<R = any, T = any>
 interface CommandRunSpec
     extends
         Record<'commandName', string>,
-        Record<'jobId', string>,
+        // Record<'jobId', string>,
         Record<'instance', any>,
-        Record<"processId", string>,
+        // Record<"processId", string>,
         Record<'args', Record<string, any>> {}
 
 
@@ -38,8 +38,9 @@ interface CommandRunSpec
 interface CommandResultSpec<R>
     extends
         Record<'run', CommandRunSpec>,
-        Record<'output', R>,
-        Record<'metrics', CommandResultMetricsSpec> {}
+        Record<'output', R | Error | undefined>,
+        Record<'metrics', CommandResultMetricsSpec>
+        {}
 
 
 /**
