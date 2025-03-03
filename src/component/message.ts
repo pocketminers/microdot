@@ -59,7 +59,7 @@ interface MessageEntry<
 class Message<
     L extends MessageLevel = MessageLevels.Info,
     S extends MessageStatus = MessageStatuses.Success,
-    B = any | undefined
+    B = any
 > 
     extends
         Configurable<MessageEntry<L,S,B>>
@@ -71,7 +71,7 @@ class Message<
         description,
         args,
         level = MessageLevels.Info as L,
-        body = undefined as B,
+        body,
         status = MessageStatuses.Success as S,
         metadata = new Metadata()
     }: {
@@ -154,7 +154,7 @@ class MessageFactory {
     public static createMessage<
         L extends MessageLevel = MessageLevels.Info,
         S extends MessageStatus = 'Success',
-        T = any | undefined
+        B = any | undefined
     >({
         id,
         name,
@@ -169,12 +169,12 @@ class MessageFactory {
         name?: string,
         description?: string,
         level?: L,
-        body: T,
+        body: B,
         status?: S,
         args?: ArgumentEntry[],
         metadata?: MetadataEntry
-    }): Message<L, S, T> {
-        return new Message<L, S, T>({
+    }): Message<L, S, B> {
+        return new Message<L, S, B>({
             id,
             name,
             description,
@@ -447,6 +447,10 @@ class MessageManager
 export {
     MessageManagerConfigParameters,
     MessageConfigParameters,
+    type MessageLevel,
+    MessageLevels,
+    type MessageStatus,
+    MessageStatuses,
     Message,
     type MessageEntry,
     MessageFactory,

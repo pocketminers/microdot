@@ -1,4 +1,4 @@
-import { CommandRunner } from "../src/service/runner";
+import { CommandRunner } from "../src/component/runner";
 import { CommandSpec } from "../src/template/spec/v0/command";
 
 describe("CommandRunner", () => {

@@ -1,4 +1,4 @@
-import { ParameterSpec, JobRunSpec, CommandRunSpec } from "@/template/spec";
+import { JobRunSpec } from "@/template/spec";
 import { ParameterEntry } from "@component/properties";
 
 const JobQueueOptions: ParameterEntry[] = [

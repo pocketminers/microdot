@@ -1,4 +1,4 @@
-import { defaultTaskRunner } from '../src/service/runner';
+import { defaultTaskRunner } from '../src/component/runner';
 import { CommandSpec, CommandResultSpec } from '../src/template/spec/v0/command';
 import { ArgumentSpec, ParameterSpec } from '../src/template/spec/v0/config';
 

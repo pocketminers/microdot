@@ -13,7 +13,7 @@ import {
     Properties, 
     PropertiesEntry 
 } from "@component/properties";
-import { CommandRunner } from "@service/runner";
+import { CommandRunner } from "@component/runner";
 import { Configurable } from "@component/configurable";
 
 enum ProcessTypes {

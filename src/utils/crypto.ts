@@ -180,5 +180,7 @@ class CryptoUtils {
 }
 
 export {
+    type HashAlgorithm,
+    type HashDigest,
     CryptoUtils
 };

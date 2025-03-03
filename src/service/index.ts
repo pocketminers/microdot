@@ -1,24 +1,11 @@
-
-// // import { ErrorMessage, Message } from '@artifacts/message';
-// // import { Configuration } from '@artifacts/configuration';
-// import { ArgumentEntry } from '@artifacts/argument';
-// import { Command, QueuedCommand, CommandResult } from '@service/command';
-// import { Process } from '@service/process';
-// import { Configurable, ConfigurableEntry } from '@/artifacts/configurable';
-// import { HistorianConfig } from './historian';
-// import { MessengerConfig } from './messenger';
-// // import { JobQueueConfig } from './queue';
-
-import { IdentityManager, IdentityStore } from "@/component/identity";
-import { MessageManager } from "./message";
-import { ProcessStatuses } from "@/template";
+import { IdentityManager } from "@/component/identity";
+import { MessageManager } from "@component/message";
 import { MessageStatuses } from "@/template/spec/v0/comms";
 import { Process } from "@/component/process";
 
 
 /**
  * ServiceTypes
- * @summary
  * Describes the type of service
  * - Internal: Service is private and not accessible from outside of the K8s cluster
  * - External: Service is public and accessible from outside of the K8s cluster
@@ -30,7 +17,6 @@ enum ServiceTypes {
 
 /**
  * ServiceType
- * @summary
  * Describes the type of service
  * - enum: ['Internal', 'External']
  */

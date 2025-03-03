@@ -1,17 +1,11 @@
 import {
     Process,
-    ProcessEntry,
-    ProcessParameters,
-    ProcessType,
     ProcessTypes
 } from '../src/component/process'
-
 import {
     ProcessStatuses
 } from '../src/template/spec/v0/process'
-import { ArgumentEntry } from '../src/component/properties'
-
-import { defaultTaskRunner } from '../src/service/runner'
+import { defaultTaskRunner } from '../src/component/runner'
 
 describe('Process', () => {
     it('should create a new Process', () => {
@@ -25,7 +19,7 @@ describe('Process', () => {
             commands: [],
             metadata: {}
         })
-        expect(process).toBeInstanceOf(Process)
+        expect(process).toBeInstanceOf(Process<ProcessTypes.AUTH>)
     })
 
     it('should create a new Process with default name', () => {

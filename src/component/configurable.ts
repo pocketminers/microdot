@@ -1,6 +1,6 @@
 import { ConfigSpec, Metadata, MetadataEntry } from "@/template";
 import { Properties, PropertiesEntry } from "@component/properties";
-import { Component } from "@/component";
+import { Component } from "@component/base";
 
 
 interface Configuration<T = any>
@@ -19,7 +19,7 @@ interface ConfigurableEntry<D>
         Partial<Record<"metadata", MetadataEntry>> {}
 
 
-class Configurable<D extends Record<string, any> = any | undefined>
+class Configurable<D extends Record<string, any>>  
     extends Component<D>
 {
     constructor({

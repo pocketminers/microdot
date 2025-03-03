@@ -5,3 +5,7 @@ interface PubSub
         Record<"topics", string[]>,
         Partial<Record<"auth", Record<string, any>>>,
         Partial<Record<"properties", any>> {}
+
+export {
+    type PubSub,
+}

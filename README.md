@@ -70,6 +70,6 @@ yarn docs
 yarn build
 ```
 
-## Components
+## Template Specs
 
-- **[Artifacts](./src/artifacts/README.md)**: Type classes that define the structure of the system.
+- **[Templates](./src/template/README.md)**: The template system is designed to provide a consistent interface for all services. This allows for easy integration and scaling.

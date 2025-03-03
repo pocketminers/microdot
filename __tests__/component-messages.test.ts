@@ -3,7 +3,10 @@ import {
     Message,
     MessageFactory,
 } from '../src/component/message';
-import { MessageLevels, MessageStatuses } from '../src/template/spec/v0/comms';
+import {
+    MessageLevels,
+    MessageStatuses
+} from '../src/template/spec/v0/comms';
 import { Configurable } from '../src/component/configurable';
 
 

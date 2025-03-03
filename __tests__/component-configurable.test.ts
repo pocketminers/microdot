@@ -1,14 +1,14 @@
-import { Configurable, ConfigurableEntry } from "../src/component/configurable";
+import { Configurable } from "../src/component/configurable";
 import { Properties } from "../src/component/properties";
-import { Annotations } from "../src/template/meta/annotation";
 import { Metadata } from "../src/template/meta";
-import { Labels } from "../src/template/meta/label";
 
 describe('Configurable', () => {
     let configurable: Configurable<any>;
 
     beforeEach(() => {
-        configurable = new Configurable({
+        configurable = new Configurable<{
+            customData: string;
+        }>({
             id: "test-id",
             name: "test-name",
             description: "test-description",
