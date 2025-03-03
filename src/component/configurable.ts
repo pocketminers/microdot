@@ -40,16 +40,6 @@ class Configurable<D extends Record<string, any> = any | undefined>
             },
             meta: metadata instanceof Metadata ? metadata : new Metadata(metadata)
         });
-
-        // console.log(`Configurable: ${JSON.stringify(this, null, 2)}`);
-
-        // this.data.properties.args.forEach(arg => Object.freeze(arg));
-        // this.data.properties.params.forEach(param => Object.freeze(param));
-        // Object.freeze(this.data);
-        // Object.freeze(this);
-        // Object.freeze(this.data.properties);
-        // Object.freeze(this.data.properties.args);
-        // Object.freeze(this.data.properties.params); 
     }
 
     public get id(): string {
@@ -70,6 +60,10 @@ class Configurable<D extends Record<string, any> = any | undefined>
 
     public get metadata(): Metadata {
         return this.meta;
+    }
+
+    public get timestamp(): string | undefined {
+        return this.meta.annotations.createdAt;
     }
 
     

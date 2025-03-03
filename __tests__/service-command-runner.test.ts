@@ -1,5 +1,5 @@
 import { CommandRunner } from "../src/service/runner";
-import { CommandSpec, CommandResultSpec } from "../src/template/spec/v0/command";
+import { CommandSpec } from "../src/template/spec/v0/command";
 
 describe("CommandRunner", () => {
     let commandManager: CommandRunner;
@@ -71,8 +71,6 @@ describe("CommandRunner", () => {
         commandManager.registerCommand(command1);
         commandManager.registerCommand(command2);
 
-        // console.log(commandManager.listCommands());
-
         expect(commandManager.listCommands()).toEqual([command1, command2]);
     });
 
@@ -121,30 +119,10 @@ describe("CommandRunner", () => {
         const result = await commandManager.executeCommand({
             commandName: "test",
             instance: undefined,
-            // jobId: "test",
-            // processId: "default",
             args: []
         });
 
         expect(result).toEqual(undefined);  
-
-        // expect(result).toEqual({
-        //     run: {
-        //         commandName: "test",
-        //         processId: "default",
-        //         args: [],
-        //         jobId: expect.any(String),
-        //         instance: undefined
-        //     },
-        //     output: undefined,
-        //     metrics: {
-        //         start: expect.any(Number),
-        //         end: expect.any(Number),
-        //         duration: expect.any(Number),
-        //         bytesIn: 0,
-        //         bytesOut: 0
-        //     }
-        // });
     });
 
     it("should execute a command with args", async () => {
@@ -164,32 +142,11 @@ describe("CommandRunner", () => {
         const result = await commandManager.executeCommand<any>({
             commandName: "test",
             instance: undefined,
-            // jobId: "test",
-            // processId: "default",
             args: { test: "test" }
         });
 
-      // console.log(`result`, result);
-
         expect(result).toEqual(
             { "test": "test" }
-            // run: {
-            //     commandName: "test",
-            //     processId: "default",
-            //     args: {
-            //         test: "test"
-            //     },
-            //     jobId: expect.any(String),
-            //     instance: undefined
-            // },
-            // output: { test: "test" },
-            // metrics: {
-            //     start: expect.any(Number),
-            //     end: expect.any(Number),
-            //     duration: expect.any(Number),
-            //     bytesIn: 15,
-            //     bytesOut: 15
-            // }
         );
     });
 });

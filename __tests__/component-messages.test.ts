@@ -1,10 +1,9 @@
-import { hash } from 'crypto';
 import {
     MessageManager,
     Message,
     MessageFactory,
-} from '../src/service/message';
-import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from '../src/template/spec/v0/comms';
+} from '../src/component/message';
+import { MessageLevels, MessageStatuses } from '../src/template/spec/v0/comms';
 import { Configurable } from '../src/component/configurable';
 
 

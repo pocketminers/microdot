@@ -1,9 +1,10 @@
 import { promises as fs } from "fs";
 
-import { ArgumentEntry, Component, Configurable, ConfigurableEntry, ParameterEntry, Properties } from "@/component";
-import { MessageLevel, MessageLevels, MessageSpec, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
+import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 import { Metadata, MetadataEntry } from "@/template";
 import { IdentityManager } from "@/component/identity";
+import { ArgumentEntry, ParameterEntry, Properties } from "./properties";
+import { Configurable } from "./configurable";
 
 
 const MessageConfigParameters: ParameterEntry[] = [
@@ -95,8 +96,6 @@ class Message<
             } as MessageEntry<L,S,B>,
             metadata: metadata instanceof Metadata ? metadata : new Metadata(metadata)
         });
-
-        // console.log(`Message:constructor: ${JSON.stringify(this, null, 2)}`);
     }
 
     public get level(): L {
@@ -313,7 +312,7 @@ class MessageManager
     public async createMessage<
         L extends MessageLevel = MessageLevels.Info,
         S extends MessageStatuses = MessageStatuses.Success,
-        T = any | undefined
+        B = any | undefined
     >({
         id = this.identifier.createId(),
         name,
@@ -329,17 +328,17 @@ class MessageManager
         description?: string,
         args?: ArgumentEntry[],
         level?: L,
-        body: T,
+        body: B,
         status?: S,
         metadata?: MetadataEntry
-    }): Promise<Message<L, S, T>> {
+    }): Promise<Message<L, S, B>> {
         this.properties = new Properties({ params: MessageManagerConfigParameters, args });
         const messageProperties = new Properties({ params: MessageConfigParameters, args });
 
         const managerSaveProperty: boolean = this.properties.getValue<boolean>("keepHistory");
         const messageSaveProperty: boolean = messageProperties.getValue<boolean>("save");
         
-        const message = MessageFactory.createMessage<L,S,T>({ id, name, description, level, body, status, args, metadata });
+        const message = MessageFactory.createMessage<L,S,B>({ id, name, description, level, body, status, args, metadata });
 
         if (
             (managerSaveProperty === true || messageSaveProperty === true)
@@ -399,7 +398,9 @@ class MessageManager
         messages.push({
             level: message.level,
             status: message.status,
-            
+            body: message.body,
+            metadata: message.metadata,
+            properties: message.properties,
             timestamp: message.timestamp !== undefined ? message.timestamp : new Date().toISOString()
         });
 

@@ -1,4 +1,3 @@
-import { Spec } from "@/template/manifest";
 
 /**
  * Argument Specification Template

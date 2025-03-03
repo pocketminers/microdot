@@ -1,7 +1,20 @@
-import { CommandResultSpec, CommandRunSpec, CommandSpec, Metadata, MetadataEntry, ParameterSpec, ProcessStatus, ProcessStatuses, PropertiesSpec } from "@/template";
-import { ArgumentEntry, Parameter, ParameterEntry, Properties, PropertiesEntry } from "./properties";
-import { CommandRunner } from "@/service/runner";
-import { Configurable } from "./configurable";
+import { 
+    CommandResultSpec, 
+    CommandSpec, 
+    Metadata, 
+    MetadataEntry, 
+    ParameterSpec, 
+    ProcessStatus, 
+    ProcessStatuses
+} from "@/template";
+import { 
+    ArgumentEntry, 
+    ParameterEntry, 
+    Properties, 
+    PropertiesEntry 
+} from "@component/properties";
+import { CommandRunner } from "@service/runner";
+import { Configurable } from "@component/configurable";
 
 enum ProcessTypes {
     DB_PSQL = 'DB_PSQL',
@@ -102,7 +115,6 @@ class Process<T extends ProcessType>
             data: {
                 type: type as T,
                 instance,
-                // instance: instance !== undefined ? instance : async ({instance, args}:{ instance: Function, args: Record<string, any>}) => {return await instance(args)},
                 commandRunner: new CommandRunner(commands)
             },
             metadata
@@ -120,13 +132,16 @@ class Process<T extends ProcessType>
         this.data.instance = instance;
     }
 
+    public get commandRunner(): CommandRunner {
+        return this.data.commandRunner;
+    }
+
     private async createInstance(): Promise<void> {
         this.status = ProcessStatuses.Initializing;
 
         const initializeFunction: (args?: Record<string, any>) => Promise<Function> = this.properties.getValue('initializeFunction');
         const initializeProperties: Properties = new Properties(this.properties.getValue<PropertiesEntry>('initializeProperties'));
 
-        // console.log(`Process ${this.id} initializing...`);
 
         try {
             if (initializeFunction !== null
@@ -149,7 +164,6 @@ class Process<T extends ProcessType>
     public async initialize(): Promise<void> {
         const initialize: boolean = this.properties.getValue('initialize');
 
-        // console.log(`Process ${this.id} initialize ${initialize}`);
 
         if (initialize === true) {
             await this.createInstance();
@@ -159,16 +173,13 @@ class Process<T extends ProcessType>
     }
 
     private async runWithRetryAndTimeout<R>({
-        // jobId,
         commandName,
         args
     }:{
-        // jobId: string,
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<Map<number, R | undefined | Error>> {
         const properties = new Properties({params: ProcessParameters, args});
-        const argValues = new Properties({args}).toKeyValue();
 
         const retry: boolean = properties.getValue('retry');
         const retryCount: number = properties.getValue('retryCount');
@@ -177,28 +188,10 @@ class Process<T extends ProcessType>
         let retries = 0;
         let results: Map<number, R | undefined | Error> = new Map();
 
-        // let result: CommandResultSpec<R | undefined | Error> = {
-        //     run: {
-        //         instance: this.instance,
-        //         processId: this.id,
-        //         jobId,
-        //         commandName,
-        //         args: argValues
-        //     },
-        //     output: undefined,
-        //     metrics: {
-        //         start: Date.now(),
-        //         end: 0,
-        //         duration: 0,
-        //         bytesIn: 0,
-        //         bytesOut: 0
-        //     }
-        // };
 
         if (retry) {
             do {
                 const result = await this.runWithTimeout<R>({
-                    // jobId,
                     commandName,
                     args
                 });
@@ -207,63 +200,13 @@ class Process<T extends ProcessType>
 
                 await new Promise((resolve) => setTimeout(resolve, retryDelay));
 
-                // try {
-                //     result = await this.runWithTimeout<R>({jobId, commandName, args});
-                //     results.set(retries + 1, result);
-                //     break;
-                // }
-                // catch (error: any) {
-                //     result = {
-                //         run: {
-                //             instance: this.instance,
-                //             processId: this.id,
-                //             jobId,
-                //             commandName,
-                //             args: argValues
-                //         },
-                //         output: error,
-                //         metrics: {
-                //             start: result.metrics.start || 0,
-                //             end: result.metrics.end || 0,
-                //             duration: result.metrics.duration || 0,
-                //             bytesIn: result.metrics.bytesIn || 0,
-                //             bytesOut: result.metrics.bytesOut || 0
-                //         }
-                //     };
 
-                //     results.set(retries + 1, result);
-                //     retries++;
-                //     await new Promise((resolve) => setTimeout(resolve, retryDelay));
-                // }
             }
             while (retries < retryCount);
         }
         else {
-            // try {
-            //     result = await this.runWithTimeout<R>({jobId, commandName, args});
-            // }
-            // catch (error: any) {
-            //     result = {
-            //         run: {
-            //             instance: this.instance,
-            //             processId: this.id,
-            //             jobId,
-            //             commandName,
-            //             args: argValues
-            //         },
-            //         output: error,
-            //         metrics: {
-            //             start: result.metrics.start || 0,
-            //             end: result.metrics.end || 0,
-            //             duration: result.metrics.duration || 0,
-            //             bytesIn: result.metrics.bytesIn || 0,
-            //             bytesOut: result.metrics.bytesOut || 0
-            //         }
-            //     };
-            // }
 
             const result = await this.runWithTimeout<R>({
-                // jobId,
                 commandName,
                 args
             });
@@ -274,25 +217,24 @@ class Process<T extends ProcessType>
     }
 
     private async runWithTimeout<R>({
-        // jobId,
         commandName,
         args
     }:{
-        // jobId: string,
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<R | undefined | Error> {
+
+        const properties = new Properties({params: ProcessParameters, args});
+
         const timeout: number = this.properties.getValue('timeout');
         const timeoutAction: string = this.properties.getValue('timeoutAction');
 
         if (timeout > 0) {
             return new Promise((resolve, reject) => {
                 const timer = setTimeout(async () => {
-                    // console.log(`Process ${this.id} running ${commandName} w/ timeout ${timeout}ms`);
 
                     if (timeoutAction === 'retry') {
                         resolve(this.runCommand<R>({
-                            // jobId,
                             commandName,
                             args
                         }));
@@ -306,7 +248,6 @@ class Process<T extends ProcessType>
                 timer.unref();
 
                 this.runCommand<R>({
-                    // jobId,
                     commandName,
                     args
                 })
@@ -325,7 +266,6 @@ class Process<T extends ProcessType>
         }
         else {
             const result = await this.runCommand<R>({
-                // jobId,
                 commandName,
                 args
             });
@@ -335,11 +275,9 @@ class Process<T extends ProcessType>
     }
 
     private async runCommand<R>({
-        // jobId,
         commandName,
         args
     }:{
-        // jobId: string,
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<R | undefined | Error> {
@@ -356,8 +294,6 @@ class Process<T extends ProcessType>
 
         const result = await this.data.commandRunner.executeCommand<R>({
             commandName,
-            // jobId,
-            // processId: this.id,
             instance: this.instance,
             args: properties.toKeyValue()
         });
@@ -368,21 +304,18 @@ class Process<T extends ProcessType>
     }
 
     public async run<R>({
-        // jobId,
         commandName,
         args
     }:{
-        // jobId: string,
         commandName: string,
         args: ArgumentEntry[]
-    }): Promise<CommandResultSpec<Map<number, R | undefined | Error>>> {
+    }): Promise<CommandResultSpec<R | undefined | Error>> {
 
         let output: Map<number, R | undefined | Error> = new Map();
         const { startTime, bytesIn } = CommandRunner.getInputMetrics(new Properties({args}).toKeyValue());
 
         try {
             output = await this.runWithRetryAndTimeout<R>({
-                // jobId,
                 commandName,
                 args
             });
@@ -392,14 +325,11 @@ class Process<T extends ProcessType>
             output.set(1, error);
         }
 
-        output
-
         const { endTime, bytesOut, duration } = CommandRunner.getOutputMetrics(output.get(output.size), startTime);
 
         return {
             run: {
                 processId: this.id,
-                // jobId,
                 commandName,
                 args: new Properties({args}).toKeyValue(),
                 instance: this.instance
@@ -412,55 +342,7 @@ class Process<T extends ProcessType>
                 bytesIn,
                 bytesOut
             }
-        } as CommandResultSpec<Map<number,R | undefined | Error>>;
-        
-
-        // return await this.runWithRetryAndTimeout<R | undefined | Error>({jobId, commandName, args});
-
-        // const properties = new Properties({params: ProcessParameters, args});
-        // const argValues = new Properties({args}).toKeyValue();
-
-        // const retry: boolean = properties.getValue('retry');
-        // const retryCount: number = properties.getValue('retryCount');
-        // const retryDelay: number = properties.getValue('retryDelay');
-
-        // let retries = 0;
-        // let results: Map<number, CommandResultSpec<R | undefined | Error>> = new Map();
-
-        // let result: CommandResultSpec<R | undefined | Error> = {
-        //     run: {
-        //         instance: this.instance,
-        //         processId: this.id,
-        //         jobId,
-        //         commandName,
-        //         args: argValues
-        //     },
-        //     output: undefined,
-        //     metrics: {
-        //         start: Date.now(),
-        //         end: 0,
-        //         duration: 0,
-        //         bytesIn: 0,
-        //         bytesOut: 0
-        //     }
-        // };
-
-        // if (retry) {
-        //     do {
-        //         const result = await this.runWithTimeout<R>({jobId, commandName, args});
-        //         results.set(retries + 1, result);
-        //         retries++;
-
-        //         await new Promise((resolve) => setTimeout(resolve, retryDelay));
-        //     }
-        //     while (retries < retryCount);
-        // }
-        // else {
-        //     const result = await this.runWithTimeout<R>({jobId, commandName, args});
-        //     results.set(retries + 1, result);
-        // }
-
-        // return results;
+        } as CommandResultSpec<R | undefined | Error>;
     }
 }
 

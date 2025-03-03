@@ -68,12 +68,9 @@ class CommandRunner {
 
     public async executeCommand<R>({
         commandName,
-        // jobId,
-        // processId = 'default',
         instance,
         args
     }: CommandRunSpec): Promise<R | Error | undefined> {
-        // const { startTime, bytesIn } = CommandRunner.getInputMetrics(args);
         let output: R | Error |undefined;
         
         try {
@@ -82,30 +79,9 @@ class CommandRunner {
         }
         catch (error: any) {
             output = error;
-            // console.log(`error`, error);
         }
 
         return output;
-
-        // const { bytesOut, duration, endTime } = CommandRunner.getOutputMetrics<R | Error | undefined>(output, startTime);        
-
-        // return {
-            // run: {
-            //     // processId,
-            //     commandName,
-            //     // jobId: jobId !== undefined ? jobId : `${commandName}-${Date.now()}`,
-            //     args,
-            //     instance
-            // },
-            // output: output as R | Error | undefined,
-            // metrics: {
-            //     start: startTime,
-            //     end: endTime,
-            //     duration,
-            //     bytesIn,
-            //     bytesOut
-            // }
-        // } as CommandResultSpec<R>;
     }
 
     public static getByteCount(value: any): number {
@@ -168,13 +144,9 @@ class CommandRunner {
     public static getOutputMetrics<R>(output: R, startTime: number): { bytesOut: number, duration: number, endTime: number } {
         let bytesOut: number = 0;
 
-        // console.log(`output`, output);
-
         if (
             output !== undefined
-            // && Checks.isEmpty(output) === false
         ) {
-            // console.log(`output is not empty`);
             bytesOut = CommandRunner.getByteCount(output);
         }
 
