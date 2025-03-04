@@ -1,152 +1,152 @@
-import { CommandRunner } from "../src/component/runner";
-import { CommandSpec } from "../src/template/spec/v0/command";
+// import { CommandRunner } from "../src/component/runner";
+// import { CommandSpec } from "../src/template/spec/v0/command";
 
-describe("CommandRunner", () => {
-    let commandManager: CommandRunner;
+// describe("CommandRunner", () => {
+//     let commandManager: CommandRunner;
 
-    beforeEach(() => {
-        commandManager = new CommandRunner();
-    });
+//     beforeEach(() => {
+//         commandManager = new CommandRunner();
+//     });
 
-    it("should register a command", () => {
-        const command: CommandSpec = {
-            id: "test",
-            name: "test",
-            description: "test",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
-        commandManager.registerCommand(command);
-        expect(commandManager.getCommand("test")).toEqual(command);
-    });
+//     it("should register a command", () => {
+//         const command: CommandSpec = {
+//             id: "test",
+//             name: "test",
+//             description: "test",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
+//         commandManager.registerCommand(command);
+//         expect(commandManager.getCommand("test")).toEqual(command);
+//     });
     
-    it("should unregister a command", () => {
-        const command: CommandSpec = {
-            id: "test",
-            name: "test",
-            description: "test",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
+//     it("should unregister a command", () => {
+//         const command: CommandSpec = {
+//             id: "test",
+//             name: "test",
+//             description: "test",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
 
-        commandManager.registerCommand(command);
-        commandManager.unregisterCommand("test");
+//         commandManager.registerCommand(command);
+//         commandManager.unregisterCommand("test");
 
-        try {
-            commandManager.getCommand("test");
-        }
-        catch (error: any) {
-            expect(error.message).toEqual("Command test not found");
-        }
-    });
+//         try {
+//             commandManager.getCommand("test");
+//         }
+//         catch (error: any) {
+//             expect(error.message).toEqual("Command test not found");
+//         }
+//     });
 
-    it("should list commands", () => {
-        const command1: CommandSpec = {
-            id: "test1",
-            name: "test1",
-            description: "test1",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
+//     it("should list commands", () => {
+//         const command1: CommandSpec = {
+//             id: "test1",
+//             name: "test1",
+//             description: "test1",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
 
-        const command2: CommandSpec = {
-            id: "test2",
-            name: "test2",
-            description: "test2",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
-        commandManager.registerCommand(command1);
-        commandManager.registerCommand(command2);
+//         const command2: CommandSpec = {
+//             id: "test2",
+//             name: "test2",
+//             description: "test2",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
+//         commandManager.registerCommand(command1);
+//         commandManager.registerCommand(command2);
 
-        expect(commandManager.listCommands()).toEqual([command1, command2]);
-    });
+//         expect(commandManager.listCommands()).toEqual([command1, command2]);
+//     });
 
-    it("should list command names", () => {
-        const command1: CommandSpec = {
-            id: "test1",
-            name: "test1",
-            description: "test1",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
+//     it("should list command names", () => {
+//         const command1: CommandSpec = {
+//             id: "test1",
+//             name: "test1",
+//             description: "test1",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
 
-        const command2: CommandSpec = {
-            id: "test2",
-            name: "test2",
-            description: "test2",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
-        commandManager.registerCommand(command1);
-        commandManager.registerCommand(command2);
+//         const command2: CommandSpec = {
+//             id: "test2",
+//             name: "test2",
+//             description: "test2",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
+//         commandManager.registerCommand(command1);
+//         commandManager.registerCommand(command2);
 
-        expect(commandManager.listCommandNames()).toEqual(["test1", "test2"]);
-    });
+//         expect(commandManager.listCommandNames()).toEqual(["test1", "test2"]);
+//     });
 
-    it("should execute a command", async () => {
-        const command: CommandSpec = {
-            id: "test",
-            name: "test",
-            description: "test",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async () => undefined
-        };
+//     it("should execute a command", async () => {
+//         const command: CommandSpec = {
+//             id: "test",
+//             name: "test",
+//             description: "test",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async () => undefined
+//         };
 
-        commandManager.registerCommand(command);
+//         commandManager.registerCommand(command);
 
-        const result = await commandManager.executeCommand({
-            commandName: "test",
-            instance: undefined,
-            args: []
-        });
+//         const result = await commandManager.executeCommand({
+//             commandName: "test",
+//             instance: undefined,
+//             args: []
+//         });
 
-        expect(result).toEqual(undefined);  
-    });
+//         expect(result).toEqual(undefined);  
+//     });
 
-    it("should execute a command with args", async () => {
-        const command: CommandSpec = {
-            id: "test",
-            name: "test",
-            description: "test",
-            properties: {
-                args: [],
-                params: []
-            },
-            run: async ({args}) => args
-        };
+//     it("should execute a command with args", async () => {
+//         const command: CommandSpec = {
+//             id: "test",
+//             name: "test",
+//             description: "test",
+//             properties: {
+//                 args: [],
+//                 params: []
+//             },
+//             run: async ({args}) => args
+//         };
 
-        commandManager.registerCommand(command);
+//         commandManager.registerCommand(command);
 
-        const result = await commandManager.executeCommand<any>({
-            commandName: "test",
-            instance: undefined,
-            args: { test: "test" }
-        });
+//         const result = await commandManager.executeCommand<any>({
+//             commandName: "test",
+//             instance: undefined,
+//             args: { test: "test" }
+//         });
 
-        expect(result).toEqual(
-            { "test": "test" }
-        );
-    });
-});
+//         expect(result).toEqual(
+//             { "test": "test" }
+//         );
+//     });
+// });

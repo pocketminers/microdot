@@ -1,3 +1,4 @@
+import { BaseTypes } from '../src/component';
 import {
     ArgumentEntry,
     Argument,
@@ -51,13 +52,14 @@ describe('Parameter', () => {
 
 describe('Properties', () => {
     it('should create a new instance', () => {
-        const properties = new Properties();
+        const properties = new Properties<BaseTypes.Custom>({type: BaseTypes.Custom});
 
         expect(properties).toBeInstanceOf(Properties);
     });
 
     it('should create a new instance with args and params', () => {
         const properties = new Properties({
+            type: BaseTypes.Custom,
             args: [
                 {
                     name: 'arg1',
@@ -87,6 +89,7 @@ describe('Properties', () => {
 
     it('should get arg value', () => {
         const properties = new Properties({
+            type : BaseTypes.Custom,
             args: [
                 {
                     name: 'arg1',
@@ -100,6 +103,7 @@ describe('Properties', () => {
 
     it('should get param value', () => {
         const properties = new Properties({
+            type: BaseTypes.Custom,
             params: [
                 {
                     name: 'param1'
@@ -118,6 +122,7 @@ describe('Properties', () => {
 
     it('should get all names', () => {
         const properties = new Properties({
+            type: BaseTypes.Custom,
             args: [
                 {
                     name: 'arg1',
@@ -143,6 +148,7 @@ describe('Properties', () => {
 
     it('should get all values', () => {
         const properties = new Properties({
+            type: BaseTypes.Custom,
             args: [
                 {
                     name: 'arg1',
@@ -171,6 +177,7 @@ describe('Properties', () => {
 
     it('should get the key-value map', () => {
         const properties = new Properties({
+            type: BaseTypes.Custom,
             args: [
                 {
                     name: 'arg1',

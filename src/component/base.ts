@@ -1,28 +1,55 @@
 
 import { CryptoUtils } from "@utils/crypto";
 import { Metadata, MetadataEntry } from "@template/meta";
+import { Properties } from "./properties";
 
 
-enum ComponentTypes {
-    QUEUE = "QUEUE",
-
+enum BaseTypes {
+    Identity = "Identity",
+    Command = "Command",
+    Message = "Message",
+    Job = "Job",
+    Custom = "Custom"
 }
 
-interface ComponentEntry<D>
+type BaseType = keyof typeof BaseTypes;
+
+class Base<T extends BaseType> {
+    private readonly _type: BaseType;
+
+    constructor(
+        type: T
+    ) {
+        if (type in BaseTypes === false) {
+            throw new TypeError(`Base:constructor: The type is not a valid BaseTypes value: ${type}`);
+        }
+
+        this._type = type;
+    }
+
+    public get type(): T {
+        return this._type as T;
+    }
+}
+
+
+interface ComponentEntry<T extends BaseType, D = any>
     extends
         Record<"data", D>,
+        Record<"type", T>,
         Partial<Record<"meta", MetadataEntry>> {}
 
 /**
  */
-class Component<D> {
+class Component<T extends BaseType, D = any> {
     public data: D;
     public meta: Metadata;
 
     constructor({
+        type,
         data,
         meta
-    }: ComponentEntry<D>) {
+    }: ComponentEntry<T, D>) {
         this.data = data
         if (meta instanceof Metadata) {
             this.meta = meta;
@@ -38,6 +65,12 @@ class Component<D> {
         else {
             this.meta = new Metadata();
         }
+
+        this.setTypeName(type);
+    }
+
+    private setTypeName(type: T): void {
+        this.meta.labels.set('componentType', type);
     }
 
     public getDataValue<K extends keyof D>(key: K): D[K] {
@@ -50,7 +83,7 @@ class Component<D> {
 
     public async hashData(): Promise<string> {
         const hashedData = await CryptoUtils.hashData(this.data);
-        const storedHash = this.meta.annotations.hash;
+        const storedHash = this.meta.hash;
 
         if (storedHash === 'not-set'
             || storedHash === undefined
@@ -74,7 +107,9 @@ class Component<D> {
 
 
 export {
-    ComponentTypes,
+    type BaseType,
+    BaseTypes,
+    Base,
     type ComponentEntry,
     Component
 };

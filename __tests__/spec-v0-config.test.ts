@@ -1,3 +1,4 @@
+import { BaseTypes } from '../src/component';
 import { Properties } from '../src/component/properties';
 import { PropertiesSpec, ArgumentSpec, ParameterSpec } from '../src/template/spec/v0/config';
 
@@ -33,7 +34,7 @@ describe('PropertiesSpec', () => {
 
     it('should get argument value by name', () => {
         const args = [{ name: 'arg1', value: 'value1'}];
-        const config: Properties = new Properties({ args });
+        const config: Properties<BaseTypes.Custom> = new Properties({ type: BaseTypes.Custom, args });
         expect(config.getValue('arg1')).toEqual('value1');
     });
 

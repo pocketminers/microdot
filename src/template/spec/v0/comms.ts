@@ -1,4 +1,4 @@
-import { Properties } from "@/component";
+import { BaseTypes, Properties } from "@/component";
 
 enum MessageLevels {
     Debug = "Debug",
@@ -19,7 +19,7 @@ interface MessageSpec<
         Record<'body', T>,
         Record<'level', L>,
         Record<"status", S>,
-        Record<"properties", Properties>,
+        Record<"properties", Properties<BaseTypes.Message>>,
         Record<"timestamp", Date> {}
 
 
@@ -84,6 +84,7 @@ export {
     MessageLevels,
     type MessageLevel,
     MessageStatuses,
+    MessageStatusCodes,
     type MessageStatus,
     type MessageSpec
 }

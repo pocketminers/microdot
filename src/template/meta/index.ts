@@ -2,6 +2,9 @@
 import { AnnotationEntry, Annotations } from "./annotation";
 import { Labels, type LabelEntry } from "./label";
 
+type MetadataEntryIndexType = string;
+type MetadataEntryValueType = string | number | boolean | undefined | string[] | any;
+
 interface MetadataEntry
     extends
         Partial<Pick<AnnotationEntry, 'createdBy' | 'hash'>>,
@@ -28,14 +31,26 @@ class Metadata {
         this.name = name;
         this.description = description;
         this.annotations = new Annotations({
-            createdBy,
-            hash,
             ...annotations
         })
         this.labels = new Labels({
             id,
+            hash,
+            createdBy,
             ...labels
         })
+    }
+
+    public get id(): string {
+        return this.labels.get('id') as string;
+    }
+
+    public get createdBy(): string {
+        return this.annotations.get('createdBy') as string;
+    }
+
+    public get hash(): string {
+        return this.annotations.get('hash') as string;
     }
 
     public toJSON(): {
@@ -54,6 +69,8 @@ class Metadata {
 }
 
 export {
+    type MetadataEntryIndexType,
+    type MetadataEntryValueType,
     type MetadataEntry,
     Metadata
 };

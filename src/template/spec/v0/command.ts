@@ -3,8 +3,6 @@ import { ConfigSpec } from './config';
 
 /**
  * TaksRunner runs a command
- * @param instance - The instance of the command
- * @param args - The arguments to the command
  * @returns The result of the command
  */
 type TaskRunner<R = any, T = any>  = ({instance, args}: {instance?: T | undefined, args?: Record<string, any>}) => Promise<R>;
@@ -25,11 +23,8 @@ interface CommandSpec<R = any, T = any>
 interface CommandRunSpec
     extends
         Record<'commandName', string>,
-        // Record<'jobId', string>,
         Record<'instance', any>,
-        // Record<"processId", string>,
         Record<'args', Record<string, any>> {}
-
 
 
 /**

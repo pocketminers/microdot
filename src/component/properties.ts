@@ -1,11 +1,11 @@
 import { Checks } from "@/utils";
 import { ArgumentSpec, ParameterSpec, PropertiesSpec } from "@template/spec/v0/config";
+import { Base, BaseType } from "./base";
 
 
 /**
  * This class is used as the input for the Argument class.
  * It is a subset of the ArgumentSpec interface.
- * @summary used to create a new instance of the Argument class.
  * @see {@link ArgumentSpec}
  * @see {@link Argument}
  */
@@ -53,7 +53,6 @@ class Argument<T = any> {
 /**
  * This class is used as the input for the Parameter class.
  * It is a subset of the ParameterSpec interface.
- * @summary used to create a new instance of the Parameter class.
  * @see {@link ParameterSpec}
  * @see {@link Parameter}
  */
@@ -139,31 +138,40 @@ class Parameter<T = any> {
 /**
  * This class is used as the input for the Properties class.
  * It is a subset of the Properties interface.
- * @summary used to create a new instance of the Properties class.
  * @see {@link PropertiesSpec}
  * @see {@link Properties}
  */
-interface PropertiesEntry
+interface PropertiesEntry<T extends BaseType>
     extends
+        Record<'type', T>,
         Partial<Record<'params', ParameterEntry[]>>,
         Partial<Record<'args', ArgumentEntry[]>> {}
 
 
 /**
  * Properties are the arguments and parameters that are held by the `ConfigSpec` interface.
- * @summary Properties are the arguments and parameters that are held by the `ConfigSpec` interface.
  * @see {@link PropertiesSpec}
  * @see {@link PropertiesEntry}
  * @see {@link Properties}
  */
-class Properties {
+class Properties<T extends BaseType>
+    extends Base<T>
+{
+    /**
+     * An array of arguments.
+     */
     public args: Argument<any>[] = [];
+    /**
+     * An array of parameters.
+     */
     public params: Parameter<any>[] = [];
 
     constructor({
+        type,
         args = [],
         params = []
-    }: PropertiesEntry = {}) {
+    }: PropertiesEntry<T>) {
+        super(type);
         this.args = args !== undefined ? args.map(arg => new Argument(arg)) : [];
         this.params = params !== undefined ? params.map(param => new Parameter(param)) : [];
     }
