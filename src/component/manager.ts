@@ -34,8 +34,8 @@ class Manager<
         }
     ) {
         super(type);
-        this.factory = factory;
-        this.storage = storage;
+        this.factory = factory !== undefined ? factory : new Factory<T>(type) as F;
+        this.storage = storage !== undefined ? storage : new Storage<T>(type) as S;
         this.properties = new Properties<T>({type, params: parameters, args});
     }
 }

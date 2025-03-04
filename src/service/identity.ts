@@ -30,7 +30,7 @@ type Identifier = string;
 
 
 class IdentityFactory
-    extends Factory<BaseTypes.Identity, {id: Identifier, type: IdentifiableBaseTypes}>
+    extends Factory<BaseTypes.Identity>
 {
     constructor() {
         super(BaseTypes.Identity);
@@ -126,7 +126,7 @@ class IdentityStorage
     extends Storage<BaseTypes.Identity, IdentityStorageItem>
 {
     constructor(items: IdentityStorageItem[] = []) {
-        super({ type: BaseTypes.Identity, items });
+        super(BaseTypes.Identity);
     }
 
     public get ids(): Set<IdentityStorageItem> {
@@ -144,13 +144,25 @@ class IdentityStorage
     }
 
     public hasId(identifier: {id: Identifier, type: IdentifiableBaseTypes}): boolean {
+        // try {
+        //     if (this.getItem({value: identifier, allow: []}) !== undefined) {
+        //         console.log(`get item: ${this.getItem({value: identifier, allow: []})}`); 
+        //         return true;
+        //     }
+        // } catch (error) {
+        //     return false;
+        // }
+
         try {
-            if (this.getItem({value: identifier})) {
+            const item = this.ids;
+            if (item.has(identifier)) {
                 return true;
             }
-        } catch (error) {
+        }
+        catch (error) {
             return false;
         }
+
 
         return false;
     }

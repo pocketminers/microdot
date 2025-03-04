@@ -14,7 +14,7 @@ enum BaseTypes {
 
 type BaseType = keyof typeof BaseTypes;
 
-class Base<T extends BaseType> {
+class Base<T extends BaseType = BaseTypes.Custom> {
     private readonly _type: BaseType;
 
     constructor(

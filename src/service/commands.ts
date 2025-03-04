@@ -49,7 +49,7 @@ class Command<R = any, T = any>
 }
 
 class CommandFactory
-    extends Factory<BaseTypes.Command, Command>
+    extends Factory<BaseTypes.Command>
 {
     constructor() {
         super(BaseTypes.Command);
@@ -70,7 +70,7 @@ class CommandStorage
     extends Storage<BaseTypes.Command, Command>
 {
     constructor(commands: Command[] = []) {
-        super({type: BaseTypes.Command});
+        super(BaseTypes.Command);
 
         for (const command of commands) {
             this.addItem({index: command.name, item: command});

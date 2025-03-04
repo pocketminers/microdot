@@ -13,7 +13,7 @@ class Job {
 }
 
 class JobFactory
-    extends Factory<BaseTypes.Job, Job>
+    extends Factory<BaseTypes.Job>
 {
     constructor() {
         super(BaseTypes.Job);

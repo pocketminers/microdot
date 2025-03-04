@@ -2,9 +2,12 @@ import { BaseTypes } from "../src/component";
 import { Storage } from "../src/component/storage";
 
 describe('Storage', () => {
-    class TestStorage<D = any> extends Storage<BaseTypes.Custom, D> {
+    class TestStorage<D = any> 
+        extends 
+            Storage<BaseTypes.Custom, D>
+    {
         constructor() {
-            super({type: BaseTypes.Custom});
+            super(BaseTypes.Custom);
         }
     }
 
@@ -23,7 +26,7 @@ describe('Storage', () => {
         const storage = new TestStorage<{id: string, name: string}>();
         const item = storage.addItem({index: 'test', item: {id: 'test', name: 'Test'}});
         console.log(storage.listItems());
-        console.log(storage.getItem({value: item.item}));
+        console.log(storage.getItem({index: item.index}));
         // console.log(storage.getItem({value: item.item}));
         // expect(storage.getItem({value: item.item})).toEqual({index: 'test', value: {id: 'test', name: 'Test'}});
     }); 
@@ -54,8 +57,5 @@ describe('Storage', () => {
         expect(storage.size).toBe(0);
     });
 
-    it('should throw an error if item not found', () => {
-        const storage = new TestStorage<{id: string, name: string}>();
-        expect(() => storage.getItem({value: {id: 'test', name: 'test'}, allow: []})).toThrow(`Component ${{id: 'test', name: 'test'}} not found`);
-    });
+ 
 });

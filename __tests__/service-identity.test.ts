@@ -24,7 +24,8 @@ describe('IdentityManager', () => {
 
         expect(identityManager.storage.size).toBe(1);
         console.log(identityManager.storage.listItems());
-        // expect(identityManager.storage.hasId(identifier.item)).toBe(true);
+        console.log(identifier);
+        expect(identityManager.storage.hasId(identifier.item)).toBe(true);
     });
 
     it('should remove an identifier', () => {
@@ -74,6 +75,7 @@ describe('IdentityStore', () => {
         identityStore.removeId(identifier.item);
 
         expect(identityStore.size).toBe(0);
+        console.log(identityStore.listItems());
         expect(identityStore.hasId(identifier.item)).toEqual(false);
     });
 

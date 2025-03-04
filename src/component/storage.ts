@@ -1,20 +1,17 @@
 import { Metadata, MetadataEntry } from "@/template";
-import { Base, BaseType } from "./base";
+import { Base, BaseType, BaseTypes } from "./base";
 import { CryptoUtils } from "@/utils";
 
 type StorageItemIndex = string | number;
 type StorageItems<D = any> = Map<StorageItemIndex, D>;
 
-abstract class Storage<T extends BaseType, D = any>
+class Storage<T extends BaseType, D = any>
     extends Base<T>
 {
     private readonly _items: StorageItems<D> = new Map();
 
-    constructor({type, items = []}: {type: T, items?: D[]}) {
+    constructor(type: T) {
         super(type);
-        items.forEach((item, index) => {
-            this.addItem({index: index, item});
-        });
     }
 
     private addNextItem(item: D): number {
@@ -98,13 +95,16 @@ abstract class Storage<T extends BaseType, D = any>
         };
 
         if (index !== undefined) {
-            return this.getItemByIndex(index, allow);
+            item = this.getItemByIndex(index, allow);
         }
         else if (value !== undefined) {
-            return this.getItemByValue(value);
+            item =  this.getItemByValue(value);
         }
 
-        if (allow.includes(item.value) === false) {
+        if (
+            allow.length > 0
+            && allow.includes(item.value) === false
+        ) {
             throw new Error(`Component ${String(item.value)} not found`);
         }
 
@@ -209,12 +209,12 @@ class HashedStorageItem<D = any> {
     }
 }
 
-class HashedStorage<T extends BaseType, D>
+class HashedStorage<T extends BaseTypes, D>
     extends Storage<T, HashedStorageItem<D>>
 {
 
     constructor({type, items = []}: {type: T, items?: HashedStorageItem<D>[]}) {
-        super({type, items});
+        super(type);
     }
 
     public async hashItems(): Promise<void> {
