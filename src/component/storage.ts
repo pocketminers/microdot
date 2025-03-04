@@ -5,7 +5,7 @@ import { CryptoUtils } from "@/utils";
 type StorageItemIndex = string | number;
 type StorageItems<D = any> = Map<StorageItemIndex, D>;
 
-class Storage<T extends BaseType, D = any>
+abstract class Storage<T extends BaseType, D = any>
     extends Base<T>
 {
     private readonly _items: StorageItems<D> = new Map();
@@ -17,38 +17,109 @@ class Storage<T extends BaseType, D = any>
         });
     }
 
-    public addNextItem(item: D): void {
-        this._items.set(this._items.size, item);
-    }
-
-    public addItemByKey({index, item}: {index: StorageItemIndex, item: D}): void {
+    private addNextItem(item: D): number {
+        const index = this._items.size;
         this._items.set(index, item);
+        return index;
     }
 
-    public addItem({item}: {item: D}): void;
-    public addItem({index, item}: {index: StorageItemIndex, item: D}): void;
-    public addItem({index, item}: {index?: StorageItemIndex, item: D}): void {
+    private addItemByIndex({
+        index,
+        item
+    }: {
+        index: StorageItemIndex,
+        item: D
+    }): StorageItemIndex {
+        this._items.set(index, item);
+        return index;
+    }
+
+    public addItem({item}: {item: D}): {index: StorageItemIndex, item: D};
+    public addItem({index, item}: {index: StorageItemIndex, item: D}): {index: StorageItemIndex, item: D};
+    public addItem({index, item}: {index?: StorageItemIndex, item: D}): {index: StorageItemIndex, item: D} {
+        let storedIndex: StorageItemIndex = -1;
+        
         if (index === undefined) {
-            this.addNextItem(item);
+            storedIndex = this.addNextItem(item);
         }
         else {
-            this.addItemByKey({index, item});
+            storedIndex = this.addItemByIndex({index, item});
         }
+
+        return {
+            index: storedIndex,
+            item
+        };
     }
 
-    public getItem(id: StorageItemIndex): D {
-        const item = this._items.get(id);
-        if (item === undefined) {
-            throw new Error(`Component ${id} not found`);
+    private getItemByIndex(index: StorageItemIndex, allow: any[]): { index: StorageItemIndex, value: D | keyof typeof allow } {
+        const value = this._items.get(index) ?? allow[0];
+
+        return {
+            index,
+            value
+        };
+    }
+
+    
+    private getItemByValue(value: D): { index: StorageItemIndex, value: D } {
+        let index: StorageItemIndex = -1;
+
+        for (const [key, val] of this._items) {
+            if (val === value) {
+                index = key;
+                break;
+            }
         }
+
+        return {
+            index,
+            value
+        };
+    }
+
+    // public getItem({index}:{index: StorageItemIndex}): { index: StorageItemIndex, value: D };
+    // public getItem({value}:{value: D}): { index: StorageItemIndex, value: D };
+    public getItem({
+        index,
+        value,
+        allow = []
+    }: {
+        index?: StorageItemIndex,
+        value?: D,
+        allow?: any[]
+    } = {}): {
+        index: StorageItemIndex,
+        value: D | keyof typeof allow
+    } {
+        let item: { index: StorageItemIndex, value: D | keyof typeof allow } = {
+            index: -1,
+            value: allow[0]
+        };
+
+        if (index !== undefined) {
+            return this.getItemByIndex(index, allow);
+        }
+        else if (value !== undefined) {
+            return this.getItemByValue(value);
+        }
+
+        if (allow.includes(item.value) === false) {
+            throw new Error(`Component ${String(item.value)} not found`);
+        }
+
         return item;
     }
+        
 
-    public removeItemByKey(id: StorageItemIndex): boolean {
-        return this._items.delete(id);
+    private removeItemByIndex(index: StorageItemIndex): boolean {
+        if (this.getItemByIndex(index, []).value) {
+            return this._items.delete(index);
+        }
+        return false;
     }
 
-    public removeItemByValue(item: D): boolean {
+    private removeItemByValue(item: D): boolean {
         for (const [key, value] of this._items) {
             if (value === item) {
                 return this._items.delete(key);
@@ -57,19 +128,22 @@ class Storage<T extends BaseType, D = any>
         return false;
     }
 
-    public removeItem({id}:{id: StorageItemIndex}): boolean;
+    public removeItem({index}:{index: StorageItemIndex}): boolean;
     public removeItem({item}: {item: D}): boolean;
-    public removeItem({id, item}: {id?: StorageItemIndex, item?: D}): boolean {
-        if (id === undefined && item === undefined) {
+    public removeItem({index, item}: {index?: StorageItemIndex, item?: D}): boolean {
+        if (
+            ( index === undefined || index === -1)
+            && item === undefined
+        ) {
             throw new Error("id or item must be provided, but neither was");
         }
 
-        if (id !== undefined && item !== undefined) {
+        if (index !== undefined && item !== undefined) {
             throw new Error("id and item cannot both be provided");
         }
 
-        if (id !== undefined) {
-            return this.removeItemByKey(id);
+        if (index !== undefined) {
+            return this.removeItemByIndex(index);
         }
         if (item !== undefined) {
             return this.removeItemByValue(item);

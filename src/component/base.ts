@@ -89,7 +89,7 @@ class Component<T extends BaseType, D = any> {
             || storedHash === undefined
             || storedHash === hashedData
         ) {
-            this.meta.annotations.set('hash',  hashedData);
+            this.meta.labels.set('hash',  hashedData);
         }
         
         else if (

@@ -40,7 +40,7 @@ interface PropertiesSpec
  */
 interface ConfigSpec
     extends
-        Record<'id', string>,
+        Partial<Record<'id', string>>,
         Record<'name', string>,
         Record<'description', string>,
         Record<'properties', PropertiesSpec> {}

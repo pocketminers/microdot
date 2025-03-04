@@ -1,6 +1,6 @@
-import { BaseTypes } from "@component/base";
+import { BaseType, BaseTypes } from "@component/base";
 import { Factory } from "@component/factory";
-import { Storage } from "@component/storage";
+import { Storage, StorageItemIndex } from "@component/storage";
 import { ArgumentEntry, ParameterEntry } from "@component/properties";
 import { Manager } from "@component/manager";
 
@@ -30,7 +30,7 @@ type Identifier = string;
 
 
 class IdentityFactory
-    extends Factory<BaseTypes.Identity, Identifier>
+    extends Factory<BaseTypes.Identity, {id: Identifier, type: IdentifiableBaseTypes}>
 {
     constructor() {
         super(BaseTypes.Identity);
@@ -41,14 +41,19 @@ class IdentityFactory
         options = {
             prefix: "",
             suffix: ""
-        }
+        },
+        type = undefined
     }: {
         format?: IdentifierFormat,
         options?: {
             prefix?: string,
             suffix?: string
-        }
-    } = {}): Identifier {
+        },
+        type?: IdentifiableBaseTypes
+    } = {}): {
+        id: Identifier,
+        type: IdentifiableBaseTypes
+    } {
         const prefix = options?.prefix || "";
         const suffix = options?.suffix || "";
 
@@ -73,7 +78,17 @@ class IdentityFactory
 
         identifier += suffix;
 
-        return identifier;
+        if (type === undefined) {
+            return {
+                id: identifier,
+                type: BaseTypes.Custom
+            };
+        }
+
+        return {
+            id: identifier,
+            type
+        };
     }
 
     private static createUUID(): string {
@@ -98,25 +113,39 @@ class IdentityFactory
 
 }
 
+type IdentifiableBaseTypes = BaseTypes.Command | BaseTypes.Message | BaseTypes.Job | BaseTypes.Custom;
+
+
+interface IdentityStorageItem
+    extends 
+        Record<"id", Identifier>,
+        Record<'type', IdentifiableBaseTypes> {}
+
 
 class IdentityStorage
-    extends Storage<BaseTypes.Identity, Identifier>
+    extends Storage<BaseTypes.Identity, IdentityStorageItem>
 {
-    constructor(items: Identifier[] = []) {
+    constructor(items: IdentityStorageItem[] = []) {
         super({ type: BaseTypes.Identity, items });
     }
 
-    public get ids(): Set<Identifier> {
+    public get ids(): Set<IdentityStorageItem> {
         return new Set(this.listItems());
     }
 
-    public addId(identifier: Identifier): void {
-        this.addItem({index: identifier, item: identifier});
+    public addId({
+        identifier,
+        type
+    }:{
+        identifier: Identifier,
+        type: IdentifiableBaseTypes
+    }):  {index: StorageItemIndex, item: IdentityStorageItem} {
+        return this.addItem({item: {id: identifier, type}});
     }
 
-    public hasId(identifier: Identifier): boolean {
+    public hasId(identifier: {id: Identifier, type: IdentifiableBaseTypes}): boolean {
         try {
-            if (this.getItem(identifier)) {
+            if (this.getItem({value: identifier})) {
                 return true;
             }
         } catch (error) {
@@ -126,11 +155,11 @@ class IdentityStorage
         return false;
     }
 
-    public removeId(identifier: Identifier): void {
+    public removeId(identifier: {id: Identifier, type: IdentifiableBaseTypes}): void {
         this.removeItem({item: identifier} );
     }
 
-    public listIds(): Identifier[] {
+    public listIds(): IdentityStorageItem[] {
         return this.listItems();
     }
 }
@@ -149,8 +178,7 @@ const IdentityManagerParameters: ParameterEntry[] = [
 
 
 class IdentityManager
-    extends Manager
-    <
+    extends Manager<
         BaseTypes.Identity,
         IdentityFactory,
         IdentityStorage
@@ -166,13 +194,44 @@ class IdentityManager
         })
     }
 
-    public createId(format?: IdentifierFormat, options?: { prefix?: string, suffix?: string }): string {
+    public createId({
+        format,
+        options,
+        type = BaseTypes.Custom,
+    }:{
+        format?: IdentifierFormat,
+        options?: { prefix?: string, suffix?: string }
+        type?: IdentifiableBaseTypes
+    } = {}): {
+        index:  StorageItemIndex,
+        item: { id: Identifier, type: IdentifiableBaseTypes }
+     } {
         format = format !== undefined ? format : this.properties.getValue("defaultFormat");
-        const id = this.factory.create({format, options});
+        const id: {id: Identifier, type: IdentifiableBaseTypes } = this.factory.create({format, options, type});
 
-        this.storage.addId(id);
+        const indexedItem = this.storage.addId({identifier: id.id, type: id.type});
         
-        return id;
+        return indexedItem;
+    }
+
+    public createBulkIds({
+        count,
+        format,
+        options,
+        type
+    }:{
+        count: number,
+        format?: IdentifierFormat,
+        options?: { prefix?: string, suffix?: string }
+        type?: IdentifiableBaseTypes
+    }): Identifier[] {
+        const ids: Identifier[] = [];
+
+        for (let i = 0; i < count; i++) {
+            ids.push(this.createId({format, options, type}).item.id);
+        }
+
+        return ids;
     }
 }
 
@@ -182,6 +241,8 @@ export {
     IdentifierFormats,
     type IdentifierFormat,
     IdentityManagerParameters,
+    type IdentifiableBaseTypes,
+    type IdentityStorageItem,
     IdentityFactory,
     IdentityStorage,
     IdentityManager

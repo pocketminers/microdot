@@ -1,6 +1,7 @@
-import { ArgumentEntry, BaseTypes, Factory, Manager, ParameterEntry, Properties, Storage } from "@/component";
+import { ArgumentEntry, Base, BaseTypes, Factory, Manager, ParameterEntry, Properties, Storage } from "@/component";
 import { CommandSpec, TaskRunner } from "@/template";
 import { Checks } from "@/utils";
+import { Identifier } from "./identity";
 
 /**
  * The default task runner
@@ -23,10 +24,14 @@ interface RunCommandEntry
         Record<'instance', any>,
         Partial<Record<'args', {[key: string]: any}>> {}
 
-class Command<R = any, T = any>{
+
+class Command<R = any, T = any>
+    extends Base<BaseTypes.Command>
+    implements CommandSpec<R, T>
+{
     public readonly name: string;
     public readonly description: string;
-    public readonly properties: Record<string, any>;
+    public readonly properties: Properties<BaseTypes.Command>;
     public readonly run: TaskRunner<R, T>;
 
     constructor({
@@ -35,9 +40,10 @@ class Command<R = any, T = any>{
         parameters,
         run
     }: CommandEntry<R, T>) {
+        super(BaseTypes.Command);
         this.name = name;
         this.description = description;
-        this.properties = new Properties({type: 'Command', params: parameters});
+        this.properties = new Properties({type: BaseTypes.Command, params: parameters});
         this.run = run !== undefined ? run : defaultTaskRunner;
     }
 }
@@ -84,12 +90,12 @@ class CommandManager
     >
 {
     constructor({
-        args,
-        commandEntries
+        args = [],
+        commandEntries = []
     }:{
-        args: ArgumentEntry[]
-        commandEntries: CommandEntry[]
-    }) {
+        args?: ArgumentEntry[]
+        commandEntries?: CommandEntry[]
+    } ={}) {
         super({
             type: BaseTypes.Command,
             factory: new CommandFactory(),
@@ -111,8 +117,12 @@ class CommandManager
         let output: R | Error |undefined;
         
         try {
-            const command = this.storage.getItem(commandName);
-            output = await command.run({instance, args});
+            const command = this.storage.getItem({index: commandName}).value;
+            if (command instanceof Command) {
+                output = await command.run({instance, args});
+            } else {
+                throw new Error(`Command ${commandName} not found or invalid type`);
+            }
         }
         catch (error: any) {
             output = error;

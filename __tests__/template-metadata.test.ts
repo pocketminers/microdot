@@ -20,12 +20,14 @@ describe('Metadata', () => {
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'test',
-            'hash': 'not-set',
             'test': 'test'
         });
         expect(metadata.labels.toJSON()).toEqual({
             'id': '1',
+            'hash': 'not-set',
+            'createdBy': 'test',
+            'tags': undefined,
+            'type': undefined,
             'test': 'test'
         });
     });
@@ -37,11 +39,11 @@ describe('Metadata', () => {
         expect(metadata.description).toBeUndefined();
         expect(metadata.annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'unknown',
-            'hash': 'not-set'
         });
         expect(metadata.labels.toJSON()).toEqual({
-            'id': 'not-tracked'
+            'id': 'not-tracked',
+            'hash': 'not-set',
+            'createdBy': 'unknown'
         });
     });
 
@@ -61,11 +63,13 @@ describe('Metadata', () => {
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'test',
-            'hash': 'not-set'
         });
         expect(metadata.labels.toJSON()).toEqual({
             'id': '1',
+            'hash': 'not-set',
+            'createdBy': 'test',
+            'tags': undefined,
+            'type': undefined,
             'test': 'test'
         });
     });
@@ -86,12 +90,13 @@ describe('Metadata', () => {
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'test',
-            'hash': 'not-set',
             'test': 'test'
         });
         expect(metadata.labels.toJSON()).toEqual({
-            'id': '1'
+            'id': '1',
+            'hash': 'not-set',
+            'createdBy': 'test'
+
         });
     });
 });
@@ -105,8 +110,6 @@ describe('Annotations', () => {
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'unknown',
-            'hash': 'not-set',
             'test': 'test'
         });
     });
@@ -116,18 +119,14 @@ describe('Annotations', () => {
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
             'createdAt': expect.any(String),
-            'createdBy': 'unknown',
-            'hash': 'not-set'
         });
     });
 
     it('should create an Annotations instance with default values and custom createdBy', () => {
-        const annotations = new Annotations({ createdBy: 'test' });
+        const annotations = new Annotations();
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
-            'createdBy': 'test',
-            'hash': 'not-set'
+            'createdAt': expect.any(String)
         });
     });
 });

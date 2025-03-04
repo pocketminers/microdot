@@ -46,7 +46,7 @@ class Service<
     }) {
         this.identities = new IdentityManager(args);
         // this.commands = new CommandManager({args});
-        this.id = this.identities.createId();
+        this.id = this.identities.createId().item.id;
         this.type = type;
     }
 }

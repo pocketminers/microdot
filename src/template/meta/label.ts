@@ -3,7 +3,6 @@ import { MetadataEntryIndexType, MetadataEntryValueType } from ".";
 interface LabelEntry
     extends
         Partial<Record<"id", string>>,
-        Partial<Record<'name', string>>,
         Partial<Record<'type', string>>,
         Partial<Record<"hash", string>>,
         Partial<Record<"createdBy", string>>,
@@ -24,6 +23,13 @@ class Labels
         super();
 
         if (
+            entries.id === null
+            || entries.id === undefined
+        ) {
+            entries.id = "not-tracked";
+        }
+
+        if (
             entries.createdBy === null
             || entries.createdBy === undefined
         ) {
@@ -35,6 +41,10 @@ class Labels
             || entries.hash === undefined
         ) {
             entries.hash = 'not-set';
+        }
+
+        for (const [key, value] of Object.entries(entries)) {
+            this.set(key, value);
         }
     }
 
