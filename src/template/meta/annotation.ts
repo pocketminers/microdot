@@ -5,7 +5,8 @@ import { MetadataEntryIndexType, MetadataEntryValueType } from "@template/meta/i
  */
 interface AnnotationEntry
     extends
-        Partial<Record<"createdAt", string>>
+        Partial<Record<'description', string>>,
+        Partial<Record<"timestamp", string>>
 {
     [key: MetadataEntryIndexType]: MetadataEntryValueType;
 }
@@ -21,15 +22,20 @@ class Annotations
 
         // Set default values - createdAt, createdBy, hash
         if (
-            entries.createdAt === null
-            || entries.createdAt === undefined
+            entries.timestamp === null
+            || entries.timestamp === undefined
+            || entries.timestamp === ""
         ) {
-            entries.createdAt = new Date().toISOString();
+            entries.timestamp = new Date().toISOString();
         }
 
         for (const [key, value] of Object.entries(entries)) {
             this.set(key, value);
         }
+    }
+
+    public get timestamp(): string {
+        return this.get('timestamp') || "";
     }
 
     public toJSON(): AnnotationEntry {

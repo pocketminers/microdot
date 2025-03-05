@@ -144,15 +144,6 @@ class IdentityStorage
     }
 
     public hasId(identifier: {id: Identifier, type: IdentifiableBaseTypes}): boolean {
-        // try {
-        //     if (this.getItem({value: identifier, allow: []}) !== undefined) {
-        //         console.log(`get item: ${this.getItem({value: identifier, allow: []})}`); 
-        //         return true;
-        //     }
-        // } catch (error) {
-        //     return false;
-        // }
-
         try {
             const item = this.ids;
             if (item.has(identifier)) {

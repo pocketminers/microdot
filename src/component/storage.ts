@@ -8,7 +8,7 @@ type StorageItems<D = any> = Map<StorageItemIndex, D>;
 class Storage<T extends BaseType, D = any>
     extends Base<T>
 {
-    private readonly _items: StorageItems<D> = new Map();
+    private readonly _items: StorageItems<D> = new Map<StorageItemIndex, D>();
 
     constructor(type: T) {
         super(type);
@@ -168,14 +168,36 @@ class Storage<T extends BaseType, D = any>
     }
 }
 
-class HashedStorageItem<D = any> {
+class HashedStorageItem<T extends BaseType, D = any>
+    extends Base<T>
+{
     public readonly data: D;
     public readonly meta: Metadata;
 
-    constructor({data, meta}: {data: D, meta: MetadataEntry}) {
+    constructor({
+        type,
+        data,
+        meta
+    }: {
+        type: T,
+        data: D,
+        meta: MetadataEntry
+    }) {
+        super(type);
         this.data = data;
         this.meta = new Metadata(meta);
+    }
 
+    public get id(): string {
+        return this.meta.labels.get('id') || "";
+    }
+
+    public get name(): string {
+        return this.meta.labels.get('name') || "";
+    }
+
+    public get description(): string {
+        return this.meta.annotations.get('description') || "";
     }
 
     public get hash(): string {
@@ -209,12 +231,16 @@ class HashedStorageItem<D = any> {
     }
 }
 
-class HashedStorage<T extends BaseTypes, D>
-    extends Storage<T, HashedStorageItem<D>>
+class HashedStorage<T extends BaseTypes, D, E extends HashedStorageItem<T, D>>
+    extends Storage<T, E>
 {
 
-    constructor({type, items = []}: {type: T, items?: HashedStorageItem<D>[]}) {
+    constructor({type, items = []}: {type: T, items?: E[]}) {
         super(type);
+
+        for (const item of items) {
+            this.addItem({item});
+        }
     }
 
     public async hashItems(): Promise<void> {
