@@ -7,7 +7,8 @@ import { Base, BaseType } from "./base";
 class Manager<
     T extends BaseType,
     F extends Factory<T>,
-    S extends Storage<T>
+    S extends Storage<T>,
+    D extends Manager<any, any, any, any>[] = []
 > 
     extends Base<T>
 {
@@ -17,6 +18,7 @@ class Manager<
     public readonly factory: F;
     public readonly storage: S;
     public readonly properties: Properties<T>;
+    public readonly dependencies: D;
 
     constructor(
         {
@@ -24,19 +26,22 @@ class Manager<
             factory,
             storage,
             parameters = [],
-            args = []
+            args = [],
+            dependencies
         }:{
             type: T,
             factory: F,
             storage: S,
             parameters: ParameterEntry[],
-            args: ArgumentEntry[]
+            args: ArgumentEntry[],
+            dependencies: D
         }
     ) {
         super(type);
-        this.factory = factory !== undefined ? factory : new Factory<T>(type) as F;
-        this.storage = storage !== undefined ? storage : new Storage<T>(type) as S;
+        this.factory = factory;
+        this.storage = storage;
         this.properties = new Properties<T>({type, params: parameters, args});
+        this.dependencies = dependencies;
     }
 }
 

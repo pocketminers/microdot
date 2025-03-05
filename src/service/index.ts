@@ -440,6 +440,7 @@ export {
 
 export * from "./commands";
 export * from "./identity";
+export * from "./messages";
 
 // // export * from "./command";
 // // export * from "./message";

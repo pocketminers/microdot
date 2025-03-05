@@ -101,7 +101,8 @@ class CommandManager
             factory: new CommandFactory(),
             storage: new CommandStorage(),
             parameters: CommandsManagerParameters,
-            args
+            args,
+            dependencies: []
         });
 
         for (const commandEntry of commandEntries) {

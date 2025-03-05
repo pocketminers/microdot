@@ -19,7 +19,7 @@ describe('Metadata', () => {
         expect(metadata.name).toBe('metadata');
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
             'test': 'test'
         });
         expect(metadata.labels.toJSON()).toEqual({
@@ -38,7 +38,7 @@ describe('Metadata', () => {
         expect(metadata.name).toBeUndefined();
         expect(metadata.description).toBeUndefined();
         expect(metadata.annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
         });
         expect(metadata.labels.toJSON()).toEqual({
             'id': 'not-tracked',
@@ -62,7 +62,7 @@ describe('Metadata', () => {
         expect(metadata.name).toBe('metadata');
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
         });
         expect(metadata.labels.toJSON()).toEqual({
             'id': '1',
@@ -89,7 +89,7 @@ describe('Metadata', () => {
         expect(metadata.name).toBe('metadata');
         expect(metadata.description).toBe('metadata description');
         expect(metadata.annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
             'test': 'test'
         });
         expect(metadata.labels.toJSON()).toEqual({
@@ -109,7 +109,7 @@ describe('Annotations', () => {
         const annotations = new Annotations(entry);
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
             'test': 'test'
         });
     });
@@ -118,7 +118,7 @@ describe('Annotations', () => {
         const annotations = new Annotations();
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String),
+            'timestamp': expect.any(String),
         });
     });
 
@@ -126,7 +126,7 @@ describe('Annotations', () => {
         const annotations = new Annotations();
         expect(annotations).toBeDefined();
         expect(annotations.toJSON()).toEqual({
-            'createdAt': expect.any(String)
+            'timestamp': expect.any(String)
         });
     });
 });

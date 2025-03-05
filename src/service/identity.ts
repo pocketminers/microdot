@@ -193,7 +193,8 @@ class IdentityManager
             factory: new IdentityFactory(),
             storage: new IdentityStorage(),
             parameters: IdentityManagerParameters,
-            args
+            args,
+            dependencies: []
         })
     }
 
