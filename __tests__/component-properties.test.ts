@@ -1,11 +1,8 @@
 import { BaseTypes } from '../src/component/base/base.types';
 import {
-    ArgumentEntry,
     Argument,
-    ParameterEntry,
     Parameter,
-    Properties,
-    PropertiesEntry
+    Properties
 } from '../src/component/base/properties';
 
 

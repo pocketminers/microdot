@@ -297,8 +297,6 @@ describe('MessageManager', () => {
             ]
         });
 
-        // await manager.createMessage(message);
-
         expect(manager.storage.size).toBe(1);
     });
 

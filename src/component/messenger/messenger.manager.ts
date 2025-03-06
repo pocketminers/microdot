@@ -100,7 +100,7 @@ class MessageManager
         let filePath: string | undefined = this.properties.getValue<string>("historyFilePath");
 
         if (filePath === undefined) {
-            filePath = "history.json";
+            filePath = "./history.json";
         }
 
         const fileExists: boolean = await Filing.exists(filePath);
@@ -111,17 +111,15 @@ class MessageManager
     }
 
     private async writeMessageToFile(message: Message<any, any, any>): Promise<void> {
+        await this.prepareLogFiles();
+
+
         const filePath: string | undefined = this.properties.getValue<string>("historyFilePath");
-
-        if (filePath === undefined) {
-            throw new Error(`MessageManager:writeMessageToFile: The file path is undefined`);
-        }
-
-        // const data: string = await this.readFileAsync(filePath);
+        const data: string = await Filing.readFile(filePath);
 
         // const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
 
-        const data: string = await Filing.readFile(filePath);
+        // const data: string = await Filing.readFile();
 
         console.log(`data: ${data}`);
 
