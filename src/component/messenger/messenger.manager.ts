@@ -9,6 +9,7 @@ import { MessageStorage } from "./messenger.storage";
 import { Message } from "./message";
 import { MessageConfigParameters } from "./message.params";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
+import { Filing } from "@/utils/filing";
 
 class MessageManager
     extends Manager
@@ -95,59 +96,70 @@ class MessageManager
         return message;
     }
 
-    private async readFileAsync(filePath: string): Promise<string> {
-        try {
-            const data = await fs.readFile(filePath, 'utf-8');
-            return data;
+    public async prepareLogFiles(): Promise<void> {
+        let filePath: string | undefined = this.properties.getValue<string>("historyFilePath");
+
+        if (filePath === undefined) {
+            filePath = "history.json";
         }
-        catch (error: any) {
-            await fs.writeFile(filePath, "[]");
-            return "[]";
+
+        const fileExists: boolean = await Filing.exists(filePath);
+
+        if (fileExists === false) {
+            await Filing.createFile(filePath);
         }
     }
 
-    private async writeFileAsync(filePath: string, data: string): Promise<void> {
-        try {
-            await fs.writeFile(filePath, data, 'utf-8');
-        }
-        catch (error: any) {
-            throw new Error(`MessageManager:writeFileAsync: ${error.message}`);
-        }
-    }
-
-    private async writeMessageToFile(message: Partial<Message<any, any, any>>): Promise<void> {
+    private async writeMessageToFile(message: Message<any, any, any>): Promise<void> {
         const filePath: string | undefined = this.properties.getValue<string>("historyFilePath");
 
         if (filePath === undefined) {
             throw new Error(`MessageManager:writeMessageToFile: The file path is undefined`);
         }
 
-        const data: string = await this.readFileAsync(filePath);
+        // const data: string = await this.readFileAsync(filePath);
 
-        const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+        // const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+
+        const data: string = await Filing.readFile(filePath);
+
+        console.log(`data: ${data}`);
+
+        let messages: Partial<Message<any, any, any>>[];
+        try {
+            messages = JSON.parse(data);
+        } catch (error: any) {
+            // throw new Error(`MessageManager:writeMessageToFile: Failed to parse JSON data: ${error.message}`);
+            messages = [];
+        }
 
         messages.push({
             level: message.level,
             status: message.status,
             body: message.body,
             metadata: message.metadata,
-            properties: message.properties,
-            timestamp: message.timestamp !== undefined ? message.timestamp : new Date().toISOString()
         });
 
-        await this.writeFileAsync(filePath, JSON.stringify(messages, null, 2));
+        await Filing.writeFile(filePath, JSON.stringify(messages, null, 2));
     }
 
-    public async readMessagesFromFile(filePath?: string): Promise<void> {
+    public async readMessagesFromFile(filePath?: string): Promise<Partial<Message<any, any, any>>[]> {
         filePath = filePath !== undefined ? filePath : this.properties.getValue<string>("historyFilePath");
 
         if (filePath === undefined) {
             throw new Error(`MessageManager:readMessagesFromFile: The file path is undefined`);
         }
 
-        const data: string = await this.readFileAsync(filePath);
+        const data: string = await Filing.readFile(filePath);
 
-        const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+        // const messages: Partial<Message<any, any, any>>[] = JSON.parse(data);
+
+        let messages: Partial<Message<any, any, any>>[];
+        try {
+            messages = JSON.parse(data);
+        } catch (error: any) {
+            throw new Error(`MessageManager:readMessagesFromFile: Failed to parse JSON data: ${error.message}`);
+        }
 
         messages.forEach((message) => {
             this.storage.addMessage(new Message({
@@ -160,6 +172,8 @@ class MessageManager
                 ]
             }));
         });
+
+        return messages;
     }
 
 
@@ -170,7 +184,7 @@ class MessageManager
             throw new Error(`MessageManager:clearHistoryFile: The file path is undefined`);
         }
 
-        await this.writeFileAsync(filePath, "[]");
+        await Filing.writeFile(filePath, "[]");
     }
 }
 

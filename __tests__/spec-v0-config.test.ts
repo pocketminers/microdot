@@ -1,6 +1,6 @@
 import { BaseTypes } from '../src/component/base/base.types';
 import { Properties } from '../src/component/base/properties';
-import { PropertiesSpec, ArgumentSpec, ParameterSpec } from '../src/template/spec/v0/config';
+import { PropertiesSpec } from '../src/template/spec/v0/config';
 
 describe('PropertiesSpec', () => {
     it('should initialize with empty args and params', () => {

@@ -9,8 +9,7 @@ import { CommandStorage } from "./commands.storage";
 
 
 class CommandManager
-    extends Manager
-    <
+    extends Manager<
         BaseTypes.Command,
         CommandFactory,
         CommandStorage
@@ -35,6 +34,12 @@ class CommandManager
         for (const commandEntry of commandEntries) {
             this.storage.addItem({index: commandEntry.name, item: this.factory.create(commandEntry)});
         }
+    }
+
+    public createCommand(commandEntry: CommandEntry): Command {
+        const command = this.factory.create(commandEntry);
+        this.storage.addItem({index: commandEntry.name, item: command});
+        return command;
     }
 
     public async executeCommand<R>({

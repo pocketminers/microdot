@@ -30,7 +30,7 @@
     "navigation": {
         "excludeReferences": false,
         "includeFolders": true,
-        "compactFolders": true,
+        "compactFolders": false,
         "includeGroups": true
     },
     "readme": "./README.md",

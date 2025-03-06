@@ -120,10 +120,10 @@ describe('IdentityFactory', () => {
         expect(random.type).toEqual(BaseTypes.Custom);
     });
 
-    // it('should create a timestamp identifier', () => {
-    //     const factory = new IdentityFactory();
-    //     const timestamp = factory.create({format: IdentifierFormats.Timestamp});
+    it('should create a timestamp identifier', () => {
+        const factory = new IdentityFactory();
+        const timestamp = factory.create({format: IdentifierFormats.Timestamp});
 
-    //     expect(timestamp).toMatch(/[0-9]{13}/);
-    // });
+        expect(timestamp.id).toMatch(/[0-9]{13}/);
+    });
 });
