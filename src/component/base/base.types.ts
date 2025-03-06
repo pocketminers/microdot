@@ -8,6 +8,7 @@ enum BaseTypes {
     Command = "Command",
     Message = "Message",
     Job = "Job",
+    Process = "Process",
     Custom = "Custom"
 }
 

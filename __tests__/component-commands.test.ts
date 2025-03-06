@@ -1,7 +1,7 @@
 import { Properties } from '../src/component/base';
 import {
-    CommandManager,
-} from '../src/component/commands/index';
+    CommandManager
+} from '../src/component/commands/commands.manager';
 import { Command } from '../src/component/commands/command';
 
 
