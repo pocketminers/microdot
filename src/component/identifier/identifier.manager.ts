@@ -62,8 +62,11 @@ class IdentityManager
 
         return ids;
     }
-}
 
+    public getStorage() {
+        return this.storage
+    }
+}
 
 export {
     IdentityManager

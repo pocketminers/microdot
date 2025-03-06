@@ -1,5 +1,5 @@
-import { BaseTypes } from "../src/component";
-import { Storage } from "../src/component/storage";
+import { BaseTypes } from "../src/component/base/";
+import { Storage } from "../src/component/base/storage";
 
 describe('Storage', () => {
     class TestStorage<D = any> 

@@ -1,4 +1,4 @@
-import { Argument } from '../src/component/properties';
+import { Argument } from '../src/component/base/properties';
 
 describe('Argument', () => {
     it('should create an instance of Argument', () => {

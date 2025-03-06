@@ -1,5 +1,5 @@
 import { CommandSpec, TaskRunner } from "@/template";
-import { Base, BaseTypes, Properties } from "../base";
+import { Base, BaseTypes, Properties } from "../base/index";
 import { CommandEntry, defaultTaskRunner } from "./command.types";
 
 

@@ -1,4 +1,4 @@
-import { BaseTypes } from '../src/component/base';
+import { BaseTypes } from '../src/component/base/base.types';
 import {
     ArgumentEntry,
     Argument,

@@ -1,4 +1,4 @@
-import { BaseTypes, Factory } from "../base";
+import { BaseTypes, Factory } from "../base/index";
 import { Command } from "./command";
 import { CommandEntry } from "./command.types";
 

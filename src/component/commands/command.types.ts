@@ -1,4 +1,4 @@
-import { ParameterEntry } from "@/component";
+import { ParameterEntry } from "@/component/base/properties";
 import { CommandSpec, TaskRunner } from "@/template";
 
 

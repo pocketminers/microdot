@@ -1,11 +1,17 @@
 
 import {
-    IdentityManager,
-    IdentityStorage,
-    IdentityFactory,
+    IdentityManager
+} from '../src/component/identifier/identifier.manager';
+import {
+    IdentityStorage
+} from '../src/component/identifier/identifier.storage';
+import {
+    IdentityFactory
+} from '../src/component/identifier/identifier.factory';
+import {
     IdentifierFormats
-} from '../src/component/identifier/index';
-import { Base, BaseTypes } from '../src/component/index';
+} from '../src/component/identifier/identifier.types';
+import { BaseTypes } from '../src/component/base/base.types';
 
 
 
@@ -14,7 +20,7 @@ describe('IdentityManager', () => {
         const identityManager = new IdentityManager();
 
         expect(identityManager).toBeInstanceOf(IdentityManager);
-        expect(identityManager.storage.size).toBe(0);
+        expect(identityManager.getStorage().size).toBe(0);
     });
 
     it('should add an identifier', () => {
@@ -22,32 +28,32 @@ describe('IdentityManager', () => {
 
         const identifier: any = identityManager.createId({format: IdentifierFormats.Random});
 
-        expect(identityManager.storage.size).toBe(1);
-        console.log(identityManager.storage.listItems());
+        expect(identityManager.getStorage().size).toBe(1);
+        console.log(identityManager.getStorage().listItems());
         console.log(identifier);
-        expect(identityManager.storage.hasId(identifier.item)).toBe(true);
+        expect(identityManager.getStorage().hasId(identifier.item)).toBe(true);
     });
 
     it('should remove an identifier', () => {
         const identityManager = new IdentityManager();
 
-        const identifier = identityManager.storage.addId({identifier: 'test-1', type: BaseTypes.Custom});
-        identityManager.storage.removeId(identifier.item);
+        const identifier = identityManager.getStorage().addId({identifier: 'test-1', type: BaseTypes.Custom});
+        identityManager.getStorage().removeId(identifier.item);
 
-        expect(identityManager.storage.size).toBe(0);
-        console.log(identityManager.storage.listItems());
-        expect(identityManager.storage.hasId({id: 'test-1', type: BaseTypes.Custom})).toEqual(false);
+        expect(identityManager.getStorage().size).toBe(0);
+        console.log(identityManager.getStorage().listItems());
+        expect(identityManager.getStorage().hasId({id: 'test-1', type: BaseTypes.Custom})).toEqual(false);
     });
 
     // it('should list identifiers', () => {
     //     const identityManager = new IdentityManager();
 
-    //     identityManager.storage.addId('test-1');
-    //     identityManager.storage.addId('test-2');
-    //     identityManager.storage.addId('test-3');
+    //     identityManager.getStorage().addId('test-1');
+    //     identityManager.getStorage().addId('test-2');
+    //     identityManager.getStorage().addId('test-3');
 
-    //     expect(identityManager.storage.size).toBe(3);
-    //     expect(identityManager.storage.listIds()).toEqual(['test-1', 'test-2', 'test-3']);
+    //     expect(identityManager.getStorage().size).toBe(3);
+    //     expect(identityManager.getStorage().listIds()).toEqual(['test-1', 'test-2', 'test-3']);
     // });
 });
 

@@ -1,5 +1,6 @@
-import { BaseTypes, Storage } from "../base";
-import { Command } from "./command";
+import { BaseTypes} from "@component/base/base.types";
+import { Storage } from "@component/base/storage";
+import { Command } from "@component/commands/command";
 
 
 class CommandStorage

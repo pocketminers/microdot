@@ -1,6 +1,6 @@
 import { Checks } from "@/utils";
-import { ArgumentEntry, BaseTypes, Manager } from "../base";
-import { Command } from "./command";
+import { ArgumentEntry, BaseTypes, Manager } from "@component/base/index";
+import { Command } from "@component/commands/command";
 import { CommandEntry, RunCommandEntry } from "./command.types";
 import { CommandFactory } from "./commands.factory";
 import { CommandsManagerParameters } from "./commands.params";

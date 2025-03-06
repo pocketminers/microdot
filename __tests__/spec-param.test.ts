@@ -1,5 +1,5 @@
 
-import { Parameter } from '../src/component/properties'
+import { Parameter } from '../src/component/base/properties'
 
 describe('Parameter', () => {
     it('should create an instance of Parameter', () => {
