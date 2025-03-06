@@ -1,6 +1,6 @@
 import {
     Manager
-} from "../src/component/manager";
+} from "../src/component/base/manager";
 
 import {
     BaseTypes

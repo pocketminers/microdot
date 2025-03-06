@@ -4,8 +4,7 @@
 // import { Process } from "@/component/process";
 
 import { ArgumentEntry } from "@/component";
-import { Identifier, IdentityManager } from "./identity";
-import { CommandManager } from "./commands";
+import { Identifier, IdentityManager } from "@/component/identifier";
 
 
 /**
@@ -438,9 +437,9 @@ export {
     Service
 }
 
-export * from "./commands";
-export * from "./identity";
-export * from "./messages";
+// export * from "./commands";
+// export * from "./identifier";
+// export * from "./messages";
 
 // // export * from "./command";
 // // export * from "./message";

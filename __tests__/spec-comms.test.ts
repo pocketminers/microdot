@@ -1,5 +1,5 @@
 import { MessageLevels, MessageLevel, MessageSpec, MessageStatus, MessageStatuses } from '../src/template/spec/v0/comms';
-import { Argument, BaseTypes, Properties } from '../src/component';
+import { Argument, BaseTypes, Properties } from '../src/component/base/index';
 
 describe('MessageSpec', () => {
 

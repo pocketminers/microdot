@@ -1,4 +1,4 @@
-import { BaseTypes } from '../src/component';
+import { BaseTypes } from '../src/component/base';
 import {
     ArgumentEntry,
     Argument,
@@ -6,7 +6,7 @@ import {
     Parameter,
     Properties,
     PropertiesEntry
-} from '../src/component/properties';
+} from '../src/component/base/properties';
 
 
 describe('Argument', () => {

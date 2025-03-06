@@ -1,4 +1,4 @@
-import { BaseTypes, Properties } from "@/component";
+import { BaseTypes, Properties } from "@/component/base";
 
 enum MessageLevels {
     Debug = "Debug",
