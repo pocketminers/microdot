@@ -14,7 +14,7 @@ describe('Parameter', () => {
 
     it('should throw an error if the value type does not match the expected type', () => {
         try {
-            // @ts-expect-error - Testing invalid input
+            // @ts-expect-error - this is intentional to test the error
             new Parameter<string>({name: "param1", required: true, description: "description1", defaultValue: 1});
         }
         catch (error) {

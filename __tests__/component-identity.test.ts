@@ -45,16 +45,16 @@ describe('IdentityManager', () => {
         expect(identityManager.getStorage().hasId({id: 'test-1', type: BaseTypes.Custom})).toEqual(false);
     });
 
-    // it('should list identifiers', () => {
-    //     const identityManager = new IdentityManager();
+    it('should list identifiers', () => {
+        const identityManager = new IdentityManager();
 
-    //     identityManager.getStorage().addId('test-1');
-    //     identityManager.getStorage().addId('test-2');
-    //     identityManager.getStorage().addId('test-3');
+        identityManager.getStorage().addId({identifier: 'test-1', type: BaseTypes.Custom});
+        identityManager.getStorage().addId({identifier: 'test-2', type: BaseTypes.Custom});
+        identityManager.getStorage().addId({identifier: 'test-3', type: BaseTypes.Custom});
 
-    //     expect(identityManager.getStorage().size).toBe(3);
-    //     expect(identityManager.getStorage().listIds()).toEqual(['test-1', 'test-2', 'test-3']);
-    // });
+        expect(identityManager.getStorage().size).toBe(3);
+        expect(identityManager.getStorage().listIds()).toEqual([{id: 'test-1', type: BaseTypes.Custom}, {id: 'test-2', type: BaseTypes.Custom}, {id: 'test-3', type: BaseTypes.Custom}]);
+    });
 });
 
 describe('IdentityStore', () => {
@@ -65,14 +65,14 @@ describe('IdentityStore', () => {
         expect(identityStore.size).toBe(0);
     });
 
-    // it('should add an identifier', () => {
-    //     const identityStore = new IdentityStorage();
+    it('should add an identifier', () => {
+        const identityStore = new IdentityStorage();
 
-    //     identityStore.addId('test-1');
+        identityStore.addId({identifier: 'test-1', type: BaseTypes.Custom});
 
-    //     expect(identityStore.size).toBe(1);
-    //     expect(identityStore.hasId('test-1')).toBe(true);
-    // });
+        expect(identityStore.size).toBe(1);
+        expect(identityStore.getItem({value: {id: 'test-1', type: BaseTypes.Custom}})).toEqual({index: -1, value: {id: 'test-1', type: BaseTypes.Custom}});
+    });
 
     it('should remove an identifier', () => {
         const identityStore = new IdentityStorage();
@@ -93,7 +93,7 @@ describe('IdentityStore', () => {
         const three = identityStore.addId({identifier: 'test-3', type: BaseTypes.Custom});
 
         expect(identityStore.size).toBe(3);
-        expect(identityStore.listIds()).toEqual([one.item, two.item, three.item]);
+        expect(identityStore.listIds()).toEqual([{id: 'test-1', type: BaseTypes.Custom}, {id: 'test-2', type: BaseTypes.Custom}, {id: 'test-3', type: BaseTypes.Custom}]);
     });
 
     it('should clear identifiers', () => {

@@ -1,7 +1,7 @@
 // import {
 //     CommandManager,
 //     Command
-// }  from "../src/service/commands";
+// }  from "../src/component/commands";
 
 
 // describe("CommandManager", () => {
