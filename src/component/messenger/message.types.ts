@@ -23,15 +23,8 @@ interface MessageStorageItem<
 >
     extends
         Record<'properties', Properties<BaseTypes.Message>>,
-        // Record<'args', ArgumentEntry[]>,
         Pick<MessageEntry<L, S, B>, 'id' | 'level' | 'body' | 'status'  | 'timestamp'>{}
 
-        // Record<'args', Argument[]>
-        // Record<'data', MessageEntry<L, S, B>>,
-        // HashedStorageItem<BaseTypes.Message, MessageEntry<L, S, B>>{}
-        // Record<'data', Message<L, S, B>>,
-        // Record<'name', string>,
-        // Record<'description', string>,
 
 interface MessageOutputFormat
     extends

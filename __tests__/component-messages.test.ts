@@ -2,7 +2,7 @@ import {
     MessageManager,
     Message,
     MessageFactory,
-} from '../src/component/messenger/index';
+} from '../src/component/messenger';
 import {
     MessageLevels,
     MessageStatuses
@@ -39,6 +39,8 @@ describe('MessageManager', () => {
         // manager.createMessage(message);
 
         expect(manager.storage.size).toBe(1);
+        expect(manager.storage.getMessages().length).toBe(1);
+        expect(manager.dependencies[0].storage.size).toBe(1);
         // expect(manager.messages[0].getDataValue.level).toBe('Info');
         // expect(manager.messages[0].data.body).toBe('This is a test message');
     });

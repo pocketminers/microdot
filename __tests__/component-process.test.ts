@@ -1,7 +1,8 @@
 import {
     ProcessTypes
 } from '../src/component/processor/process.types'
-import { Process } from '../src/component/processor/process'
+import { ProcessInstance } from '../src/component/processor/processInstance'
+
 // import {
 //     ProcessStatuses
 // } from '../src/template/spec/v0/process'
@@ -9,7 +10,7 @@ import { Process } from '../src/component/processor/process'
 
 describe('Process', () => {
     it('should create a new Process', () => {
-        const process = new Process<ProcessTypes.AUTH>({
+        const process = new ProcessInstance<ProcessTypes.AUTH>({
             id: 'test',
             type: ProcessTypes.AUTH,
             name: 'test',
@@ -19,23 +20,27 @@ describe('Process', () => {
             commands: [],
             metadata: {}
         })
-        expect(process).toBeInstanceOf(Process<ProcessTypes.AUTH>)
+        expect(process).toBeInstanceOf(ProcessInstance<ProcessTypes.AUTH>)
+        expect(process.dependencies.length).toBe(0)
     })
 
-    // it('should create a new Process with default name', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
-    //         id: 'test',
-    //         type: ProcessTypes.AUTH,
-    //         args: [],
-    //         instance: () => {},
-    //         commands: [],
-    //         metadata: {}
-    //     })
-    //     expect(process).toBeInstanceOf(Process)
-    // })
+    it('should create a new Process with default name', () => {
+        const process = new ProcessInstance<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            description: 'test',
+            args: [],
+            instance: () => {},
+            commands: [],
+            metadata: {}
+        })
+        expect(process).toBeInstanceOf(ProcessInstance<ProcessTypes.AUTH>)
+        expect(process.name).toBe('test')
+    })
 
     // it('should create a new Process with default description', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -48,7 +53,7 @@ describe('Process', () => {
     // })
 
     // it('should create a new Process with default args', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -60,7 +65,7 @@ describe('Process', () => {
     // })
 
     // it('should create a new Process with default instance', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -72,7 +77,7 @@ describe('Process', () => {
     // })
 
     // it('should create a new Process with default commands', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -84,7 +89,7 @@ describe('Process', () => {
     // })
 
     // it('should create a new Process with default metadata', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -96,7 +101,7 @@ describe('Process', () => {
     // })
 
     // it('should create a new Process with default status', () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -110,10 +115,11 @@ describe('Process', () => {
     // })
 
     // it('should create a process and run it', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
+    //         description: 'test',
     //         args: [{
     //             name: 'retry',
     //             value: true
@@ -157,6 +163,7 @@ describe('Process', () => {
     //         // jobId: 'test',
     //         commandName: 'test',
     //         args: [
+    //             // { 'test': 'test' }
     //             {
     //                 name: 'test',
     //                 value: 'test'
@@ -164,7 +171,7 @@ describe('Process', () => {
     //         ]
     //     })
 
-    //   // console.log(`result`, JSON.stringify(result, null, 2));
+    //   console.log(`result`, JSON.stringify(result, null, 2));
 
     //     expect(result).toEqual({
     //         run: {
@@ -193,7 +200,7 @@ describe('Process', () => {
     // })
 
     // it('should create a process and run it with retry', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -276,7 +283,7 @@ describe('Process', () => {
     // });
 
     // it('should create a process and run it with retry and fail', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -362,7 +369,7 @@ describe('Process', () => {
     // });
 
     // it('should create a process and run it with retry and fail', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -448,7 +455,7 @@ describe('Process', () => {
 
     // it('should create a process and run it and timeout', async () => {
     //     let result;
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -544,7 +551,7 @@ describe('Process', () => {
     // });
 
     // it('should create a process that does not require an initialization', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -639,7 +646,7 @@ describe('Process', () => {
     // });
 
     // it('should create a process that requires an initialization', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',
@@ -734,7 +741,7 @@ describe('Process', () => {
     // });
 
     // it('should create a process that requires an initialization and fail', async () => {
-    //     const process = new Process<ProcessTypes.AUTH>({
+    //     const process = new ProcessInstance<ProcessTypes.AUTH>({
     //         id: 'test',
     //         type: ProcessTypes.AUTH,
     //         name: 'test',

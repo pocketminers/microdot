@@ -29,14 +29,12 @@ interface ProcessStorageItem<T extends ProcessType, D = any>
 enum ProcessTypes {
     DB_PSQL = 'DB_PSQL',
     USER = 'USER',
-    AUTH = 'AUTH'
+    AUTH = 'AUTH',
+    Custom = 'Custom'
 }
 
 
 type ProcessType = keyof typeof ProcessTypes;
-
-
-
 
 
 export {

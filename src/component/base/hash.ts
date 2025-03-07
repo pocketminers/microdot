@@ -13,7 +13,7 @@ class HashedStorageItem<
     public readonly meta: Metadata;
 
     constructor({
-        type = BaseTypes.Custom as T,
+        type,
         data,
         meta
     }: {

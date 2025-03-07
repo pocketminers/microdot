@@ -1,7 +1,7 @@
 import { Checks } from "@/utils";
-import { ArgumentEntry, Base, BaseTypes, Manager } from "@component/base/index";
+import { ArgumentEntry, BaseTypes, Manager } from "@component/base/index";
 import { Command } from "@component/commands/command";
-import { CommandEntry, CommandStorageEntryItem, RunCommandEntry } from "./command.types";
+import { CommandEntry, RunCommandEntry } from "@component/commands/command.types";
 import { CommandFactory } from "./commands.factory";
 import { CommandsManagerParameters } from "./commands.params";
 import { CommandStorage } from "./commands.storage";

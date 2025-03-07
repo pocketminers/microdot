@@ -1,5 +1,3 @@
-import { promises as fs } from "fs";
-
 import { MetadataEntry } from "@/template";
 import { ArgumentEntry, BaseTypes, Manager, Properties } from "../base";
 import { IdentityManager } from "../identifier";
@@ -10,7 +8,7 @@ import { Message } from "./message";
 import { MessageConfigParameters } from "./message.params";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 import { Filing } from "@/utils/filing";
-import { MessageStorageItem } from "./message.types";
+import { MessageOutputFormat } from "./message.types";
 
 class MessageManager
     extends Manager
@@ -44,8 +42,8 @@ class MessageManager
         B = any | undefined
     >({
         id = this.dependencies[0].createId().item.id,
-        name,
-        description,
+        // name,
+        // description,
         args,
         level,
         body,
@@ -53,8 +51,8 @@ class MessageManager
         metadata
     }: {
         id?: string,
-        name?: string,
-        description?: string,
+        // name?: string,
+        // description?: string,
         args?: ArgumentEntry[],
         level?: L,
         body: B,
@@ -129,7 +127,7 @@ class MessageManager
 
         // console.log(`data: ${data}`);
 
-        let messages: MessageStorageItem<any, any, any>[];
+        let messages: MessageOutputFormat[];
         try {
             messages = JSON.parse(data);
         } catch (error: any) {
@@ -143,7 +141,7 @@ class MessageManager
             body: message.body,
             status: message.status,
             timestamp: message.timestamp,
-            properties: message.properties
+            // args: message.properties.args.
         });
 
         await Filing.writeFile(filePath, JSON.stringify(messages, null, 2));

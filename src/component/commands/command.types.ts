@@ -27,6 +27,15 @@ interface CommandStorageEntryItem<R = any, T = any, D = any>
         CommandSpec<R,T>,
         Partial<Record<'metadata', MetadataEntry>> {}
 
+
+interface CommandOutputFormat
+    extends
+        Record<'id', string>,
+        Record<'name', string>,
+        Record<'description', string>,
+        Record<'args', string>,
+        Record<'run', string> {}
+
 /**
  * The run command entry
  */
@@ -41,5 +50,6 @@ export {
     type CommandEntry,
     type CommandStorageEntryItem,
     type RunCommandEntry,
+    type CommandOutputFormat,
     defaultTaskRunner
 }
