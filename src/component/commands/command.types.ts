@@ -1,5 +1,6 @@
-import { ParameterEntry } from "@/component/base/properties";
-import { CommandSpec, TaskRunner } from "@/template";
+import { ParameterEntry, Properties } from "@/component/base/properties";
+import { CommandSpec, MetadataEntry, TaskRunner } from "@/template";
+import { BaseTypes } from "../base";
 
 
 /**
@@ -15,10 +16,17 @@ const defaultTaskRunner: TaskRunner<any, any> = async ({instance, args}) => {
  */
 interface CommandEntry<R = any, T = any>
     extends
-        Pick<CommandSpec, "name" | "description">,
+        Pick<CommandSpec, "id" | "name" | "description">,
         Partial<Record<'parameters', ParameterEntry[]>>,
-        Partial<Record<'run', TaskRunner<R, T>>> {}
+        Partial<Record<'run', TaskRunner<R, T>>>,
+        Partial<Record<'metadata', MetadataEntry>> {}
 
+
+interface CommandStorageEntryItem<R = any, T = any, D = any>
+    extends
+        CommandSpec<R,T>,
+        Record<'properties', Properties<BaseTypes.Command>>,
+        Partial<Record<'metadata', MetadataEntry>> {}
 
 /**
  * The run command entry
@@ -32,6 +40,7 @@ interface RunCommandEntry
 
 export {
     type CommandEntry,
+    type CommandStorageEntryItem,
     type RunCommandEntry,
     defaultTaskRunner
 }

@@ -1,24 +1,24 @@
 import { 
-    CommandResultSpec, 
-    CommandSpec, 
+    CommandResultSpec,
     Metadata, 
-    MetadataEntry, 
-    ParameterSpec, 
     ProcessStatus, 
     ProcessStatuses
 } from "@/template";
-import { ProcessEntry, ProcessType } from "./process.types";
-import { ArgumentEntry, Base, BaseTypes, HashedStorageItem } from "../base";
+import { ProcessEntry, ProcessStorageItem, ProcessType, ProcessTypes } from "./process.types";
+import { ArgumentEntry, Base, BaseTypes, HashedStorageItem, Properties, PropertiesEntry } from "../base";
+import { ProcessParameters } from "./process.params";
+import { Command, CommandManager } from "../commands";
+
 
 
 class Process<
-    T extends ProcessType
+    T extends ProcessType,
+    D extends Base<BaseTypes.Identity | BaseTypes.Command>[]
 > 
     extends
-        HashedStorageItem<BaseTypes.Process, ProcessEntry<T>>
+        HashedStorageItem<BaseTypes.Process, ProcessStorageItem<T, D>>
 {
     public status: ProcessStatus = ProcessStatuses.New;
-    public commands: CommandSpec[] = [];
 
     constructor({
         id,
@@ -27,29 +27,22 @@ class Process<
         description,
         args,
         instance,
-        commands,
-        metadata
-    }: {
-        id: string,
-        type?: T,
-        name?: string,
-        description?: string,
-        args?: ArgumentEntry[],
-        instance?: Function | (() => Promise<any>),
-        commands?: CommandSpec[],
-        metadata?: MetadataEntry | Metadata
-    }) {
+        metadata,
+        dependencies = [],
+    }: ProcessEntry<T, D>) {
         super({
-            id,
             type: BaseTypes.Process,
-            name,
-            description,
-            args,
-            metadata
+            data: {
+                id,
+                type: type as T,
+                name,
+                description,
+                instance,
+                dependencies,
+                properties: new Properties<BaseTypes.Process>({ type: BaseTypes.Process, params: ProcessParameters, args }),
+            },
+            meta: new Metadata(metadata)
         });
-        
-        this.status = ProcessStatuses.New;
-        this.commands = this.data.commandRunner.listCommands();
     }
 
     private get instance(): Function | undefined {
@@ -60,15 +53,43 @@ class Process<
         this.data.instance = instance;
     }
 
-    public get commandRunner(): CommandRunner {
-        return this.data.commandRunner;
+    public get id(): string {
+        return this.data.id;
     }
+
+    public get name(): string {
+        return this.data.name;
+    }
+
+    public get description(): string {
+        return this.data.description;
+    }
+
+    public get dependencies(): D[] {
+        return this.data.dependencies as D[];
+    }
+
+    public get properties(): Properties<
+        BaseTypes.Process
+    >{
+        return this.data.properties  as Properties<BaseTypes.Process>;
+    }
+
+    public get command(): Command {
+        return this.properties.getValue('command');
+    }
+
+
+
+    // public get commandRunner(): CommandRunner {
+    //     return this.data.commandRunner;
+    // }
 
     private async createInstance(): Promise<void> {
         this.status = ProcessStatuses.Initializing;
 
         const initializeFunction: (args?: Record<string, any>) => Promise<Function> = this.properties.getValue('initializeFunction');
-        const initializeProperties: Properties = new Properties(this.properties.getValue<PropertiesEntry>('initializeProperties'));
+        const initializeProperties: Properties<BaseTypes.Process> = new Properties(this.properties.getValue<PropertiesEntry<BaseTypes.Process>>('initializeProperties'));
 
 
         try {
@@ -107,7 +128,7 @@ class Process<
         commandName: string,
         args: ArgumentEntry[]
     }): Promise<Map<number, R | undefined | Error>> {
-        const properties = new Properties({params: ProcessParameters, args});
+        const properties = new Properties({type: 'Process', params: ProcessParameters, args});
 
         const retry: boolean = properties.getValue('retry');
         const retryCount: number = properties.getValue('retryCount');
@@ -152,7 +173,7 @@ class Process<
         args: ArgumentEntry[]
     }): Promise<R | undefined | Error> {
 
-        const properties = new Properties({params: ProcessParameters, args});
+        const properties = new Properties({type: BaseTypes.Process, params: ProcessParameters, args});
 
         const timeout: number = this.properties.getValue('timeout');
         const timeoutAction: string = this.properties.getValue('timeoutAction');
@@ -211,7 +232,7 @@ class Process<
     }): Promise<R | undefined | Error> {
         this.status = ProcessStatuses.Running;
 
-        const command = this.data.commandRunner.getCommand(commandName);
+        const command = this.data.storage.getCommand(commandName);
 
         if (command === undefined) {
             this.status = ProcessStatuses.CommandNotFound;
@@ -240,7 +261,7 @@ class Process<
     }): Promise<CommandResultSpec<R | undefined | Error>> {
 
         let output: Map<number, R | undefined | Error> = new Map();
-        const { startTime, bytesIn } = CommandRunner.getInputMetrics(new Properties({args}).toKeyValue());
+        const { startTime, bytesIn } = CommandManager.getInputMetrics(new Properties({type: 'Process', args}).toKeyValue());
 
         try {
             output = await this.runWithRetryAndTimeout<R>({
@@ -253,13 +274,13 @@ class Process<
             output.set(1, error);
         }
 
-        const { endTime, bytesOut, duration } = CommandRunner.getOutputMetrics(output.get(output.size), startTime);
+        const { endTime, bytesOut, duration } = CommandManager.getOutputMetrics(output.get(output.size), startTime);
 
         return {
             run: {
                 processId: this.id,
                 commandName,
-                args: new Properties({args}).toKeyValue(),
+                args: new Properties<'Process'>({type: 'Process', args}).toKeyValue(),
                 instance: this.instance
             },
             output: output.get(output.size) as R | undefined | Error,

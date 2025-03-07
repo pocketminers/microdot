@@ -1,8 +1,9 @@
 import { Metadata, MetadataEntry } from "@/template";
 import { ArgumentEntry, BaseTypes, HashedStorageItem, Properties } from "../base";
-import { MessageEntry } from "./message.types";
+import { MessageEntry, MessageStorageItem } from "./message.types";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@template/spec/v0/comms";
 import { MessageConfigParameters } from "./message.params";
+import { Identifier, IdentityManager, IdentityStorageItem } from "../identifier";
 
 
 class Message<
@@ -11,13 +12,12 @@ class Message<
     B = any | undefined
 > 
     extends
-        HashedStorageItem<BaseTypes.Message, MessageEntry<L, S, B>>
+        HashedStorageItem<BaseTypes.Message, MessageStorageItem<L, S, B>>
 {
-
     constructor({
         id,
-        name,
-        description,
+        name = "not-indexed",
+        description = "",
         args,
         level = MessageLevels.Info as L,
         body = undefined as B,
@@ -32,38 +32,36 @@ class Message<
         body?: B
         status?: S,
         metadata?: MetadataEntry | Metadata
-    } ={}) {
+    }) {
         super({
             type: BaseTypes.Message,
             data: {
+                id: id !== undefined ? id : "not-indexed",
+                name,
+                description,
                 level,
                 body,
-                status
+                status,
+                properties: new Properties<BaseTypes.Message>({ type: BaseTypes.Message, params: MessageConfigParameters, args })
             },
             meta: metadata
         });
-
-        this.meta.annotations.set('properties', new Properties<BaseTypes.Message>({ type: BaseTypes.Message, params: MessageConfigParameters, args }));
-
-        this.meta.labels.set('id', id);
-        this.meta.labels.set('name', name);
-        this.meta.annotations.set('description', description);
     }
 
-    public get id(): string {
-        return this.meta.labels.get('id') || "";
+    public get id(): Identifier {
+        return this.data.id;
     }
 
     public get name(): string {
-        return this.meta.labels.get('name') || "";
+        return this.data.name;
     }
 
     public get description(): string {
-        return this.meta.annotations.get('description') || "";
+        return this.data.description;
     }
 
     public get properties(): Properties<BaseTypes.Message> {
-        return this.meta.annotations.get('properties') as Properties<BaseTypes.Message>;
+        return this.data.properties as Properties<BaseTypes.Message>;
     }
 
     public get level(): L {

@@ -1,34 +1,41 @@
 import { Checks } from "@/utils";
-import { ArgumentEntry, BaseTypes, Manager } from "@component/base/index";
+import { ArgumentEntry, Base, BaseTypes, Manager } from "@component/base/index";
 import { Command } from "@component/commands/command";
-import { CommandEntry, RunCommandEntry } from "./command.types";
+import { CommandEntry, CommandStorageEntryItem, RunCommandEntry } from "./command.types";
 import { CommandFactory } from "./commands.factory";
 import { CommandsManagerParameters } from "./commands.params";
 import { CommandStorage } from "./commands.storage";
+import { IdentityManager } from "../identifier";
 
 
 
-class CommandManager
+class CommandManager<
+    I extends Manager<BaseTypes.Identity, any, any, any>,
+    D extends Manager<BaseTypes.Identity, any, any, any>[] = [IdentityManager]
+>
     extends Manager<
         BaseTypes.Command,
         CommandFactory,
-        CommandStorage
+        CommandStorage,
+        D
     >
 {
     constructor({
         args = [],
-        commandEntries = []
+        commandEntries = [],
+        dependencies
     }:{
         args?: ArgumentEntry[]
-        commandEntries?: CommandEntry[]
-    } ={}) {
+        commandEntries?: CommandEntry[],
+        dependencies: D[]
+    }) {
         super({
             type: BaseTypes.Command,
             factory: new CommandFactory(),
             storage: new CommandStorage(),
             parameters: CommandsManagerParameters,
             args,
-            dependencies: []
+            dependencies
         });
 
         for (const commandEntry of commandEntries) {
@@ -143,6 +150,5 @@ class CommandManager
 
 
 export {
-    CommandManager,
-    CommandsManagerParameters
+    CommandManager
 };
