@@ -9,15 +9,12 @@ import { IdentityManager } from "../identifier";
 
 
 
-class CommandManager<
-    I extends Manager<BaseTypes.Identity, any, any, any>,
-    D extends Manager<BaseTypes.Identity, any, any, any>[] = [IdentityManager]
->
+class CommandManager
     extends Manager<
         BaseTypes.Command,
         CommandFactory,
         CommandStorage,
-        D
+        [IdentityManager]
     >
 {
     constructor({
@@ -27,7 +24,7 @@ class CommandManager<
     }:{
         args?: ArgumentEntry[]
         commandEntries?: CommandEntry[],
-        dependencies: D[]
+        dependencies: [IdentityManager]
     }) {
         super({
             type: BaseTypes.Command,

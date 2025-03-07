@@ -8,7 +8,7 @@ class Manager<
     T extends BaseType,
     F extends Factory<T>,
     S extends Storage<T>,
-    D extends Manager<any, any, any, any>[] = []
+    D extends Manager<BaseType, any, any, any>[] = []
 > 
     extends Base<T>
 {
@@ -18,7 +18,7 @@ class Manager<
     public readonly factory: F;
     public readonly storage: S;
     public readonly properties: Properties<T>;
-    public readonly dependencies: D[];
+    public readonly dependencies: D
 
     constructor(
         {
@@ -27,14 +27,14 @@ class Manager<
             storage,
             parameters = [],
             args = [],
-            dependencies = []
+            dependencies
         }:{
             type: T,
             factory: F,
             storage: S,
             parameters: ParameterEntry[],
             args: ArgumentEntry[],
-            dependencies: D[]
+            dependencies: D
         }
     ) {
         super(type);

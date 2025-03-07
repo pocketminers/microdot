@@ -25,7 +25,6 @@ interface CommandEntry<R = any, T = any>
 interface CommandStorageEntryItem<R = any, T = any, D = any>
     extends
         CommandSpec<R,T>,
-        Record<'properties', Properties<BaseTypes.Command>>,
         Partial<Record<'metadata', MetadataEntry>> {}
 
 /**

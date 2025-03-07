@@ -12,7 +12,10 @@ class Message<
     B = any | undefined
 > 
     extends
-        HashedStorageItem<BaseTypes.Message, MessageStorageItem<L, S, B>>
+        HashedStorageItem<
+            BaseTypes.Message,
+            MessageStorageItem<L, S, B>
+        >
 {
     constructor({
         id,
@@ -22,7 +25,7 @@ class Message<
         level = MessageLevels.Info as L,
         body = undefined as B,
         status = MessageStatuses.Success as S,
-        metadata = new Metadata()
+        metadata = {} as MetadataEntry
     }: {
         id?: string,
         name?: string,
@@ -31,7 +34,7 @@ class Message<
         level?: L,
         body?: B
         status?: S,
-        metadata?: MetadataEntry | Metadata
+        metadata?: MetadataEntry
     }) {
         super({
             type: BaseTypes.Message,
@@ -42,7 +45,7 @@ class Message<
                 level,
                 body,
                 status,
-                properties: new Properties<BaseTypes.Message>({ type: BaseTypes.Message, params: MessageConfigParameters, args })
+                properties: new Properties<BaseTypes.Message>({type: BaseTypes.Message, params: MessageConfigParameters, args})
             },
             meta: metadata
         });

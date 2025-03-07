@@ -13,7 +13,7 @@ import { Command, CommandManager } from "../commands";
 
 class Process<
     T extends ProcessType,
-    D extends Base<BaseTypes.Identity | BaseTypes.Command>[]
+    D extends Base<BaseTypes.Identity | BaseTypes.Command>[] = Base<BaseTypes.Identity | BaseTypes.Command>[]
 > 
     extends
         HashedStorageItem<BaseTypes.Process, ProcessStorageItem<T, D>>
@@ -76,7 +76,7 @@ class Process<
     }
 
     public get command(): Command {
-        return this.properties.getValue('command');
+        return this.data?.dependencies[0].storage.getCommand(this.properties.getValue('commandName'));
     }
 
 
@@ -223,34 +223,34 @@ class Process<
         }
     }
 
-    private async runCommand<R>({
-        commandName,
-        args
-    }:{
-        commandName: string,
-        args: ArgumentEntry[]
-    }): Promise<R | undefined | Error> {
-        this.status = ProcessStatuses.Running;
+    // private async runCommand<R>({
+    //     commandName,
+    //     args
+    // }:{
+    //     commandName: string,
+    //     args: ArgumentEntry[]
+    // }): Promise<R | undefined | Error> {
+    //     this.status = ProcessStatuses.Running;
 
-        const command = this.data.storage.getCommand(commandName);
+    //     const command = this.data.storage.getCommand(commandName);
 
-        if (command === undefined) {
-            this.status = ProcessStatuses.CommandNotFound;
-            throw new Error(`Command ${commandName} not found`);
-        }
+    //     if (command === undefined) {
+    //         this.status = ProcessStatuses.CommandNotFound;
+    //         throw new Error(`Command ${commandName} not found`);
+    //     }
 
-        const properties = new Properties({params: command?.properties.params, args: [...args, ...command?.properties.args]});
+    //     // const properties = new Properties({params: command?.properties.params, args: [...args, ...command?.properties.args]});
 
-        const result = await this.data.commandRunner.executeCommand<R>({
-            commandName,
-            instance: this.instance,
-            args: properties.toKeyValue()
-        });
+    //     // const result = await this.executeCommand<R>({
+    //     //     commandName,
+    //     //     instance: this.instance,
+    //     //     args: properties.toKeyValue()
+    //     // });
 
-        this.status = ProcessStatuses.Completed;
+    //     this.status = ProcessStatuses.Completed;
 
-        return result;
-    }
+    //     // return result;
+    // }
 
     public async run<R>({
         commandName,

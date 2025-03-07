@@ -8,6 +8,10 @@ class IdentityStorage
 {
     constructor(items: IdentityStorageItem[] = []) {
         super(BaseTypes.Identity);
+
+        items.forEach((item) => {
+            this.addItem({item});
+        });
     }
 
     public get ids(): Set<IdentityStorageItem> {

@@ -7,8 +7,15 @@ import { IdentityManager } from '../src/component/identifier';
 
 
 describe('CommandManager', () => {
+    let identityManager: IdentityManager;
+
+    beforeEach( async () => {
+        jest.clearAllMocks();
+        identityManager = new IdentityManager();
+    });
+
+
     it('should create a new instance', () => {
-        const identityManager = new IdentityManager([]);
         const commandManager = new CommandManager({dependencies: [identityManager]});
 
         expect(commandManager).toBeInstanceOf(CommandManager);
@@ -16,7 +23,7 @@ describe('CommandManager', () => {
     });
 
     it('should add a command', () => {
-        const commandManager = new CommandManager();
+        const commandManager = new CommandManager({dependencies: [identityManager]});
 
         const command: any = commandManager.createCommand({name: 'test-command', description: 'test command'});
         expect(commandManager.storage.size).toBe(1);
@@ -24,7 +31,7 @@ describe('CommandManager', () => {
     });
 
     it('should remove a command', () => {
-        const commandManager = new CommandManager();
+        const commandManager = new CommandManager({dependencies: [identityManager]});
 
         const command = commandManager.storage.addItem({index: 'test-command', item: new Command({name: 'test-command', description: 'test command'})});
         commandManager.storage.removeItem({item: command.item});
@@ -34,7 +41,7 @@ describe('CommandManager', () => {
     });
 
     it('should list commands', () => {
-        const commandManager = new CommandManager();
+        const commandManager = new CommandManager({dependencies: [identityManager]});
 
         commandManager.storage.addItem({index: 'test-command-1', item: new Command({id: 'test-command-1', name: 'test-command-1', description: 'test command 1'})});
         commandManager.storage.addItem({index: 'test-command-2', item: new Command({id: 'test-command-2', name: 'test-command-2', description: 'test command 2'})});

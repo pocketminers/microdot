@@ -1,7 +1,6 @@
-import { CommandSpec, Metadata, TaskRunner } from "@/template";
-import { Base, BaseTypes, HashedStorageItem, Parameter, Properties } from "../base/index";
+import { Metadata, ParameterSpec, TaskRunner } from "@/template";
+import { BaseTypes, HashedStorageItem, Properties } from "../base/index";
 import { CommandEntry, CommandStorageEntryItem, defaultTaskRunner } from "./command.types";
-import { Identifier, IdentityManager } from "../identifier";
 
 
 class Command<
@@ -44,7 +43,7 @@ class Command<
         return this.data.description || "";
     }
 
-    public get parameters(): Parameter[] {
+    public get parameters(): ParameterSpec[] {
         return this.data.properties.params || [];
     }
 

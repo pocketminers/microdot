@@ -16,10 +16,10 @@ class IdentityManager
         super({
             type: BaseTypes.Identity,
             factory: new IdentityFactory(),
-            storage: new IdentityStorage({
-                type: BaseTypes.Identity,
-                params: new IdentityManagerParameters()
-            })
+            storage: new IdentityStorage(),
+            args,
+            parameters: IdentityManagerParameters,
+            dependencies: []
         })
     }
 
