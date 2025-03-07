@@ -3,7 +3,10 @@ import { Base, BaseType, BaseTypes } from "./base.types";
 import { Storage } from "./storage";
 import { CryptoUtils } from "@/utils";
 
-class HashedStorageItem<T extends BaseTypes = BaseTypes.Custom, D = any>
+class HashedStorageItem<
+    T extends BaseTypes = BaseTypes.Custom,
+    D = any
+>
     extends Base<T>
 {
     public readonly data: D;
@@ -66,7 +69,11 @@ class HashedStorageItem<T extends BaseTypes = BaseTypes.Custom, D = any>
     }
 }
 
-class HashedStorage<T extends BaseTypes, D, E extends HashedStorageItem<T, D>>
+class HashedStorage<
+    T extends BaseTypes,
+    D,
+    E extends HashedStorageItem<T, D>
+>
     extends Storage<T, E>
 {
 
