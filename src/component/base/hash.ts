@@ -3,14 +3,14 @@ import { Base, BaseType, BaseTypes } from "./base.types";
 import { Storage } from "./storage";
 import { CryptoUtils } from "@/utils";
 
-class HashedStorageItem<T extends BaseType, D = any>
+class HashedStorageItem<T extends BaseTypes = BaseTypes.Custom, D = any>
     extends Base<T>
 {
     public readonly data: D;
     public readonly meta: Metadata;
 
     constructor({
-        type,
+        type = BaseTypes.Custom as T,
         data,
         meta
     }: {

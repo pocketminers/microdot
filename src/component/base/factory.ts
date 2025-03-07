@@ -1,4 +1,4 @@
-import { BaseType, Base, BaseTypes } from './base.types';
+import { BaseType, Base } from './base.types';
 
 
 /**
@@ -10,8 +10,6 @@ class Factory<T extends BaseType>
     constructor(type: T) {
         super(type);
     }
-
-    // abstract create(data: E): D;
 }
 
 export {
