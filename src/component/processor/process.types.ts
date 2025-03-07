@@ -16,7 +16,9 @@ interface ProcessEntry<T extends ProcessType, D = any> {
 
 interface ProcessStorageItem<T extends ProcessType, D = any>
     extends
-        Pick<HashedStorageItem<BaseTypes.Process, ProcessEntry<T>>, 'id' | 'name' | 'description'>,
+        Record<'id', string>,
+        Record<'name', string>,
+        Record<'description', string>,
         Partial<Record<'properties', Properties<BaseTypes.Process>>>,
         Partial<Record<'dependencies', D[]>>,
         Record<'type', T>,

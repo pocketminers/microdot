@@ -18,8 +18,8 @@ class MessageFactory
         B = any | undefined
     >({
         id,
-        name,
-        description,
+        // name,
+        // description,
         level,
         body,
         status,
@@ -27,8 +27,8 @@ class MessageFactory
         metadata
     }: {
         id?: string,
-        name?: string,
-        description?: string,
+        // name?: string,
+        // description?: string,
         level?: L,
         body: B,
         status?: S,
@@ -37,8 +37,8 @@ class MessageFactory
     }): Message<L, S, B> {
         return new Message<L, S, B>({
             id,
-            name,
-            description,
+            // name,
+            // description,
             args,
             level,
             body,

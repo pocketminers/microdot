@@ -14,23 +14,25 @@ interface MetadataEntry
 
 
 class Metadata {
-    public name: string | undefined = undefined;
-    public description: string | undefined = undefined;
+    // public name: string | undefined = undefined;
+    // public description: string | undefined = undefined;
     public annotations: Annotations = new Annotations();
     public labels: Labels = new Labels();
 
     constructor({
         id = "not-tracked",
-        name = undefined,
-        description = undefined,
+        // name = undefined,
+        // description = undefined,
         hash = "not-set",
         createdBy = "unknown",
         annotations = {},
         labels = {}
     }: MetadataEntry = {}) {
-        this.name = name;
-        this.description = description;
+        // this.name = name;
+        // this.description = description;
         this.annotations = new Annotations({
+            // name,
+            // description,
             ...annotations
         })
         this.labels = new Labels({
@@ -54,14 +56,14 @@ class Metadata {
     }
 
     public toJSON(): {
-        name: string | undefined,
-        description: string | undefined,
+        // name: string | undefined,
+        // description: string | undefined,
         annotations: AnnotationEntry,
         labels: LabelEntry
     } {
         return {
-            name: this.name,
-            description: this.description,
+            // name: this.name,
+            // description: this.description,
             annotations: this.annotations.toJSON(),
             labels: this.labels.toJSON()
         }

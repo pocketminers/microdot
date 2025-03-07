@@ -10,6 +10,7 @@ import { Message } from "./message";
 import { MessageConfigParameters } from "./message.params";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 import { Filing } from "@/utils/filing";
+import { MessageStorageItem } from "./message.types";
 
 class MessageManager
     extends Manager
@@ -70,7 +71,12 @@ class MessageManager
         const managerSaveProperty: boolean = this.properties.getValue<boolean>("keepHistory");
         const messageSaveProperty: boolean = messageProperties.getValue<boolean>("save");
         
-        const message = MessageFactory.createMessage<L,S,B>({ id, name, description, level, body, status, args, metadata });
+        const message = MessageFactory.createMessage<L,S,B>({
+            id,
+            // name,
+            // description,
+            level, body, status, args, metadata
+        });
 
         if (
             (managerSaveProperty === true || messageSaveProperty === true)
@@ -121,9 +127,9 @@ class MessageManager
 
         // const data: string = await Filing.readFile();
 
-        console.log(`data: ${data}`);
+        // console.log(`data: ${data}`);
 
-        let messages: Partial<Message<any, any, any>>[];
+        let messages: MessageStorageItem<any, any, any>[];
         try {
             messages = JSON.parse(data);
         } catch (error: any) {
@@ -132,10 +138,12 @@ class MessageManager
         }
 
         messages.push({
+            id: message.id,
             level: message.level,
-            status: message.status,
             body: message.body,
-            metadata: message.metadata,
+            status: message.status,
+            timestamp: message.timestamp,
+            properties: message.properties
         });
 
         await Filing.writeFile(filePath, JSON.stringify(messages, null, 2));

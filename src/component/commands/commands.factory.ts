@@ -11,12 +11,13 @@ class CommandFactory
     }
 
     public create<R, T>({
+        id,
         name,
         description,
         parameters,
         run
     }: CommandEntry<R, T>): Command<R, T> {
-        return new Command<R, T>({name, description, parameters, run});
+        return new Command<R, T>({id, name, description, parameters, run});
     }
 }
 

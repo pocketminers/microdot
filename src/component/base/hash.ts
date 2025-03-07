@@ -26,17 +26,17 @@ class HashedStorageItem<
         this.meta = new Metadata(meta);
     }
 
-    public get id(): string {
-        return this.meta.labels.get('id') || "";
-    }
+    // public get id(): string {
+    //     return this.meta.labels.get('id') || "";
+    // }
 
-    public get name(): string {
-        return this.meta.labels.get('name') || "";
-    }
+    // public get name(): string {
+    //     return this.meta.labels.get('name') || "";
+    // }
 
-    public get description(): string {
-        return this.meta.annotations.get('description') || "";
-    }
+    // public get description(): string {
+    //     return this.meta.annotations.get('description') || "";
+    // }
 
     public get hash(): string {
         return this.meta.labels.get('hash') || "";

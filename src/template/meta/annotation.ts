@@ -5,7 +5,7 @@ import { MetadataEntryIndexType, MetadataEntryValueType } from "@template/meta/i
  */
 interface AnnotationEntry
     extends
-        Partial<Record<'description', string>>,
+        // Partial<Record<'description', string>>,
         Partial<Record<"timestamp", string>>,
         Partial<Record<MetadataEntryIndexType, MetadataEntryValueType>>
 {
