@@ -42,6 +42,6 @@ type ProcessType = keyof typeof ProcessTypes;
 export {
     type ProcessEntry,
     type ProcessStorageItem,
-    type ProcessTypes,
+    ProcessTypes,
     type ProcessType
 };
