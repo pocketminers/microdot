@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.48% </span>
+                <span class="strong">88.83% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>169/191</span>
+                <span class='fraction'>175/197</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">88.48% </span>
+                <span class="strong">88.83% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>169/191</span>
+                <span class='fraction'>175/197</span>
             </div>
         
             
@@ -253,8 +253,13 @@
 <a name='L188'></a><a href='#L188'>188</a>
 <a name='L189'></a><a href='#L189'>189</a>
 <a name='L190'></a><a href='#L190'>190</a>
-<a name='L191'></a><a href='#L191'>191</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<a name='L191'></a><a href='#L191'>191</a>
+<a name='L192'></a><a href='#L192'>192</a>
+<a name='L193'></a><a href='#L193'>193</a>
+<a name='L194'></a><a href='#L194'>194</a>
+<a name='L195'></a><a href='#L195'>195</a>
+<a name='L196'></a><a href='#L196'>196</a>
+<a name='L197'></a><a href='#L197'>197</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -293,6 +298,11 @@
 <span class="cline-any cline-yes">18x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
+<span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-yes">19x</span>
 <span class="cline-any cline-yes">19x</span>
@@ -394,6 +404,8 @@
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
@@ -443,9 +455,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { promises as fs } from "fs";
-&nbsp;
-import { MetadataEntry } from "@/template";
+<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">import { MetadataEntry } from "@/template";
 import { ArgumentEntry, BaseTypes, Manager, Properties } from "../base";
 import { IdentityManager } from "../identifier";
 import { MessageFactory } from "./messenger.factory";
@@ -455,6 +465,7 @@ import { Message } from "./message";
 import { MessageConfigParameters } from "./message.params";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@/template/spec/v0/comms";
 import { Filing } from "@/utils/filing";
+import { MessageOutputFormat } from "./message.types";
 &nbsp;
 class MessageManager
     extends Manager
@@ -488,8 +499,8 @@ class MessageManager
         B = any | undefined
     &gt;({
         id = this.dependencies[0].createId().item.id,
-        name,
-        description,
+        // name,
+        // description,
         args,
         level,
         body,
@@ -497,8 +508,8 @@ class MessageManager
         metadata
     }: {
         id?: string,
-        name?: string,
-        description?: string,
+        // name?: string,
+        // description?: string,
         args?: ArgumentEntry[],
         level?: L,
         body: B,
@@ -515,7 +526,12 @@ class MessageManager
         const managerSaveProperty: boolean = this.properties.getValue&lt;boolean&gt;("keepHistory");
         const messageSaveProperty: boolean = messageProperties.getValue&lt;boolean&gt;("save");
         
-        const message = MessageFactory.createMessage&lt;L,S,B&gt;({ id, name, description, level, body, status, args, metadata });
+        const message = MessageFactory.createMessage&lt;L,S,B&gt;({
+            id,
+            // name,
+            // description,
+            level, body, status, args, metadata
+        });
 &nbsp;
         if (
             (managerSaveProperty === true || messageSaveProperty === true)
@@ -566,9 +582,9 @@ class MessageManager
 &nbsp;
         // const data: string = await Filing.readFile();
 &nbsp;
-        console.log(`data: ${data}`);
+        // console.log(`data: ${data}`);
 &nbsp;
-        let messages: Partial&lt;Message&lt;any, any, any&gt;&gt;[];
+        let messages: MessageOutputFormat[];
         try {
             messages = JSON.parse(data);
         } <span class="branch-0 cbranch-no" title="branch not covered" >catch (error: any) {</span>
@@ -577,10 +593,12 @@ class MessageManager
 <span class="cstat-no" title="statement not covered" >        }</span>
 &nbsp;
         messages.push({
+            id: message.id,
             level: message.level,
-            status: message.status,
             body: message.body,
-            metadata: message.metadata,
+            status: message.status,
+            timestamp: message.timestamp,
+            // args: message.properties.args.
         });
 &nbsp;
         await Filing.writeFile(filePath, JSON.stringify(messages, null, 2));
@@ -640,7 +658,7 @@ export {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-03-07T16:11:58.158Z
+                at 2025-03-08T04:54:47.270Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
