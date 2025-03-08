@@ -2,10 +2,11 @@ import { Metadata, MetadataEntry } from "@/template";
 import { Base, BaseType, BaseTypes } from "./base.types";
 import { Storage } from "./storage";
 import { CryptoUtils } from "@/utils";
+import { MerkleTree } from "@/utils/merkle";
 
 class HashedStorageItem<
-    T extends BaseTypes = BaseTypes.Custom,
-    D = any
+    T extends BaseTypes,
+    D
 >
     extends Base<T>
 {
@@ -85,10 +86,10 @@ class HashedStorage<
         }
     }
 
-    public async hashItems(): Promise<void> {
-        for (const item of this.listItems()) {
-            await item.hashData();
-        }
+    public async hashTree(): Promise<MerkleTree<T, D, E>> {
+        const tree = new MerkleTree<T,D,E>(this.listItems());
+        await tree.initialize();
+        return tree;
     }
 }
 
