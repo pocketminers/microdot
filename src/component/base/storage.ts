@@ -73,8 +73,8 @@ class Storage<T extends BaseType, D = any>
         };
     }
 
-    // public getItem({index}:{index: StorageItemIndex}): { index: StorageItemIndex, value: D };
-    // public getItem({value}:{value: D}): { index: StorageItemIndex, value: D };
+    public getItem({index}:{index: StorageItemIndex}): { index: StorageItemIndex, value: D };
+    public getItem({value}:{value: D}): { index: StorageItemIndex, value: D };
     public getItem({
         index,
         value,

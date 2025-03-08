@@ -14,6 +14,10 @@ class CommandStorage
             this.addItem({index: command.name, item: command});
         }
     }
+
+    public getCommand(name: string): Command | undefined | any {
+        return this.getItem({index: name}).value;
+    }
 }
 
 
