@@ -75,7 +75,7 @@ class ProcessInstance<
     public get properties(): Properties<
         BaseTypes.Process
     >{
-        return this.data.properties  as Properties<BaseTypes.Process>;
+        return this.data.properties || new Properties<BaseTypes.Process>({ type: BaseTypes.Process, params: ProcessParameters });
     }
 
     // public get command(): Command {
@@ -92,7 +92,7 @@ class ProcessInstance<
         this.status = ProcessStatuses.Initializing;
 
         const initializeFunction: (args?: Record<string, any>) => Promise<Function> = this.properties.getValue('initializeFunction');
-        const initializeProperties: Properties<BaseTypes.Process> = new Properties(this.properties.getValue<PropertiesEntry<BaseTypes.Process>>('initializeProperties'));
+        const initializeProperties: Properties<BaseTypes.Process> = new Properties<BaseTypes.Process>(this.properties.getValue<PropertiesEntry<BaseTypes.Process>>('initializeProperties'));
 
 
         try {
@@ -109,7 +109,7 @@ class ProcessInstance<
         }
         catch (error) {
             this.status = ProcessStatuses.InitializationError;
-            throw new Error(`Failed to create instance: ${error}`);
+            throw  new Error(`Failed to create instance: ${error}`);
         }
     }
 

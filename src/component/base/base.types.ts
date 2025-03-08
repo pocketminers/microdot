@@ -21,7 +21,8 @@ class Base<T extends BaseType = BaseTypes.Custom> {
         type: T
     ) {
         if (type in BaseTypes === false) {
-            throw new TypeError(`Base:constructor: The type is not a valid BaseTypes value: ${type}`);
+            // throw new TypeError(`Base:constructor: The type is not a valid BaseTypes value: ${type}`);
+            type = BaseTypes.Custom as T;
         }
 
         this._type = type;

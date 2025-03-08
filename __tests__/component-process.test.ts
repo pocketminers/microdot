@@ -1,3 +1,5 @@
+import { BaseTypes, Properties } from '../src/component/base';
+import { ProcessParameters } from '../src/component/processor/process.params';
 import {
     ProcessTypes
 } from '../src/component/processor/process.types'
@@ -37,6 +39,53 @@ describe('Process', () => {
         })
         expect(process).toBeInstanceOf(ProcessInstance<ProcessTypes.AUTH>)
         expect(process.name).toBe('test')
+    })
+
+    it('should create a new Process with an ititialized instance', async () => {
+        const process = new ProcessInstance<ProcessTypes.AUTH>({
+            id: 'test',
+            type: ProcessTypes.AUTH,
+            name: 'test',
+            description: 'test',
+            args: [],
+            instance: () => {},
+            commands: [],
+            metadata: {}
+        })
+
+        await process.initialize()
+
+        expect(process).toBeInstanceOf(ProcessInstance<ProcessTypes.AUTH>)
+
+    })
+
+    it('should create a new Process with a declared initialization instance', async () => {
+        const process = new ProcessInstance<ProcessTypes.Custom>({
+            id: 'test',
+            type: ProcessTypes.Custom,
+            name: 'test',
+            description: 'test',
+            args: [{
+                name: 'initialize',
+                value: true
+            }, {
+                name: 'initializeFunction',
+                value: () => { console.log('hello'); return console.log }
+            },
+            {
+                name: 'intializeProperties',
+                value: { type: BaseTypes.Process, params: ProcessParameters, args: [{ name: 'test', value: 'test' }] }
+            }],
+            instance: undefined,
+            commands: [],
+            metadata: {}
+        })
+
+        await process.initialize()
+
+        expect(process).toBeInstanceOf(ProcessInstance<ProcessTypes.AUTH>)
+
+        // await process.
     })
 
     // it('should create a new Process with default description', () => {
