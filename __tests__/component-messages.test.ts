@@ -2,11 +2,253 @@ import {
     MessageManager,
     Message,
     MessageFactory,
+    MessageStorage,
 } from '../src/component/messenger';
 import {
     MessageLevels,
     MessageStatuses
 } from '../src/template/spec/v0/comms';
+
+
+describe('MessageFactory', () => {
+    it('should create a new instance', () => {
+        const messageFactory = new MessageFactory();
+
+        expect(messageFactory).toBeInstanceOf(MessageFactory);
+    });
+
+    it('should create a new message', () => {
+        const messageFactory = new MessageFactory();
+
+        const message = MessageFactory.createMessage({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.body).toBe('This is a test message');
+    });
+
+    it('should create a new message with status', () => {
+        const messageFactory = new MessageFactory();
+
+        const message = MessageFactory.createMessage({
+            level: MessageLevels.Info,
+            status: MessageStatuses.Success,
+            body: 'This is a test message'
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.status).toBe('Success');
+        expect(message.data.body).toBe('This is a test message');
+    });
+
+    it('should create a new message with metadata', () => {
+        const messageFactory = new MessageFactory();
+
+        const message = MessageFactory.createMessage({
+            level: MessageLevels.Info,
+            body: 'This is a test message',
+            metadata: {
+                labels: {
+                    name: 'test'
+                },
+                annotations: {
+                    description: 'This is a test message'
+                }
+            }
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.meta.labels.get('name')).toBe('test');
+        expect(message.meta.annotations.get('description')).toBe('This is a test message');
+    });
+});
+
+
+describe('Message', () => {
+    it('should create a new instance', () => {
+        const message = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.body).toBe('This is a test message');
+    });
+
+    it('should create a new instance with status', () => {
+        const message = new Message({
+            level: MessageLevels.Info,
+            status: MessageStatuses.Success,
+            body: 'This is a test message'
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.status).toBe('Success');
+        expect(message.data.body).toBe('This is a test message');
+    });
+
+    it('should create a new instance with metadata', () => {
+        const message = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message',
+            metadata: {
+                labels: {
+                    name: 'test'
+                },
+                annotations: {
+                    description: 'This is a test message'
+                }
+            }
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.meta.labels.get('name')).toBe('test');
+        expect(message.meta.annotations.get('description')).toBe('This is a test message');
+    });
+
+    it('should create a new instance with metadata and status', () => {
+        const message = new Message({
+            level: MessageLevels.Info,
+            status: MessageStatuses.Success,
+            body: 'This is a test message',
+            metadata: {
+                labels: {
+                    name: 'test'
+                },
+                annotations: {
+                    description: 'This is a test message'
+                }
+            }
+        });
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.status).toBe('Success');
+        expect(message.data.body).toBe('This is a test message');
+        expect(message.meta.labels.get('name')).toBe('test');
+        expect(message.meta.annotations.get('description')).toBe('This is a test message');
+    });
+
+    it('should create a new instance with metadata and status', () => {
+        const message = new Message({
+            level: MessageLevels.Info,
+            status: MessageStatuses.Success,
+            body: 'This is a test message',
+            metadata: {
+                labels: {
+                    name: 'test'
+                },
+                annotations: {
+                    description: 'This is a test message'
+                }
+            }
+        }); 
+
+        expect(message).toBeInstanceOf(Message);
+        expect(message.data.level).toBe('Info');
+        expect(message.data.status).toBe('Success');
+        expect(message.data.body).toBe('This is a test message');
+        expect(message.meta.labels.get('name')).toBe('test');
+        expect(message.meta.annotations.get('description')).toBe('This is a test message');
+    });
+});
+
+
+describe('MessageStorage', () => {
+    it('should create a new instance', () => {
+        const storage = new MessageStorage();
+
+        expect(storage).toBeInstanceOf(MessageStorage);
+    });
+
+    it('should add a message to the storage', () => {
+        const storage = new MessageStorage();
+        const message = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+
+        storage.addMessage(message);
+
+        expect(storage.size).toBe(1);
+    });
+
+    it('should remove a message from the storage', () => {
+        const storage = new MessageStorage();
+        const message = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+
+        storage.addMessage(message);
+        storage.removeItem({item: message});
+
+        expect(storage.size).toBe(0);
+    });
+
+    it('should get all messages from the storage', () => {
+        const storage = new MessageStorage();
+        const message1 = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+        const message2 = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+
+        storage.addMessage(message1);
+        storage.addMessage(message2);
+
+        expect(storage.size).toBe(2);
+    });
+
+    it('should get messages by level', () => {
+        const storage = new MessageStorage();
+        const message1 = new Message({
+            level: MessageLevels.Info,
+            body: 'This is a test message'
+        });
+        const message2 = new Message({
+            level: MessageLevels.Error,
+            body: 'This is a test message'
+        });
+
+        storage.addMessage(message1);
+        storage.addMessage(message2);
+
+        expect(storage.getMessages({ level: MessageLevels.Info }).length).toBe(1);
+        expect(storage.getMessages({ level: MessageLevels.Error }).length).toBe(1);
+    });
+
+    it('should get messages by status', () => {
+        const storage = new MessageStorage();
+        const message1 = new Message({
+            level: MessageLevels.Info,
+            status: MessageStatuses.Success,
+            body: 'This is a test message'
+        });
+        const message2 = new Message({
+            level: MessageLevels.Error,
+            status: MessageStatuses.InternalServerError,
+            body: 'This is a test message'
+        });
+
+        storage.addMessage(message1);
+        storage.addMessage(message2);
+
+        expect(storage.getMessages({ status: MessageStatuses.Success }).length).toBe(1);
+        expect(storage.getMessages({ status: MessageStatuses.InternalServerError }).length).toBe(1);
+    });
+
+});
+
 
 
 describe('MessageManager', () => {

@@ -160,9 +160,7 @@ describe('CommandManager', () => {
         commandManager.storage.addItem({index: 'test-command-3', item: new Command({id: 'test-command-3', name: 'test-command-3', description: 'test command 3'})});
 
         expect(commandManager.storage.size).toBe(3);
-        console.log(`commandManager.storage.listItems()`, commandManager.storage.listItems());
         const commands = commandManager.storage.listItems();
-        console.log(`commands`, commands);
 
         expect(commands.length).toBe(3);
     });
