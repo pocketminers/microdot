@@ -1,16 +1,20 @@
 import { CommandSpec, Metadata, MetadataEntry } from "@/template";
 import { ArgumentEntry, BaseTypes, HashedStorageItem, Properties } from "../base";
+import { IdentityManager } from "../identifier";
+import { CommandEntry, CommandManager } from "../commands";
 
 interface ProcessEntry<T extends ProcessType, D = any> {
-    id: string;
+    id?: string;
     name: string;
-    description: string;
+    description?: string;
     instance?: Function | undefined;
     args?: ArgumentEntry[];
     dependencies?: D[];
     type: T;
-    commands?: CommandSpec[];
-    metadata?: MetadataEntry | Metadata;
+    commands?: CommandEntry[] | CommandManager;
+    identifier?: IdentityManager;
+    metadata?: MetadataEntry;
+    properties?: Properties<BaseTypes.Process>;
 }
 
 

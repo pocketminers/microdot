@@ -5,8 +5,8 @@ import { HashedStorage } from "../base";
 
 
 class ProcessStorage<
-    T extends ProcessType,
-    D extends Base<BaseTypes.Identity | BaseTypes.Command>[] = Base<BaseTypes.Identity | BaseTypes.Command>[]
+    T extends ProcessType = ProcessTypes.Custom,
+    D extends Array<Base<BaseTypes.Identity> | Base<BaseTypes.Command> | Base<BaseTypes.Custom>> = Array<Base<BaseTypes.Identity> | Base<BaseTypes.Command> | Base<BaseTypes.Custom>>
 >
     extends HashedStorage<BaseTypes.Process, ProcessEntry<T,D>, ProcessInstance<T,D>>
 {

@@ -1,19 +1,20 @@
 import { 
-    CommandResultSpec,
+    CommandSpec,
     Metadata, 
     ProcessStatus, 
     ProcessStatuses
 } from "@/template";
 import { ProcessEntry, ProcessStorageItem, ProcessType, ProcessTypes } from "./process.types";
-import { ArgumentEntry, Base, BaseTypes, HashedStorageItem, Properties, PropertiesEntry } from "../base";
+import { Base, BaseTypes, HashedStorageItem, Properties, PropertiesEntry } from "../base";
 import { ProcessParameters } from "./process.params";
-// import { Command, CommandManager } from "../commands";
+import { CommandManager } from "../commands";
+import { IdentityManager } from "../identifier";
 
 
 
 class ProcessInstance<
-    T extends ProcessType,
-    D extends Base<BaseTypes.Identity | BaseTypes.Command>[] = Base<BaseTypes.Identity | BaseTypes.Command>[]
+    T extends ProcessType = ProcessTypes.Custom,
+    D extends Base<BaseTypes>[] = []
 > 
     extends
         HashedStorageItem<
@@ -21,17 +22,20 @@ class ProcessInstance<
             ProcessStorageItem<T, D>
         >
 {
+    public commands: CommandManager;
     public status: ProcessStatus = ProcessStatuses.New;
 
     constructor({
-        id,
+        id = 'not-indexed',
         type,
         name = `${type} Process`,
-        description,
+        description = `A ${type} process`,
         args,
         instance,
         metadata,
         dependencies = [],
+        identifier = new IdentityManager(),
+        commands = [],
     }: ProcessEntry<T, D>) {
         super({
             type: BaseTypes.Process,
@@ -46,6 +50,13 @@ class ProcessInstance<
             },
             meta: new Metadata(metadata)
         });
+
+        if (commands instanceof CommandManager) {
+            this.commands = commands;
+        }
+        else {
+            this.commands = new CommandManager({ commandEntries: commands, dependencies: [identifier] });
+        }
     }
 
     private get instance(): Function | undefined {
@@ -78,9 +89,9 @@ class ProcessInstance<
         return this.data.properties || new Properties<BaseTypes.Process>({ type: BaseTypes.Process, params: ProcessParameters });
     }
 
-    // public get command(): Command {
-    //     return this.data?.dependencies[0].storage.getCommand(this.properties.getValue('commandName'));
-    // }
+    public get metadata(): Metadata {
+        return this.meta;
+    }
 
 
 
