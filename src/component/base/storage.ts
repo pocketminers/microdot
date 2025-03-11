@@ -86,7 +86,14 @@ class StorageItem
 //  * - This is a map of `StorageItemIndex` to `StorageItem`
 //  */
 class StorageItems<
-    T = any,
+    /**
+     * The type of data stored in the map of the `StorageItems`
+     */
+    T = undefined,
+
+    /**
+     * The schema for the item stored in the `Storage
+     */
     D extends StorageItemSchema<T> = StorageItemSchema<T>
 > 
     extends 
@@ -95,9 +102,21 @@ class StorageItems<
     constructor({
         items = []
     }: {
-        items: [StorageItemIndex, D][]
-    }) {
+        items?: [StorageItemIndex, D][]
+    } = {}) {
         super(items);
+    }
+
+    public listItems(): D[] {
+        return Array.from(this.values());
+    }
+
+    public listItemKeys(): StorageItemIndex[] {
+        return Array.from(this.keys());
+    }
+
+    public clear(): void {
+        super.clear();
     }
 }
 
@@ -289,6 +308,6 @@ export {
     type StorageItemSchema,
     type StorageItemIndex,
     StorageItem,
-    type StorageItems,
+    StorageItems,
     Storage
 };
