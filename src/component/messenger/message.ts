@@ -1,9 +1,9 @@
 import { Metadata, MetadataEntry } from "@/template";
 import { Argument, ArgumentEntry, BaseTypes, HashedStorageItem, Properties } from "../base";
-import { MessageEntry, MessageStorageItem } from "./message.types";
+import { MessageStorageItem } from "./message.types";
 import { MessageLevel, MessageLevels, MessageStatus, MessageStatuses } from "@template/spec/v0/comms";
 import { MessageConfigParameters } from "./message.params";
-import { Identifier, IdentityManager, IdentityStorageItem } from "../identifier";
+import { Identifier } from "../identifier";
 
 
 class Message<

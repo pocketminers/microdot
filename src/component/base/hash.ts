@@ -1,12 +1,12 @@
 import { Metadata, MetadataEntry } from "@/template";
 import { Base, BaseType, BaseTypes } from "./base.types";
-import { Storage } from "./storage";
+import { Storage, StorageItem, StorageItemIndex, StorageItems } from "./storage";
 import { CryptoUtils } from "@/utils";
 import { MerkleTree } from "@/utils/merkle";
 
 class HashedStorageItem<
-    T extends BaseTypes,
-    D
+    T extends BaseTypes,    // BaseTypes
+    D = any                // StorageSchema
 >
     extends Base<T>
 {
@@ -14,30 +14,23 @@ class HashedStorageItem<
     public readonly meta: Metadata;
 
     constructor({
-        type,
         data,
-        meta
+        meta = {} as MetadataEntry,
+        type = BaseTypes.Custom as T,
     }: {
-        type: T,
-        data: D,
-        meta: MetadataEntry
-    }) {
+        data?: D,
+        meta?: MetadataEntry,
+        type?: T
+    } = {}) {
         super(type);
+
+        if (data === undefined) {
+            throw new Error("Data is required for HashedStorageItem");
+        }
+
         this.data = data;
         this.meta = new Metadata(meta);
     }
-
-    // public get id(): string {
-    //     return this.meta.labels.get('id') || "";
-    // }
-
-    // public get name(): string {
-    //     return this.meta.labels.get('name') || "";
-    // }
-
-    // public get description(): string {
-    //     return this.meta.annotations.get('description') || "";
-    // }
 
     public get hash(): string {
         return this.meta.labels.get('hash') || "";
@@ -72,8 +65,8 @@ class HashedStorageItem<
 
 class HashedStorage<
     T extends BaseTypes,
-    D,
-    E extends HashedStorageItem<T, D>
+    D = any,
+    E extends HashedStorageItem<T, D> = HashedStorageItem<T, D>
 >
     extends Storage<T, E>
 {
@@ -90,6 +83,14 @@ class HashedStorage<
         const tree = new MerkleTree<T,D,E>(this.listItems());
         await tree.initialize();
         return tree;
+    }
+
+    public getStoredItem({
+        index
+    }: {
+        index: StorageItemIndex
+    }): StorageItem {
+        return this.getItem({index});
     }
 }
 

@@ -2,14 +2,17 @@ import { MerkleTree } from "../src/utils/merkle";
 import { HashedStorageItem } from "../src/component/base/hash";
 import { CryptoUtils } from "../src/utils";
 import { BaseTypes } from "../src/component/base/base.types";
+import { StorageItemSchema } from "../src/component/base";
 
 jest.mock("@/utils/crypto");
 
-class MockHashedStorageItem extends HashedStorageItem<BaseTypes.Custom, string> {
+
+
+class MockHashedStorageItem extends HashedStorageItem<BaseTypes.Custom, StorageItemSchema> {
     constructor(data: string) {
         super({
             type: BaseTypes.Custom,
-            data,
+            data: data as StorageItemSchema,
             meta: { labels: new Map(), annotations: new Map() },
         });
     }

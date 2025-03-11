@@ -1,6 +1,6 @@
 
 import { BaseTypes, Factory } from "../base";
-import { IdentifiableBaseTypes, Identifier, IdentifierFormat } from "./identifier.types";
+import { IdentifiableBaseType, Identifier, IdentifierFormat } from "./identifier.types";
 
 
 
@@ -11,7 +11,7 @@ class IdentityFactory
         super(BaseTypes.Identity);
     }
 
-    public create({
+    public static create({
         format,
         options = {
             prefix: "",
@@ -24,10 +24,10 @@ class IdentityFactory
             prefix?: string,
             suffix?: string
         },
-        type?: IdentifiableBaseTypes
+        type?: IdentifiableBaseType
     } = {}): {
         id: Identifier,
-        type: IdentifiableBaseTypes
+        type: IdentifiableBaseType
     } {
         const prefix = options?.prefix || "";
         const suffix = options?.suffix || "";
@@ -85,6 +85,16 @@ class IdentityFactory
     private static createName(): string {
         return Math.random().toString(36).substring(2);
     }
+
+    private static formatIdentifier(identifier: string): string {
+        return identifier;
+    }
+
+    private static checkForUUID(identifier: string): boolean {
+        return identifier.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/) !== null;
+    }
+
+
 
 }
 

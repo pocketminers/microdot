@@ -20,7 +20,7 @@ describe('IdentityManager', () => {
         const identityManager = new IdentityManager();
 
         expect(identityManager).toBeInstanceOf(IdentityManager);
-        expect(identityManager.getStorage().size).toBe(0);
+        expect(identityManager.storage.size).toBe(0);
     });
 
     it('should add an identifier', () => {
@@ -28,32 +28,32 @@ describe('IdentityManager', () => {
 
         const identifier: any = identityManager.createId({format: IdentifierFormats.Random});
 
-        expect(identityManager.getStorage().size).toBe(1);
-        console.log(identityManager.getStorage().listItems());
+        expect(identityManager.storage.size).toBe(1);
+        console.log(identityManager.storage.listItems());
         console.log(identifier);
-        expect(identityManager.getStorage().hasId(identifier.item)).toBe(true);
+        expect(identityManager.storage.hasId(identifier.item)).toBe(true);
     });
 
     it('should remove an identifier', () => {
         const identityManager = new IdentityManager();
 
-        const identifier = identityManager.getStorage().addId({identifier: 'test-1', type: BaseTypes.Custom});
-        identityManager.getStorage().removeId(identifier.item);
+        const identifier = identityManager.storage.addId({identifier: 'test-1', type: BaseTypes.Custom});
+        identityManager.storage.removeId(identifier.item);
 
-        expect(identityManager.getStorage().size).toBe(0);
-        console.log(identityManager.getStorage().listItems());
-        expect(identityManager.getStorage().hasId({id: 'test-1', type: BaseTypes.Custom})).toEqual(false);
+        expect(identityManager.storage.size).toBe(0);
+        console.log(identityManager.storage.listItems());
+        expect(identityManager.storage.hasId({id: 'test-1', type: BaseTypes.Custom})).toEqual(false);
     });
 
     it('should list identifiers', () => {
         const identityManager = new IdentityManager();
 
-        identityManager.getStorage().addId({identifier: 'test-1', type: BaseTypes.Custom});
-        identityManager.getStorage().addId({identifier: 'test-2', type: BaseTypes.Custom});
-        identityManager.getStorage().addId({identifier: 'test-3', type: BaseTypes.Custom});
+        identityManager.storage.addId({identifier: 'test-1', type: BaseTypes.Custom});
+        identityManager.storage.addId({identifier: 'test-2', type: BaseTypes.Custom});
+        identityManager.storage.addId({identifier: 'test-3', type: BaseTypes.Custom});
 
-        expect(identityManager.getStorage().size).toBe(3);
-        expect(identityManager.getStorage().listIds()).toEqual([{id: 'test-1', type: BaseTypes.Custom}, {id: 'test-2', type: BaseTypes.Custom}, {id: 'test-3', type: BaseTypes.Custom}]);
+        expect(identityManager.storage.size).toBe(3);
+        expect(identityManager.storage.listIds()).toEqual([{id: 'test-1', type: BaseTypes.Custom}, {id: 'test-2', type: BaseTypes.Custom}, {id: 'test-3', type: BaseTypes.Custom}]);
     });
 });
 
@@ -71,7 +71,7 @@ describe('IdentityStore', () => {
         identityStore.addId({identifier: 'test-1', type: BaseTypes.Custom});
 
         expect(identityStore.size).toBe(1);
-        expect(identityStore.getItem({value: {id: 'test-1', type: BaseTypes.Custom}})).toEqual({index: -1, value: {id: 'test-1', type: BaseTypes.Custom}});
+        expect(identityStore.getStoredItem({index: 0})).toEqual({index: -1, value: {id: 'test-1', type: BaseTypes.Custom}});
     });
 
     it('should remove an identifier', () => {
@@ -114,7 +114,7 @@ describe('IdentityStore', () => {
 describe('IdentityFactory', () => {
     it('should create a random identifier', () => {
         const factory = new IdentityFactory();
-        const random = factory.create({format: IdentifierFormats.Random});
+        const random = IdentityFactory.create({format: IdentifierFormats.Random});
 
         expect(random.id).toMatch(/[a-z0-9]{10}/);
         expect(random.type).toEqual(BaseTypes.Custom);
@@ -122,8 +122,15 @@ describe('IdentityFactory', () => {
 
     it('should create a timestamp identifier', () => {
         const factory = new IdentityFactory();
-        const timestamp = factory.create({format: IdentifierFormats.Timestamp});
+        const timestamp = IdentityFactory.create({format: IdentifierFormats.Timestamp});
 
         expect(timestamp.id).toMatch(/[0-9]{13}/);
+    });
+
+    it('should create a name identifier', () => {
+        const factory = new IdentityFactory();
+        const name = IdentityFactory.create({format: IdentifierFormats.Name});
+
+        expect(name.id).toMatch(/[a-z]{5}/);
     });
 });

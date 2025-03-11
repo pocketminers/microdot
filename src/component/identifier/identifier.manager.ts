@@ -1,6 +1,6 @@
-import { ArgumentEntry, BaseTypes, Manager, StorageItemIndex } from "@component/base";
+import { ArgumentEntry, BaseTypes, HashedStorageItem, Manager, StorageItemIndex, StorageSchema } from "@component/base";
 import { IdentityFactory } from "./identifier.factory";
-import { IdentifiableBaseTypes, Identifier, IdentifierFormat } from "./identifier.types";
+import { IdentifiableBaseType, Identifier, IdentifierFormat, IdentityStorageItem, IdentityStorageSchema } from "./identifier.types";
 import { IdentityStorage } from "./identifier.storage";
 import { IdentityManagerParameters } from "./identifier.params";
 
@@ -30,13 +30,10 @@ class IdentityManager
     }:{
         format?: IdentifierFormat,
         options?: { prefix?: string, suffix?: string }
-        type?: IdentifiableBaseTypes
-    } = {}): {
-        index:  StorageItemIndex,
-        item: { id: Identifier, type: IdentifiableBaseTypes }
-     } {
+        type?: IdentifiableBaseType
+    } = {}): StorageSchema {
         format = format !== undefined ? format : this.properties.getValue("defaultFormat");
-        const id: {id: Identifier, type: IdentifiableBaseTypes } = this.factory.create({format, options, type});
+        const id: {id: Identifier, type: IdentifiableBaseType } = IdentityFactory.create({format, options, type});
 
         const indexedItem = this.storage.addId({identifier: id.id, type: id.type});
         
@@ -52,7 +49,7 @@ class IdentityManager
         count: number,
         format?: IdentifierFormat,
         options?: { prefix?: string, suffix?: string }
-        type?: IdentifiableBaseTypes
+        type?: IdentifiableBaseType
     }): Identifier[] {
         const ids: Identifier[] = [];
 
@@ -63,8 +60,48 @@ class IdentityManager
         return ids;
     }
 
-    public getStorage() {
-        return this.storage
+    public getId({
+        index,
+        type
+    }: {
+        index?: StorageItemIndex[],
+        type?: IdentifiableBaseType
+    } = {}): Array<IdentityStorageSchema> {
+
+        const items: Array<IdentityStorageSchema> = [];
+
+        if (
+            index !== undefined
+            && type !== undefined
+        ) {
+            items.push(this.storage.getItem({index}));
+
+            for(const item of items) {
+                if (item.type !== type) {
+                    items.splice(items.indexOf(item), 1);
+                }
+            }
+        }
+
+        else if (
+            index !== undefined
+            && type === undefined
+        ) {
+            items.push(this.storage.getItem({index}));
+        }
+
+        else if (
+            index === undefined
+            && type !== undefined
+        ) {
+            items.push(...this.storage.listItems().filter((item) => item.type === type));
+        }
+
+        else {
+            items.push(...this.storage.listItems());
+        }
+
+        return items;
     }
 }
 

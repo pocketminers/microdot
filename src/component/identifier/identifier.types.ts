@@ -1,4 +1,4 @@
-import { BaseTypes } from "@component/base";
+import { BaseTypes, HashedStorageItem, StorageItemSchema, StorageSchema } from "@component/base";
 
 /**
  * The IdentifierFormats enum is a string enumeration that represents the available identifier formats.
@@ -24,13 +24,27 @@ type IdentifierFormat = keyof typeof IdentifierFormats;
 type Identifier = string;
 
 
-type IdentifiableBaseTypes = BaseTypes.Command | BaseTypes.Message | BaseTypes.Job | BaseTypes.Custom;
+/**
+ * The IdentifiableBaseType enum is a string enumeration that represents the base types that can be identified.
+ */
+enum IdentifiableBaseTypes {
+    Command = "Command",
+    Message = "Message",
+    Job = "Job",
+    Custom = "Custom"
+}
+
+type IdentifiableBaseType = keyof typeof IdentifiableBaseTypes;
 
 
-interface IdentityStorageItem
-    extends 
+interface IdentityStorageSchema<T = string>
+    extends
+        StorageSchema,
         Record<"id", Identifier>,
-        Record<'type', IdentifiableBaseTypes> {}
+        Record<'type', IdentifiableBaseType> {}
+
+
+type IdentityStorageItem = HashedStorageItem<BaseTypes.Identity, IdentityStorageSchema>;
 
 
 
@@ -38,7 +52,9 @@ export {
     type Identifier,
     IdentifierFormats,
     type IdentifierFormat,
+    type IdentifiableBaseType,
     type IdentifiableBaseTypes,
+    type IdentityStorageSchema,
     type IdentityStorageItem
 }
 

@@ -1,10 +1,10 @@
-import { BaseTypes } from "@/component";
+import { BaseTypes, StorageItemSchema } from "@/component";
 import { HashedStorageItem } from "@/component/base/hash";
 import { CryptoUtils } from "@/utils";
 
 class MerkleTree<
     T extends BaseTypes,
-    D,
+    D extends StorageItemSchema,
     E extends HashedStorageItem<T,D> = HashedStorageItem<T,D>,
 > {
     private leaves: E[];

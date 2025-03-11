@@ -40,4 +40,27 @@ describe("HashedStorage [No Mocks]", () => {
 
         expect(tree.getRoot()).toBe("d71dc32fa2cd95be60b32dbb3e63009fa8064407ee19f457c92a09a5ff841a8a");
     });
+
+    it("should handle an even number of leaves", async () => {
+        const items = [
+            new HashedStorageItem({ type: BaseTypes.Custom, data: "a", meta: { labels: new Map(), annotations: new Map() } }),
+            new HashedStorageItem({ type: BaseTypes.Custom, data: "b", meta: { labels: new Map(), annotations: new Map() } }),
+            new HashedStorageItem({ type: BaseTypes.Custom, data: "c", meta: { labels: new Map(), annotations: new Map() } }),
+            new HashedStorageItem({ type: BaseTypes.Custom, data: "d", meta: { labels: new Map(), annotations: new Map() } }),
+        ];
+
+        const storage = new HashedStorage({ type: BaseTypes.Custom, items });
+        const tree = await storage.hashTree();
+
+        expect(tree.getRoot()).toBe("58c89d709329eb37285837b042ab6ff72c7c8f74de0446b091b6a0131c102cfd");
+    });
+
+    it('should get stored item by index', () => {
+        const item = new HashedStorageItem({ type: BaseTypes.Custom, data: "test-data", meta: { labels: new Map(), annotations: new Map() } });
+        const storage = new HashedStorage({ type: BaseTypes.Custom, items: [item] });
+
+        const storedItem = storage.getItem({index: 0});
+        expect(storedItem.value).toBe(item);
+        expect(storedItem.index).toBe(0);
+    });
 });
