@@ -31,6 +31,7 @@ export default {
     transformIgnorePatterns: [
         "/node_modules/"
     ],
+    detectOpenHandles: true,
     verbose: true,
     testTimeout: 30000,
 };

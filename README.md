@@ -69,3 +69,7 @@ yarn docs
 ```bash
 yarn build
 ```
+
+## Template Specs
+
+- **[Templates](./src/template/README.md)**: The template system is designed to provide a consistent interface for all services. This allows for easy integration and scaling.

@@ -1,15 +1,9 @@
-import { createIdentifier } from "../utils/identifier";
 import { Hashable } from "./hashable";
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method
  */
 class Parameter extends Hashable {
-    name;
-    required;
-    description;
-    defaultValue;
-    optionalValues;
     /**
      * Parameter Constructor that creates a new instance of a parameter from the given parameter entry
      * @summary Create a new Parameter instance
@@ -25,70 +19,70 @@ class Parameter extends Hashable {
      *    optionalValues: [123, 456]
      * }`
      */
-    constructor({ name = createIdentifier("Name", { prefix: "Parameter-" }), required = false, description = "A parameter", defaultValue, optionalValues = [] } = {}) {
-        super({ name, required, description, defaultValue, optionalValues });
-        this.name = name;
-        this.required = required;
-        this.description = description;
-        this.defaultValue = defaultValue;
-        this.optionalValues = optionalValues;
-        this.checkOptionalValues();
+    constructor({ 
+    // id = createIdentifier("Name", { prefix: "Parameter-" }),
+    name, required = false, description = "", defaultValue = undefined, optionalValues = [] }) {
+        super({ data: { name, required, description, defaultValue, optionalValues } });
+        this.isDefaultValueInOptionalValues();
     }
     /**
      * Check if the Default Value or a Given Value is in the Optional Values
      * @summary Check if the value is in the optional values
      */
-    checkOptionalValues(value) {
-        value = value !== undefined ? value : this.defaultValue;
-        if (this.optionalValues !== undefined
-            && this.optionalValues.length > 0
-            && value !== undefined
-            && !this.optionalValues.includes(value)) {
-            throw new Error(`Value is not in optional values: ${this.name}`);
+    isDefaultValueInOptionalValues() {
+        const defaultValue = this.getDefaultValue();
+        if (defaultValue !== undefined) {
+            return this.isValueInOptionalValues(defaultValue);
         }
         return true;
     }
-    /**
-     * Get the value from the parameter and a given value
-     * @summary Get the value of the parameter which will be the default value if the given value is undefined
-     */
-    getValue(value) {
-        if ((value === undefined
-            || value === null
-            || value === "")
-            && this.defaultValue === undefined) {
-            throw new Error(`Value is required: ${this.name}`);
+    isValueInOptionalValues(value) {
+        const optionalValues = this.getOptionalValues();
+        if (optionalValues !== undefined
+            && optionalValues.length > 0
+            && optionalValues.includes(value) === false) {
+            throw new Error(`Value is not in optional values: ${this.getName()}`);
         }
-        if ((value === undefined
-            || value === null
-            || value === "")
-            && this.defaultValue !== undefined) {
-            return this.defaultValue;
-        }
-        if (!this.checkOptionalValues(value)) {
-            throw new Error(`Value is not in optional values: ${this.name}`);
-        }
-        return value;
+        return true;
     }
-    /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
-     */
-    set(value) {
-        throw new Error("Method not implemented. Unable to set value: " + value);
+    getName() {
+        return this.getData().name;
+    }
+    getRequired() {
+        return this.getData().required;
+    }
+    getDescription() {
+        return this.getData().description;
+    }
+    getDefaultValue() {
+        return this.getData().defaultValue;
+    }
+    getOptionalValues() {
+        return this.getData().optionalValues;
+    }
+    getValue(value) {
+        if (value !== undefined) {
+            this.isValueInOptionalValues(value);
+            return value;
+        }
+        const defaultValue = this.getDefaultValue();
+        if (defaultValue !== undefined) {
+            return defaultValue;
+        }
+        throw new Error("Value is required: " + this.getName());
     }
     /**
      * Convert the Parameter to a JSON object
      * @summary Convert the parameter to a JSON object
      */
     toJSON() {
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name,
+            required,
+            description,
+            defaultValue,
+            optionalValues
         };
     }
     /**
@@ -102,22 +96,23 @@ class Parameter extends Hashable {
      *  required: true
      *  default: 123
      *  options: 123, 456
-     *  hash: <insert sha256 hash here>`
      */
     toString() {
-        return `name: ${this.name}\ndescription: ${this.description}\nrequired: ${this.required} ${this.defaultValue ? `\ndefault: ${this.defaultValue}` : ""} ${this.optionalValues !== undefined && this.optionalValues.length > 0 ? `\noptions: ${this.optionalValues.join(", ")}` : ""} ${this.hash ? `\nhash: ${this.hash}` : ""}`;
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
+        return `name: ${name}\ndescription: ${description}\nrequired: ${required} ${defaultValue ? `\ndefault: ${defaultValue}` : ""} ${optionalValues !== undefined && optionalValues.length > 0 ? `\noptions: ${optionalValues.join(", ")}` : ""}`;
     }
     /**
      * Export the Parameter as a Record
      * @summary Convert the parameter to a record and return it
      */
     toRecord() {
+        const { name, required, description, defaultValue, optionalValues } = this.getData();
         return {
-            name: this.name,
-            required: this.required,
-            description: this.description,
-            defaultValue: this.defaultValue,
-            optionalValues: this.optionalValues
+            name,
+            required,
+            description,
+            defaultValue,
+            optionalValues
         };
     }
 }

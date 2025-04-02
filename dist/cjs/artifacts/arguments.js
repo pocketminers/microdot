@@ -39,7 +39,7 @@ class Arguments extends Array {
     /**
      * Get an argument entry by name
      */
-    getArgumentEntry(name) {
+    getArgument(name) {
         return this.getArgumentByName(name);
     }
     /**
@@ -53,7 +53,7 @@ class Arguments extends Array {
      */
     get(name, entry = false) {
         if (this.hasArgument(name)) {
-            return entry === true ? this.getArgumentEntry(name) : this.getArgumentValue(name);
+            return entry === true ? this.getArgument(name) : this.getArgumentValue(name);
         }
         return undefined;
     }

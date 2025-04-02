@@ -81,7 +81,7 @@ var Arguments = /** @class */ (function (_super) {
     /**
      * Get an argument entry by name
      */
-    Arguments.prototype.getArgumentEntry = function (name) {
+    Arguments.prototype.getArgument = function (name) {
         return this.getArgumentByName(name);
     };
     /**
@@ -96,7 +96,7 @@ var Arguments = /** @class */ (function (_super) {
     Arguments.prototype.get = function (name, entry) {
         if (entry === void 0) { entry = false; }
         if (this.hasArgument(name)) {
-            return entry === true ? this.getArgumentEntry(name) : this.getArgumentValue(name);
+            return entry === true ? this.getArgument(name) : this.getArgumentValue(name);
         }
         return undefined;
     };

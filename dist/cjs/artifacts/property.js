@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Property = void 0;
+const utils_1 = require("../utils");
 const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
 /**
@@ -14,10 +15,12 @@ class Property extends parameter_1.Parameter {
     /**
      * Create a new Property instance from a PropertyEntry
      */
-    constructor({ name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
-        super({ name, description, required, defaultValue, optionalValues });
-        if (value !== undefined && super.checkOptionalValues(value)) {
-            this.argument = new argument_1.Argument({ name, value });
+    constructor({ id = '', name, value, description = '', required = true, defaultValue = undefined, optionalValues = [] }) {
+        super({ id, name, description, required, defaultValue, optionalValues });
+        if ((0, utils_1.checkIsEmpty)([value]) === false
+            && value !== undefined
+            && this.checkOptionalValues(value)) {
+            this.argument = new argument_1.Argument({ id, name, value });
         }
     }
     /**

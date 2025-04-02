@@ -2,8 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Configuration = void 0;
 const utils_1 = require("../utils");
+const argument_1 = require("./argument");
 const parameter_1 = require("./parameter");
 const property_1 = require("./property");
+const arguments_1 = require("./arguments");
+;
 /**
  * Configuration is a map of properties that can be set by arguments.
  * A 'property' is a parameter with an argument.
@@ -11,13 +14,17 @@ const property_1 = require("./property");
  * This allows the property to be set by the argument.
  */
 class Configuration extends Map {
+    name = 'Configuration';
+    description = 'A configuration of properties that can be set by arguments';
     /**
      * Create a new Configuration instance
      * Both, properties and arguments can be passed to the constructor.
      */
-    constructor(properties = [], parameters = [], args = []) {
+    constructor({ name = 'Configuration', description = 'A configuration of properties that can be set by arguments', properties = [], parameters = [], args = [], useArgs = false }) {
         super();
-        this.addEntries([...properties, ...parameters], args);
+        this.name = name;
+        this.description = description;
+        this.addEntries({ entries: [...properties, ...parameters], args, fromArgs: useArgs });
     }
     /**
      * Add a property to the configuration from a property entry and an argument entry.
@@ -26,14 +33,14 @@ class Configuration extends Map {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntry(entry, args = [], overwrite = false) {
+    addEntry(entry, args, overwrite = false) {
         let property;
         // If the entry is a parameter, then create a new property
         if (entry instanceof property_1.Property) {
             property = entry;
         }
         else if (entry instanceof parameter_1.Parameter) {
-            property = new property_1.Property(entry);
+            property = new property_1.Property({ ...entry, value: entry.defaultValue });
         }
         else {
             throw new Error(`Invalid entry: ${entry}`);
@@ -59,6 +66,16 @@ class Configuration extends Map {
         // Add the property to the configuration
         this.set(property.name, property);
     }
+    addEntryFromArg(arg) {
+        const property = new property_1.Property({
+            name: arg.name,
+            required: false,
+            description: '',
+            value: arg.value
+        });
+        property.setValue(arg.value);
+        this.set(property.name, property);
+    }
     /**
      * Add properties to the configuration from a list of property entries and a list of argument entries.
      * If the property is already in the configuration, then throw an error.
@@ -66,7 +83,7 @@ class Configuration extends Map {
      * If the entry is a parameter, then create a new property.
      * If the entry is not a parameter or a property, then throw an error.
      */
-    addEntries(entries, args = []) {
+    addEntries({ entries = [], args = [], overwrite = true, fromArgs = false } = {}) {
         //check the input entries for duplicates
         const names = entries.map(entry => entry.name);
         const duplicates = names.filter((name, index) => names.indexOf(name) !== index);
@@ -74,7 +91,60 @@ class Configuration extends Map {
             throw new Error(`Duplicate entries: ${duplicates}`);
         }
         for (const entry of entries) {
-            this.addEntry(entry, args);
+            if (entry instanceof property_1.Property
+                || entry instanceof parameter_1.Parameter) {
+                this.addEntry(entry, args, overwrite);
+            }
+            else if ((entry instanceof argument_1.Argument
+                || typeof entry === 'object')
+                && fromArgs === true) {
+                this.addEntryFromArg(entry);
+            }
+            else if (Array.isArray(entry)) {
+                this.addEntries({ entries: entry, args, overwrite });
+            }
+            else if (typeof entry === 'object'
+                && entry.name !== undefined
+                && entry.value !== undefined) {
+                this.addEntry(new property_1.Property({
+                    name: entry.name,
+                    value: entry.value,
+                    required: entry.required,
+                    description: entry.description,
+                    defaultValue: entry.defaultValue,
+                    optionalValues: entry.optionalValues
+                }), args, overwrite);
+            }
+            else {
+                throw new Error(`Invalid entry: ${entry}`);
+            }
+        }
+        if (fromArgs === true) {
+            this.setArguments(args, true);
+        }
+    }
+    setArguments(args, setProperties = false) {
+        for (const [name, property] of this) {
+            const arg = args.find(arg => arg.name === name);
+            if (arg !== undefined
+                && (0, utils_1.checkIsEmpty)([arg]) === false) {
+                property.setValue(arg.value);
+            }
+        }
+        // Check if any arguments were not set
+        const unsetArgs = args.filter(arg => this.has(arg.name) === false);
+        // If any arguments were not set, then throw an error
+        if (unsetArgs.length > 0
+            && setProperties === false) {
+            throw new Error(`Invalid arguments: ${unsetArgs.map(arg => arg.name)}`);
+        }
+        // If any arguments were not set, then add the arguments as properties
+        if (unsetArgs.length > 0
+            && setProperties === true) {
+            this.addEntries({
+                entries: unsetArgs,
+                args
+            });
         }
     }
     /**
@@ -84,6 +154,9 @@ class Configuration extends Map {
         if (this.has(name)) {
             const value = super.get(name)?.getValue();
             return value;
+        }
+        else {
+            throw new Error(`Property not found: ${name}`);
         }
     }
     /**
@@ -130,6 +203,42 @@ class Configuration extends Map {
             record[name] = property.toRecord();
         }
         return record;
+    }
+    toArguments() {
+        const args = new arguments_1.Arguments();
+        for (const [name, property] of this) {
+            args.add(new argument_1.Argument({
+                name,
+                value: property.getValue()
+            }));
+        }
+        return args;
+    }
+    toParameters() {
+        const parameters = [];
+        for (const [name, property] of this) {
+            if (property.name !== name) {
+                throw new Error(`Property name does not match parameter name: ${property.name} !== ${name}`);
+            }
+            if (property instanceof parameter_1.Parameter) {
+                parameters.push(property);
+            }
+            parameters.push(new parameter_1.Parameter({
+                name: name,
+                description: property.description,
+                required: property.required,
+                defaultValue: property.defaultValue,
+                optionalValues: property.optionalValues,
+            }));
+        }
+        return parameters;
+    }
+    toProperties() {
+        const properties = [];
+        for (const [name, property] of this) {
+            properties.push(property);
+        }
+        return properties;
     }
 }
 exports.Configuration = Configuration;

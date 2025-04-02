@@ -1,20 +1,22 @@
 import { Hashable } from "./hashable";
+import { ArgumentEntry } from "./argument";
 /**
  * An entry interface for a parameter
  * @summary Parameter entry interface that is used to create a parameter
  */
-interface ParameterEntry<T> extends Partial<Record<"name", string>>, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
+interface ParameterEntry<T> extends Pick<ArgumentEntry<T>, "name">, Partial<Record<"required", boolean>>, Partial<Record<"description", string>>, Partial<Record<"defaultValue", T>>, Partial<Record<"optionalValues", T[]>> {
 }
 /**
  * A paramter class holds the name, required flag, description, default value, and optional values
  * @summary A parameter specifies a value that can be passed to a service"s method
  */
-declare class Parameter<T> extends Hashable implements ParameterEntry<T> {
-    readonly name: string;
-    readonly required: boolean;
-    readonly description: string;
-    readonly defaultValue: T | undefined;
-    readonly optionalValues: T[] | undefined;
+declare class Parameter<T> extends Hashable<{
+    name: string;
+    required: boolean;
+    description: string;
+    optionalValues: T[];
+    defaultValue: T | undefined;
+}> {
     /**
      * Parameter Constructor that creates a new instance of a parameter from the given parameter entry
      * @summary Create a new Parameter instance
@@ -30,23 +32,19 @@ declare class Parameter<T> extends Hashable implements ParameterEntry<T> {
      *    optionalValues: [123, 456]
      * }`
      */
-    constructor({ name, required, description, defaultValue, optionalValues }?: ParameterEntry<T>);
+    constructor({ name, required, description, defaultValue, optionalValues }: ParameterEntry<T>);
     /**
      * Check if the Default Value or a Given Value is in the Optional Values
      * @summary Check if the value is in the optional values
      */
-    checkOptionalValues(value?: T | undefined): boolean;
-    /**
-     * Get the value from the parameter and a given value
-     * @summary Get the value of the parameter which will be the default value if the given value is undefined
-     */
-    getValue(value?: T | undefined): T;
-    /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
-     */
-    set<T>(value: T): void;
+    isDefaultValueInOptionalValues(): boolean;
+    isValueInOptionalValues(value: T): boolean;
+    getName(): string;
+    getRequired(): boolean;
+    getDescription(): string;
+    getDefaultValue(): T | undefined;
+    getOptionalValues(): T[];
+    getValue(value?: T): T;
     /**
      * Convert the Parameter to a JSON object
      * @summary Convert the parameter to a JSON object
@@ -69,7 +67,6 @@ declare class Parameter<T> extends Hashable implements ParameterEntry<T> {
      *  required: true
      *  default: 123
      *  options: 123, 456
-     *  hash: <insert sha256 hash here>`
      */
     toString(): string;
     /**

@@ -1,21 +1,23 @@
-import { checkIsEmpty } from "../utils/checks";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+import { checkHasEmpties } from "../utils/checks";
+import { CryptoUtils } from "../utils";
+import { IsNotEmpty } from "../utils/decorators";
 import { Hashable } from "./hashable";
 /**
  * Argument Class
  * @summary An argument specifies the value of a Parameter by name
  */
 class Argument extends Hashable {
-    /**
-     * Argument Name
-     * @summary The name of the argument
-     */
-    name;
-    /**
-     * Argument Value
-     * @summary The value of the argument
-     * @type T
-     */
-    value;
+    // public readonly name: string;
+    // public readonly value: T;
     /**
      * Argument Constructor
      * @summary Create a new Argument instance
@@ -23,48 +25,32 @@ class Argument extends Hashable {
      * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
-     *  name: "arg1",
-     *  value: 123
+     *      name: "arg1",
+     *      value: 123
      * }`
      */
     constructor({ name, value }) {
-        if (Argument.isEmtpty({ name, value })) {
-            throw new Error("Argument name or value cannot be empty.");
+        if (checkHasEmpties([name, value])) {
+            throw new Error("Argument:constructor:name or value cannot be empty.");
         }
-        super({ name, value });
-        this.name = name;
-        this.value = value;
+        super({ data: { name, value } });
     }
     /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
+     * returns the name of the argument
+     * @summary Get the name of the argument
      */
-    set(value) {
-        throw new Error(`Method not implemented. Unable to set value: ${value}`);
+    getName() {
+        return this.getData().name;
     }
     /**
-     * Get Method
+     * returns the value of the argument
      * @summary Get the value of the argument
      */
-    get() {
-        return this.value;
+    getValue() {
+        return this.getData().value;
     }
-    /**
-     * Check Hash Method
-     * @summary Check if the original hash matches the current hash
-     * @override Hashable.checkHash
-     */
-    checkHash() {
-        return super.checkHash(JSON.stringify({ name: this.name, value: this.value }));
-    }
-    /**
-     * Check if the Argument is empty
-     * @summary Check if the argument is an empty object, or if the name or value is empty
-     */
-    static isEmtpty({ name, value }) {
-        return checkIsEmpty([name, value]);
+    async getHash() {
+        return await CryptoUtils.hashData(this.toJSON());
     }
     /**
      * Export the Argument as a JSON object
@@ -72,8 +58,8 @@ class Argument extends Hashable {
      */
     toJSON() {
         return {
-            name: this.name,
-            value: this.value
+            name: this.getName(),
+            value: this.getValue()
         };
     }
     /**
@@ -81,7 +67,7 @@ class Argument extends Hashable {
      * @summary Convert the argument to a pre-formatted string and return it
      */
     toString() {
-        return `${this.name}: ${this.value}`;
+        return `${this.getName()}: ${this.getValue()}`;
     }
     /**
      * Export the Argument as a Record
@@ -89,7 +75,7 @@ class Argument extends Hashable {
      */
     toRecord() {
         return {
-            [this.name]: this.value
+            [this.getName()]: this.getValue()
         };
     }
     /**
@@ -97,8 +83,30 @@ class Argument extends Hashable {
      * @summary Create an argument from a record object
      */
     static fromRecord(record) {
-        return new Argument({ name: Object.keys(record)[0], value: Object.values(record)[0] });
+        const name = Object.keys(record)[0];
+        const value = record[name];
+        return new Argument({ name, value });
+    }
+    /**
+     * Create an Argument from a string
+     * @summary Create an argument from a string
+     */
+    static fromString(str) {
+        const record = JSON.parse(str);
+        return Argument.fromRecord(record);
     }
 }
+__decorate([
+    IsNotEmpty,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Argument)
+], Argument, "fromRecord", null);
+__decorate([
+    IsNotEmpty,
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Argument)
+], Argument, "fromString", null);
 export { Argument };
 //# sourceMappingURL=argument.js.map

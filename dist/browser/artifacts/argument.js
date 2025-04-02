@@ -13,7 +13,54 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { checkIsEmpty } from "../utils/checks";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+import { checkHasEmpties } from "../utils/checks";
+import { CryptoUtils } from "../utils";
+import { IsNotEmpty } from "../utils/decorators";
 import { Hashable } from "./hashable";
 /**
  * Argument Class
@@ -21,6 +68,8 @@ import { Hashable } from "./hashable";
  */
 var Argument = /** @class */ (function (_super) {
     __extends(Argument, _super);
+    // public readonly name: string;
+    // public readonly value: T;
     /**
      * Argument Constructor
      * @summary Create a new Argument instance
@@ -28,52 +77,40 @@ var Argument = /** @class */ (function (_super) {
      * const arg = new Argument<number>({ name: "arg1", value: 123 });
      * console.log(arg);
      * `Argument {
-     *  hash: "391c5d93777313d8399678d8967923f46d2a8abfc12cb04205f7df723f1278fd",
-     *  name: "arg1",
-     *  value: 123
+     *      name: "arg1",
+     *      value: 123
      * }`
      */
     function Argument(_a) {
         var name = _a.name, value = _a.value;
-        var _this = this;
-        if (Argument.isEmtpty({ name: name, value: value })) {
-            throw new Error("Argument name or value cannot be empty.");
+        if (checkHasEmpties([name, value])) {
+            throw new Error("Argument:constructor:name or value cannot be empty.");
         }
-        _this = _super.call(this, { name: name, value: value }) || this;
-        _this.name = name;
-        _this.value = value;
-        return _this;
+        return _super.call(this, { data: { name: name, value: value } }) || this;
     }
     /**
-     * Set Method **Not Implemented!**
-     * @summary Method not implemented
-     * @throws Error
+     * returns the name of the argument
+     * @summary Get the name of the argument
      */
-    Argument.prototype.set = function (value) {
-        throw new Error("Method not implemented. Unable to set value: ".concat(value));
+    Argument.prototype.getName = function () {
+        return this.getData().name;
     };
     /**
-     * Get Method
+     * returns the value of the argument
      * @summary Get the value of the argument
      */
-    Argument.prototype.get = function () {
-        return this.value;
+    Argument.prototype.getValue = function () {
+        return this.getData().value;
     };
-    /**
-     * Check Hash Method
-     * @summary Check if the original hash matches the current hash
-     * @override Hashable.checkHash
-     */
-    Argument.prototype.checkHash = function () {
-        return _super.prototype.checkHash.call(this, JSON.stringify({ name: this.name, value: this.value }));
-    };
-    /**
-     * Check if the Argument is empty
-     * @summary Check if the argument is an empty object, or if the name or value is empty
-     */
-    Argument.isEmtpty = function (_a) {
-        var name = _a.name, value = _a.value;
-        return checkIsEmpty([name, value]);
+    Argument.prototype.getHash = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, CryptoUtils.hashData(this.toJSON())];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
     };
     /**
      * Export the Argument as a JSON object
@@ -81,8 +118,8 @@ var Argument = /** @class */ (function (_super) {
      */
     Argument.prototype.toJSON = function () {
         return {
-            name: this.name,
-            value: this.value
+            name: this.getName(),
+            value: this.getValue()
         };
     };
     /**
@@ -90,7 +127,7 @@ var Argument = /** @class */ (function (_super) {
      * @summary Convert the argument to a pre-formatted string and return it
      */
     Argument.prototype.toString = function () {
-        return "".concat(this.name, ": ").concat(this.value);
+        return "".concat(this.getName(), ": ").concat(this.getValue());
     };
     /**
      * Export the Argument as a Record
@@ -99,7 +136,7 @@ var Argument = /** @class */ (function (_super) {
     Argument.prototype.toRecord = function () {
         var _a;
         return _a = {},
-            _a[this.name] = this.value,
+            _a[this.getName()] = this.getValue(),
             _a;
     };
     /**
@@ -107,8 +144,30 @@ var Argument = /** @class */ (function (_super) {
      * @summary Create an argument from a record object
      */
     Argument.fromRecord = function (record) {
-        return new Argument({ name: Object.keys(record)[0], value: Object.values(record)[0] });
+        var name = Object.keys(record)[0];
+        var value = record[name];
+        return new Argument({ name: name, value: value });
     };
+    /**
+     * Create an Argument from a string
+     * @summary Create an argument from a string
+     */
+    Argument.fromString = function (str) {
+        var record = JSON.parse(str);
+        return Argument.fromRecord(record);
+    };
+    __decorate([
+        IsNotEmpty,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [Object]),
+        __metadata("design:returntype", Argument)
+    ], Argument, "fromRecord", null);
+    __decorate([
+        IsNotEmpty,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", [String]),
+        __metadata("design:returntype", Argument)
+    ], Argument, "fromString", null);
     return Argument;
 }(Hashable));
 export { Argument };

@@ -61,14 +61,9 @@ var IdentifierTypes;
 /**
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
- * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
- * @returns The new identifier.
  */
-var createIdentifier = function (type, _a) {
-    if (type === void 0) { type = "UUID"; }
-    var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
+var createIdentifier = function (_a) {
+    var _b = _a === void 0 ? {} : _a, type = _b.type, prefix = _b.prefix, suffix = _b.suffix;
     var id = "";
     switch (type) {
         case "UUID":
@@ -84,14 +79,14 @@ var createIdentifier = function (type, _a) {
             id = Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4) + "-" + Math.random().toString(36).substring(2, 4);
             break;
         default:
-            id = createIdentifier("UUID");
+            id = createIdentifier({ type: IdentifierTypes.UUID });
             break;
     }
     return "".concat(prefix ? prefix : "").concat(id).concat(suffix ? suffix : "");
 };
-var IdentifierFactory = /** @class */ (function (_super) {
-    __extends(IdentifierFactory, _super);
-    function IdentifierFactory(identifiers) {
+var IdentifierStore = /** @class */ (function (_super) {
+    __extends(IdentifierStore, _super);
+    function IdentifierStore(identifiers) {
         if (identifiers === void 0) { identifiers = []; }
         var _this = _super.call(this) || this;
         if (typeof identifiers === "object") {
@@ -107,12 +102,21 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return _this;
     }
-    IdentifierFactory.prototype.checkIfIdentifierExists = function (id) {
+    IdentifierStore.prototype.checkIfIndexExists = function (index) {
+        return _super.prototype.has.call(this, index);
+    };
+    IdentifierStore.prototype.checkIfIdentifierExists = function (id) {
         var e_1, _a;
         var exists = false;
         try {
-            for (var _b = __values(this.values()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var value = _c.value;
+            for (var _b = __values(this.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var _d = __read(_c.value, 2), index = _d[0], value = _d[1];
+                if (typeof id !== "string"
+                    || typeof value !== "string"
+                    || typeof index !== "number"
+                    || checkIsEmpty([value, index])) {
+                    throw new Error("Invalid identifier or index type: ".concat(value, ", ").concat(index));
+                }
                 if (value === id) {
                     exists = true;
                     break;
@@ -128,13 +132,14 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return exists;
     };
-    IdentifierFactory.prototype.addFromRecord = function (record) {
+    IdentifierStore.prototype.addFromRecord = function (record) {
         var e_2, _a, _b;
         var added = new Array();
         try {
             for (var _c = __values(Object.entries(record)), _d = _c.next(); !_d.done; _d = _c.next()) {
                 var _e = __read(_d.value, 2), key = _e[0], id = _e[1];
-                if (this.checkIfIdentifierExists(id)) {
+                if (this.checkIfIdentifierExists(id)
+                    || this.checkIfIndexExists(Number(key))) {
                     throw new Error("Identifier already exists: ".concat(id));
                 }
                 _super.prototype.set.call(this, Number(key), id);
@@ -150,16 +155,17 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.addFromIdentifier = function (id) {
+    IdentifierStore.prototype.addFromIdentifier = function (id) {
         var _a;
-        if (this.checkIfIdentifierExists(id)) {
+        if (this.checkIfIdentifierExists(id)
+            || typeof id !== "string") {
             throw new Error("Identifier already exists: ".concat(id));
         }
         var key = this.size;
         _super.prototype.set.call(this, key, id);
         return _a = {}, _a[key] = id, _a;
     };
-    IdentifierFactory.prototype.addFromArrayOfIdentifiers = function (ids) {
+    IdentifierStore.prototype.addFromArrayOfIdentifiers = function (ids) {
         var _this = this;
         var added = new Array();
         ids.forEach(function (id) {
@@ -168,7 +174,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         });
         return added;
     };
-    IdentifierFactory.prototype.addFromArrayOfRecords = function (ids) {
+    IdentifierStore.prototype.addFromArrayOfRecords = function (ids) {
         var e_3, _a;
         var added = new Array();
         try {
@@ -187,7 +193,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.addFromMap = function (map) {
+    IdentifierStore.prototype.addFromMap = function (map) {
         var e_4, _a, _b;
         var added = new Array();
         if (map.size === 0) {
@@ -199,7 +205,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 if (checkIsEmpty([id, key])) {
                     throw new Error("Identifier or key is empty: ".concat(id, ", ").concat(key));
                 }
-                if (this.checkIfIdentifierExists(id)) {
+                if (this.checkIfIdentifierExists(id)
+                    || this.checkIfIndexExists(key)) {
                     throw new Error("Identifier already exists: ".concat(id));
                 }
                 var completed = this.addFromRecord((_b = {}, _b[key] = id, _b));
@@ -215,7 +222,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return added;
     };
-    IdentifierFactory.prototype.add = function (idsOrRecords) {
+    IdentifierStore.prototype.add = function (idsOrRecords) {
         var e_5, _a;
         var added = new Array();
         if (Array.isArray(idsOrRecords)) {
@@ -246,12 +253,15 @@ var IdentifierFactory = /** @class */ (function (_super) {
             var record = this.addFromIdentifier(idsOrRecords);
             added.push(record);
         }
+        else {
+            throw new Error("Invalid argument type: ".concat(typeof idsOrRecords));
+        }
         return added;
     };
-    IdentifierFactory.prototype.getAll = function () {
+    IdentifierStore.prototype.getAll = function () {
         return this;
     };
-    IdentifierFactory.prototype.getIdentifierByIndex = function (index) {
+    IdentifierStore.prototype.getIdentifierByIndex = function (index) {
         var _a;
         var identifiers = this.getAll();
         if (index >= 0
@@ -262,7 +272,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
             }
         }
     };
-    IdentifierFactory.prototype.getIdentifierByValue = function (value) {
+    IdentifierStore.prototype.getIdentifierByValue = function (value) {
         var e_6, _a, _b;
         try {
             for (var _c = __values(this.getAll().entries()), _d = _c.next(); !_d.done; _d = _c.next()) {
@@ -280,7 +290,7 @@ var IdentifierFactory = /** @class */ (function (_super) {
             finally { if (e_6) throw e_6.error; }
         }
     };
-    IdentifierFactory.prototype.getRecord = function (identifier) {
+    IdentifierStore.prototype.getRecord = function (identifier) {
         var id = undefined;
         if (typeof identifier === "number") {
             id = this.getIdentifierByIndex(identifier);
@@ -293,15 +303,16 @@ var IdentifierFactory = /** @class */ (function (_super) {
         }
         return id;
     };
-    IdentifierFactory.prototype.getValue = function (identifier) {
+    IdentifierStore.prototype.getValue = function (identifier) {
         var id = this.getRecord(identifier);
         return Object.values(id)[0];
     };
-    IdentifierFactory.prototype.remove = function (idsOrRecords) {
+    IdentifierStore.prototype.remove = function (idsOrRecords) {
         var e_7, _a, e_8, _b, _c, e_9, _d, _e, _f;
         var removed = new Array();
         if (Array.isArray(idsOrRecords)
-            && idsOrRecords.length > 0) {
+            && idsOrRecords.length > 0
+            && checkIsEmpty([idsOrRecords])) {
             try {
                 for (var idsOrRecords_2 = __values(idsOrRecords), idsOrRecords_2_1 = idsOrRecords_2.next(); !idsOrRecords_2_1.done; idsOrRecords_2_1 = idsOrRecords_2.next()) {
                     var id = idsOrRecords_2_1.value;
@@ -321,7 +332,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
             try {
                 for (var _g = __values(idsOrRecords.entries()), _h = _g.next(); !_h.done; _h = _g.next()) {
                     var _j = __read(_h.value, 2), key = _j[0], id = _j[1];
-                    if (this.checkIfIdentifierExists(id)) {
+                    if (this.checkIfIdentifierExists(id)
+                        && this.checkIfIndexExists(key)) {
                         _super.prototype.delete.call(this, key);
                         removed.push((_c = {}, _c[key] = id, _c));
                     }
@@ -340,7 +352,8 @@ var IdentifierFactory = /** @class */ (function (_super) {
             try {
                 for (var _k = __values(Object.entries(record)), _l = _k.next(); !_l.done; _l = _k.next()) {
                     var _m = __read(_l.value, 2), key = _m[0], id = _m[1];
-                    if (this.checkIfIdentifierExists(id)) {
+                    if (this.checkIfIdentifierExists(id)
+                        && this.checkIfIndexExists(Number(key))) {
                         _super.prototype.delete.call(this, Number(key));
                         removed.push((_e = {}, _e[key] = id, _e));
                     }
@@ -362,15 +375,18 @@ var IdentifierFactory = /** @class */ (function (_super) {
                 removed.push((_f = {}, _f[key] = id, _f));
             }
         }
+        else {
+            throw new Error("Invalid argument type: ".concat(typeof idsOrRecords));
+        }
         return removed;
     };
-    IdentifierFactory.prototype.create = function (type, _a) {
+    IdentifierStore.prototype.create = function (type, _a) {
         var _b = _a === void 0 ? {} : _a, prefix = _b.prefix, suffix = _b.suffix;
-        var id = createIdentifier(type, { prefix: prefix, suffix: suffix });
+        var id = createIdentifier({ type: type, prefix: prefix, suffix: suffix });
         this.add(id);
         return id;
     };
-    return IdentifierFactory;
+    return IdentifierStore;
 }(Map));
-export { createIdentifier, IdentifierTypes, IdentifierFactory };
+export { createIdentifier, IdentifierTypes, IdentifierStore };
 //# sourceMappingURL=identifier.js.map

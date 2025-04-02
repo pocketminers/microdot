@@ -12,20 +12,16 @@ declare enum IdentifierTypes {
  * The IdentifierType type is a string that is used to specify the type of identifier to create.
  */
 type IdentifierType = keyof typeof IdentifierTypes;
+interface IdentifierCreatorEntry extends Partial<Record<"type", IdentifierTypes>>, Partial<Record<'prefix', string>>, Partial<Record<'suffix', string>> {
+}
 /**
  * Creates a new identifier.
  * @summary Creates a new identifier with the specified type.
- * @param type The type of identifier to create.
- * @param prefix The prefix to add to the identifier.
- * @param suffix The suffix to add to the identifier.
- * @returns The new identifier.
  */
-declare const createIdentifier: (type?: IdentifierType, { prefix, suffix }?: {
-    prefix?: string;
-    suffix?: string;
-}) => Identifier;
-declare class IdentifierFactory extends Map<number, Identifier> {
+declare const createIdentifier: ({ type, prefix, suffix }?: IdentifierCreatorEntry) => Identifier;
+declare class IdentifierStore extends Map<number, Identifier> {
     constructor(identifiers?: Identifier[] | Map<number, Identifier>);
+    private checkIfIndexExists;
     private checkIfIdentifierExists;
     private addFromRecord;
     private addFromIdentifier;
@@ -45,10 +41,10 @@ declare class IdentifierFactory extends Map<number, Identifier> {
     remove(record: Record<number, Identifier>): Array<Record<number, Identifier | undefined>>;
     remove(records: Record<number, Identifier>[]): Array<Record<number, Identifier | undefined>>;
     remove(map: Map<number, Identifier>): Array<Record<number, Identifier | undefined>>;
-    create<T extends IdentifierType>(type: T, { prefix, suffix }?: {
+    create<T extends IdentifierTypes>(type?: T, { prefix, suffix }?: {
         prefix?: string;
         suffix?: string;
     }): Identifier;
 }
-export { type Identifier, createIdentifier, type IdentifierType, IdentifierTypes, IdentifierFactory };
+export { type Identifier, createIdentifier, type IdentifierType, type IdentifierCreatorEntry, IdentifierTypes, IdentifierStore };
 //# sourceMappingURL=identifier.d.ts.map

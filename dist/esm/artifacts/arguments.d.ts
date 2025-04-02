@@ -17,7 +17,7 @@ declare class Arguments extends Array<Argument<any>> {
      *      value: 123
      * }]`
      */
-    constructor(entryOrObject?: ArgumentEntry<any> | ArgumentEntry<any>[] | Record<string, any> | []);
+    constructor(entryOrObject?: Argument<any> | ArgumentEntry<any> | ArgumentEntry<any>[] | Record<string, any> | []);
     /**
      * Check if an argument exists in the list by name
      */
@@ -29,7 +29,7 @@ declare class Arguments extends Array<Argument<any>> {
     /**
      * Get an argument entry by name
      */
-    private getArgumentEntry;
+    private getArgument;
     /**
      * Get an argument value by name
      */
@@ -37,7 +37,7 @@ declare class Arguments extends Array<Argument<any>> {
     /**
      * Get an argument by name
      */
-    get<T = any>(name: string, entry?: boolean): T | ArgumentEntry<T> | undefined;
+    get<T = any>(name: string, entry?: boolean): T | Argument<T> | undefined;
     /**
      * Check if an entry is an ArgumentEntry
      */
